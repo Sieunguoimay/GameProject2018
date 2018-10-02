@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1A5BC4B0-15CB-4648-8016-9E04754F953C}</ProjectGuid>
+    <RootNamespace>GameFramework</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\PropertySheet.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>E:\CodingSpace\SDLProjects\SDLAndroid\AndroidFramework\app\assets;E:\CodingSpace\SDLProjects\SDLAndroid\AndroidFramework\app\jni\src\GamePackage;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libEGL.lib;libGLESv2.lib;glu32.lib;Utilities.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\HelloTriangle.fs" />
+    <None Include="Resources\Shaders\HelloTriangle.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GamePackage\2D\AnimatedSprite.cpp" />
+    <ClCompile Include="GamePackage\2D\Animation.cpp" />
+    <ClCompile Include="GamePackage\2D\Renderer.cpp" />
+    <ClCompile Include="GamePackage\2D\Sprite.cpp" />
+    <ClCompile Include="GamePackage\2D\SpriteManager.cpp" />
+    <ClCompile Include="GamePackage\Controls\GameController.cpp" />
+    <ClCompile Include="GamePackage\Controls\InputDispatcher.cpp" />
+    <ClCompile Include="GamePackage\Controls\InputHolder.cpp" />
+    <ClCompile Include="GamePackage\DrawDebug\DebugDraw.cpp" />
+    <ClCompile Include="GamePackage\GameBase.cpp" />
+    <ClCompile Include="GamePackage\GameObjects\BaseObject.cpp" />
+    <ClCompile Include="GamePackage\GameObjects\MovingObject.cpp" />
+    <ClCompile Include="GamePackage\GameObjects\PhysicsObject.cpp" />
+    <ClCompile Include="GamePackage\GameObjects\SteeringBehaviors.cpp" />
+    <ClCompile Include="GamePackage\GameWorld\GameWorld.cpp" />
+    <ClCompile Include="GamePackage\GameWorld\Tile.cpp" />
+    <ClCompile Include="GamePackage\Graphics\Camera.cpp" />
+    <ClCompile Include="GamePackage\Graphics\Light.cpp" />
+    <ClCompile Include="GamePackage\Graphics\Mesh.cpp" />
+    <ClCompile Include="GamePackage\Graphics\Model3D.cpp" />
+    <ClCompile Include="GamePackage\Graphics\ResourceManager.cpp" />
+    <ClCompile Include="GamePackage\Graphics\SceneManager.cpp" />
+    <ClCompile Include="GamePackage\Graphics\Shaders.cpp" />
+    <ClCompile Include="GamePackage\Graphics\Texture.cpp" />
+    <ClCompile Include="GamePackage\misc\GameAccessor.cpp" />
+    <ClCompile Include="GamePackage\Physics\PhysicsBody.cpp" />
+    <ClCompile Include="GamePackage\Physics\PhysicsManager.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GamePackage\2D\AnimatedSprite.h" />
+    <ClInclude Include="GamePackage\2D\Animation.h" />
+    <ClInclude Include="GamePackage\2D\Renderer.h" />
+    <ClInclude Include="GamePackage\2D\Sprite.h" />
+    <ClInclude Include="GamePackage\2D\SpriteManager.h" />
+    <ClInclude Include="GamePackage\Controls\GameController.h" />
+    <ClInclude Include="GamePackage\Controls\InputDispatcher.h" />
+    <ClInclude Include="GamePackage\Controls\InputHandler.h" />
+    <ClInclude Include="GamePackage\Controls\InputHolder.h" />
+    <ClInclude Include="GamePackage\DrawDebug\DebugDraw.h" />
+    <ClInclude Include="GamePackage\GameBase.h" />
+    <ClInclude Include="GamePackage\GameObjects\BaseObject.h" />
+    <ClInclude Include="GamePackage\GameObjects\MovingObject.h" />
+    <ClInclude Include="GamePackage\GameObjects\SteeringBehaviors.h" />
+    <ClInclude Include="GamePackage\GameWorld\GameWorld.h" />
+    <ClInclude Include="GamePackage\GameWorld\Tile.h" />
+    <ClInclude Include="GamePackage\Graphics\Camera.h" />
+    <ClInclude Include="GamePackage\Graphics\Light.h" />
+    <ClInclude Include="GamePackage\Graphics\Mesh.h" />
+    <ClInclude Include="GamePackage\Graphics\Model3D.h" />
+    <ClInclude Include="GamePackage\Graphics\ResourceManager.h" />
+    <ClInclude Include="GamePackage\Graphics\SceneManager.h" />
+    <ClInclude Include="GamePackage\Graphics\Shaders.h" />
+    <ClInclude Include="GamePackage\Graphics\Texture.h" />
+    <ClInclude Include="GamePackage\misc\Assistances.h" />
+    <ClInclude Include="GamePackage\misc\GameAccessor.h" />
+    <ClInclude Include="GamePackage\Physics\PhysicsBody.h" />
+    <ClInclude Include="GamePackage\Physics\PhysicsManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
