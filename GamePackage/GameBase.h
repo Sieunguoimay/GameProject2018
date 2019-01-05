@@ -2,72 +2,65 @@
 #include"Box2D\Box2D.h"
 #include"SDL2\SDL_mixer.h"
 
-#include"Graphics\Shaders.h"
-#include"Graphics\Model3D.h"
-#include"Graphics\Texture.h"
-#include"Graphics\Mesh.h"
-#include"Graphics\Model3D.h"
-#include"Graphics\Camera.h"
-#include"Controls\InputHandler.h"
-#include"Controls\InputHolder.h"
-#include"GameObjects\BaseObject.h"
-#include"GameObjects\MovingObject.h"
-#include"Controls\GameController.h"
-#include"GameWorld\GameWorld.h"
+#include<Box2D\Box2D.h>
+
+#include"2D\Shaders.h"
+#include"2D\Renderer.h"
+#include"2D\PrimitiveRenderer.h"
+#include"2D\Camera2D.h"
+#include"2D\AnimationCollection.h"
+
+#include"misc\WindowSizeProblem.h"
+#include"misc\Timer.h"
+#include"Input\InputManager.h"
+#include"GameObjects\Box.h"
+#include"GameObjects\Entity.h"
+#include"AssetsManager.h"
+#include"GameObjects\SpriterEngine\ScmlObject.h"
+
+
 #define DEFAULT_FPS 40.0f
 class GameAccessor;
 class GameBase
 {
-	//handler of this class for access from any where
-	friend class GameAccessor;
+protected:
+	b2World*m_world;
 
-	glm::mat4 m_proj;
-
-	int m_windowWidth;
-	int m_windowHeight;
-	int m_gameWidth;
-	int m_gameHeight;
-	float m_pixelToOpenGL;//(x,y)->(ratio,1.0);
-
-	Camera*m_mainCamera;
-	InputHolder*m_inputHolder;
-	GameController*m_controller;
-	SteeringBehaviors*m_steering;
-	std::vector<BaseObject*>m_objects;
-	std::vector<MovingObject*>m_flock;
-	std::vector<Sprite*>sprites;
-	//Sprite*m_pBackground;
-	GameWorld*m_gameWorld;
-	Mix_Music*m_music;
-	NoPhysicsObject*m_background;
+	std::vector<Entity*>m_entities;
 
 	//Utilities
+	Timer m_timer;
+	Box2DRenderer m_box2DRenderer;
+	std::vector<Renderer*>m_renderers;
+	WindowSizeProblem m_windowSize;
+	Camera2D m_camera2D;
 
-	Uint32 m_frameStart;
-	int m_frameTime;
-	float m_FPS;
-	int m_frameDelay;
+	InputManager m_inputManager;
+	AssetsManager m_assetsManager;
 
-	void DrawPrimitive(GLint numVertices, GLfloat*vtxBuf, 
-		GLint vtxStride, GLint numIndices, GLushort*indices);
-	void SetUpOpenGL();
-protected:
+	void SetupOpenGL(float width, float height);
 	bool m_done;
 public:
 	GameBase();
 	virtual ~GameBase();
 
 	virtual int Init(int width, int height);
-	virtual void Update(float deltaTime);
+	virtual void HandleEvent(const InputEvent&inputEvent);
+	virtual void Update();
 	virtual void Draw();
 	virtual void CleanUp();
 	bool Done() { return m_done; }
-};
-class SmallTester : public GameBase {
-public:
 
+	//handler of this class for access from any where
+	friend class GameAccessor;
+};
+
+class SmallTester : public GameBase {
+
+public:
+	SmallTester();
 	virtual int Init(int width, int height);
-	virtual void Update(float deltaTime);
+	virtual void Update();
 	virtual void Draw();
 	virtual void CleanUp();
 };

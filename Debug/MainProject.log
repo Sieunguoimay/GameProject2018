@@ -1,0 +1,32 @@
+﻿Build started 05-Jan-19 1:25:45 PM.
+     1>Project "E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\MainProject\MainProject.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (GameFramework.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /IE:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\Include\ /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt GamePackage\GameObjects\Character\CharacterBrain.cpp
+         CharacterBrain.cpp
+     1>e:\codingspace\sdlprojects\sdlwindow\windowframework\gameframework\mainproject\gamepackage\gameobjects\character\characterbrain.cpp(47): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\Debug\MainProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\Lib\ libEGL.lib libGLESv2.lib glu32.lib Utilities.lib SDL2.lib SDL2main.lib SDL2_image.lib Box2D.lib SDL2_mixer.lib Engine.lib SpriterEngine.lib freetype240MT_D.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\Debug\MainProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\Debug\MainProject.lib" /MACHINE:X86 Debug\Box.obj
+         Debug\AssetsManager.obj
+         Debug\GameBase.obj
+         Debug\BodyKit.obj
+         Debug\CharacterBrain.obj
+         Debug\Player.obj
+         Debug\Character.obj
+         Debug\TerrestrialBody.obj
+         Debug\Entity.obj
+         Debug\GraphNode.obj
+         Debug\Transform.obj
+         Debug\SpriterEntity.obj
+         Debug\InputManager.obj
+         Debug\Locator.obj
+         Debug\tinyxml2.obj
+         Debug\Main.obj
+         Debug\StateMachine.obj
+         Debug\stdafx.obj
+         MainProject.vcxproj -> E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\Debug\MainProject.exe
+     1>Done Building Project "E:\CodingSpace\SDLProjects\SDLWindow\WindowFramework\GameFramework\MainProject\MainProject.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.09

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assets generator="SystemFileEngine" generator_version="1.0">
+	<folder id="0" name="Fonts" >
+		<file id="0" name="CONSOLA.TTF" />
+		<file id="1" name="CONSOLAB.TTF" />
+		<file id="2" name="consolai.ttf" />
+		<file id="3" name="Consolas.ttf" />
+		<file id="4" name="consolaz.ttf" />
+	</folder>
+	<folder id="1" name="Shaders" >
+		<file id="0" name="2DLighting.vs" />
+		<file id="1" name="HelloTriangle.vs" />
+		<file id="2" name="OnScreenShade.vs" />
+		<file id="3" name="PhongShade.vs" />
+		<file id="4" name="PrimitiveDrawing.vs" />
+		<file id="5" name="PrimitiveFilling.vs" />
+		<file id="6" name="2DLighting.fs" />
+		<file id="7" name="2DSpritePhongShade.fs" />
+		<file id="8" name="HelloTriangle.fs" />
+		<file id="9" name="OnScreenShade.fs" />
+		<file id="10" name="PhongShade.fs" />
+		<file id="11" name="PrimitiveDrawing.fs" />
+		<file id="12" name="PrimitiveFilling.fs" />
+	</folder>
+	<folder id="2" name="Textures" >
+		<file id="0" name="background.png" />
+		<file id="1" name="controller_base.png" />
+		<file id="2" name="heart.png" />
+		<file id="3" name="icon.png" />
+		<file id="4" name="icon2.png" />
+		<file id="5" name="packed.png" />
+		<file id="6" name="plant.png" />
+		<file id="7" name="player.png" />
+		<file id="8" name="snail.png" />
+		<file id="9" name="tile.png" />
+		<file id="10" name="animation1.scml" />
+		<file id="11" name="skin_2/main_character_exported_0000s_0000s_0000_Shape-2-copy.png" />
+		<file id="12" name="skin_2/main_character_exported_0000s_0000s_0001_Shape-2.png" />
+		<file id="13" name="skin_2/main_character_exported_0000s_0000s_0002_Shape-1-copy-2.png" />
+		<file id="14" name="skin_2/main_character_exported_0000s_0000s_0003_Shape-1.png" />
+		<file id="15" name="skin_2/main_character_exported_0000s_0000_body.png" />
+		<file id="16" name="skin_2/main_character_exported_0000s_0000_body_2.png" />
+		<file id="17" name="skin_2/main_character_exported_0000s_0001s_0000_Shape-17.png" />
+		<file id="18" name="skin_2/main_character_exported_0000s_0001s_0001_Shape-16.png" />
+		<file id="19" name="skin_2/main_character_exported_0000s_0001s_0002_Shape-15.png" />
+		<file id="20" name="skin_2/main_character_exported_0000s_0002s_0000_Shape-17.png" />
+		<file id="21" name="skin_2/main_character_exported_0000s_0002s_0001_Shape-16.png" />
+		<file id="22" name="skin_2/main_character_exported_0000s_0002s_0002_Shape-15.png" />
+		<file id="23" name="skin_2/main_character_exported_0000s_0003s_0000s_0001_Shape-10-copy-2.png" />
+		<file id="24" name="skin_2/main_character_exported_0000s_0003s_0000s_0002_Shape-12.png" />
+		<file id="25" name="skin_2/main_character_exported_0000s_0003s_0000_Shape-10-copy.png" />
+		<file id="26" name="skin_2/main_character_exported_0000s_0004s_0000_Shape-11.png" />
+		<file id="27" name="skin_2/main_character_exported_0000s_0004s_0001_Shape-14.png" />
+		<file id="28" name="skin_2/main_character_exported_0000s_0004s_0002_Shape-11-copy.png" />
+		<file id="29" name="skin_2/main_skin.scml" />
+		<file id="30" name="tree/deep/controller_button.png" />
+		<file id="31" name="tree/deep/rock.png" />
+		<file id="32" name="tree/deep/rocktree.scml" />
+	</folder>
+</assets>
