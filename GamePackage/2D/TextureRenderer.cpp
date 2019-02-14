@@ -96,26 +96,46 @@ TextureRenderer::TextureRenderer(Shaders*shader, SortType sortType)
 
 	m_sortType = sortType;
 	glGenBuffers(1, &m_vbo);
+	glGenBuffers(1, &m_ibo);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices, GL_DYNAMIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices, GL_DYNAMIC_DRAW);
+
 }
 
 
 TextureRenderer::~TextureRenderer()
 {
 	glDeleteBuffers(1, &m_vbo);
+	glDeleteBuffers(1, &m_ibo);
 }
 
 
 
-
+#include"../misc/Locator.h"
+#include"../misc/Assistances.h"
 void TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
+	if (m_disabled||!check_overlap(Locator::GetCamera()->GetCamRect(), destRect))
+		return;
+
+
 	m_meshes.emplace_back(SpriteMesh(destRect, uvRect, textureID, depth, color, horizontal_flip, vertical_flip));
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
 }
 void TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, float angle, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
+	if (m_disabled || !check_overlap(Locator::GetCamera()->GetCamRect(), destRect))
+		return;
+
 	m_meshes.emplace_back(destRect, uvRect, textureID, depth, color, angle,center, horizontal_flip,vertical_flip);
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
 }
 void TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
+	if (m_disabled || !check_overlap(Locator::GetCamera()->GetCamRect(), destRect))
+		return;
+
 	const glm::vec2 right(1.0f, 0.0f);
 	float angle = acosf(glm::dot(right, direction));
 	if (direction.y < 0.0f)angle = -angle;
@@ -123,93 +143,159 @@ void TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureI
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
 }
 
-
 void TextureRenderer::Render(const float*matrix) {
 	sortGlyphs();
 	createRenderBatches();
 
 	m_pShader->UseProgram();
+
 	glUniformMatrix4fv(m_pShader->u_ortho, 1, GL_FALSE, matrix);
-	for (auto&a : m_renderBatches) {
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, m_counter*sizeof(glm::vec4), m_vertices);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, m_indexCounter*sizeof(GLushort), m_indices);
+
+	glEnableVertexAttribArray(0);
+	//glEnableVertexAttribArray(1);
+	//glEnableVertexAttribArray(2);
+
+	//position attribute pointer
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+	//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (void*)&m_vertices[0]);
+	////uv attribute pointer
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(GLfloat), (void*)&m_vertices[0]);
+
+
+	for (auto&a:m_renderBatches) {
 		glBindTexture(GL_TEXTURE_2D, a.textureID);
-		bindVertexArray();
-		glDrawArrays(GL_TRIANGLES, a.offset, a.numVertices);
-		unbindVertexArray();
+		//glDrawArrays(GL_TRIANGLES, a.offset, a.numVertices);
+		glDrawElements(GL_TRIANGLES,a.numVertices, GL_UNSIGNED_SHORT,(void*)(a.offset*2));
+		/*
+			BIG LESTION TO REMEMEBER GOES HERE>>>>
+
+			The size of a void* is a platform dependent value. 
+			Typically it's value is 4 or 8 for 32 and 64 bit platforms respectively.
+
+			that means, if you give a number representing a index of an array,
+			then that index i will be point to 8*i location of the array.
+
+			that's why here when you multiply offset index with 2.
+			you get correct location in array. 16*i. because your array
+			is GLushort (16bits).
+
+			so. next time. try to pass the correct pointer to the location
+			instead of passing the index of that array to a void* pointer.
+			which is just 8bit. and your array, of course, size of element
+			is arbitrary. The Nhe!!!
+		*/
 	}
+	//glRenderbufferStorage();
+	glDisableVertexAttribArray(0);
+	//glDisableVertexAttribArray(1);
+	//glDisableVertexAttribArray(2);
+
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	m_pShader->UnuseProgram();
 
-
-	m_renderBatches.clear();
 	m_meshes.clear();
 	m_pMeshes.clear();
 }
 
 void TextureRenderer::createRenderBatches()
 {
-	std::vector<Vertex> vertices;
-	vertices.resize(m_meshes.size() * 6);
+	//std::vector<Vertex> vertices;
 
 	if (m_meshes.empty()) { return; }
 
-	int offset = 0;
-	int cv = 0;//current vertex
 
-	m_renderBatches.emplace_back(RenderBatch(0, 6, m_pMeshes[0]->textureID));
-	vertices[cv++] = m_pMeshes[0]->topLeft;
-	vertices[cv++] = m_pMeshes[0]->bottomLeft;
-	vertices[cv++] = m_pMeshes[0]->bottomRight;
-	vertices[cv++] = m_pMeshes[0]->bottomRight;
-	vertices[cv++] = m_pMeshes[0]->topRight;
-	vertices[cv++] = m_pMeshes[0]->topLeft;
+
+	GLuint offset = 0;
+	m_counter = 0;
+	m_indexCounter = 0;
+	if (!m_renderBatches.empty())
+		m_renderBatches.clear();
+
+	//m_renderBatches[m_counter++] = { 0, 6, (GLuint)m_pMeshes[0]->textureID };
+	m_renderBatches.emplace_back(0, 6, m_pMeshes[0]->textureID);
+
+	//0
+	m_indices[m_indexCounter++] = m_counter;
+	m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->topLeft.position, m_pMeshes[0]->topLeft.uv);
+	//1
+	m_indices[m_indexCounter++] = m_counter;
+	m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->bottomLeft.position, m_pMeshes[0]->bottomLeft.uv);
+	//2
+	m_indices[m_indexCounter++] = m_counter;
+	m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->bottomRight.position, m_pMeshes[0]->bottomRight.uv);
+	//2
+	m_indices[m_indexCounter++] = m_counter-1;
+
+	//0
+	m_indices[m_indexCounter++] = m_counter - 3;
+
+	//3
+	m_indices[m_indexCounter++] = m_counter;
+	m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->topRight.position, m_pMeshes[0]->topRight.uv);
+
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->topLeft.position, m_pMeshes[0]->topLeft.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->bottomLeft.position, m_pMeshes[0]->bottomLeft.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->bottomRight.position, m_pMeshes[0]->bottomRight.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->bottomRight.position, m_pMeshes[0]->bottomRight.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->topLeft.position, m_pMeshes[0]->topLeft.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[0]->topRight.position, m_pMeshes[0]->topRight.uv);
+
+
+
 	offset += 6;
 
-	for (int cg = 1; cg < m_pMeshes.size(); cg++) {
-		if (m_pMeshes[cg]->textureID != m_pMeshes[cg - 1]->textureID)
-			m_renderBatches.emplace_back(RenderBatch(offset, 6, m_pMeshes[cg]->textureID));
-		else
-			m_renderBatches.back().numVertices += 6;
+	for (GLuint cg = 1; cg < m_pMeshes.size(); cg++) {
+		if (m_pMeshes[cg]->textureID != m_pMeshes[cg - 1]->textureID) {
 
-		vertices[cv++] = m_pMeshes[cg]->topLeft;
-		vertices[cv++] = m_pMeshes[cg]->bottomLeft;
-		vertices[cv++] = m_pMeshes[cg]->bottomRight;
-		vertices[cv++] = m_pMeshes[cg]->bottomRight;
-		vertices[cv++] = m_pMeshes[cg]->topRight;
-		vertices[cv++] = m_pMeshes[cg]->topLeft;
+			m_renderBatches.emplace_back(offset, 6,m_pMeshes[cg]->textureID );
+		}
+		else {
+			m_renderBatches.back().numVertices += 6;
+		}
+
+
+		//0
+		m_indices[m_indexCounter++] = m_counter;
+		m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->topLeft.position, m_pMeshes[cg]->topLeft.uv);
+		//1
+		m_indices[m_indexCounter++] = m_counter;
+		m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->bottomLeft.position, m_pMeshes[cg]->bottomLeft.uv);
+		//2
+		m_indices[m_indexCounter++] = m_counter;
+		m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->bottomRight.position, m_pMeshes[cg]->bottomRight.uv);
+		//2
+		m_indices[m_indexCounter++] = m_counter - 1;
+
+		//0
+		m_indices[m_indexCounter++] = m_counter-3;
+
+		//3
+		m_indices[m_indexCounter++] = m_counter;
+		m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->topRight.position, m_pMeshes[cg]->topRight.uv);
+
 		offset += 6;
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size()*sizeof(Vertex), vertices.data());
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->topLeft.position, m_pMeshes[cg]->topLeft.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->bottomLeft.position, m_pMeshes[cg]->bottomLeft.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->bottomRight.position, m_pMeshes[cg]->bottomRight.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->bottomRight.position, m_pMeshes[cg]->bottomRight.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->topLeft.position, m_pMeshes[cg]->topLeft.uv);
+	//m_vertices[m_counter++] = glm::vec4(m_pMeshes[cg]->topRight.position, m_pMeshes[cg]->topRight.uv);
 
 }
-void TextureRenderer::bindVertexArray() {
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-	//position attribute pointer
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
-	//color attribute pointer
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-
-	//uv attribute pointer
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
-}
-
-void TextureRenderer::unbindVertexArray()
-{
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
 
 void TextureRenderer::sortGlyphs()
 {
+
 	switch (m_sortType) {
 	case SortType::BACK_TO_FRONT:
 		std::stable_sort(m_pMeshes.begin(), m_pMeshes.end(), compareFrontToBack);
@@ -235,6 +321,110 @@ bool TextureRenderer::compareBackToFront(SpriteMesh * a, SpriteMesh* b)
 
 bool TextureRenderer::compareTexture(SpriteMesh * a, SpriteMesh* b)
 {
-	return (a->textureID<b->textureID);
+	return (a->textureID>b->textureID);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+TextureRendererTest::TextureRendererTest(Shaders * shader, SortType sortType)
+	:TextureRenderer(shader,sortType)
+{
+	//
+	GLfloat vertices[] = {
+		0.0f,1.0f,	//top_left
+		0.0f,0.0f,	//bottom_left
+		1.0f,0.0f,	//bottom_right
+
+		1.0f,0.0f,	//bottom_right
+		1.0f,1.0f,	//top_right
+		0.0f,1.0f,	//top_left
+	};
+
+	glGenBuffers(1, &m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+}
+
+TextureRendererTest::~TextureRendererTest()
+{
+}
+
+void TextureRendererTest::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, bool horizontal_flip, bool vertical_flip)
+{
+	Draw(destRect, textureId, 0);
+}
+
+void TextureRendererTest::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, float angle, glm::vec2 center, bool horizontal_flip, bool vertical_flip)
+{
+	Draw(destRect, textureId, angle);
+
+}
+
+void TextureRendererTest::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center, bool horizontal_flip, bool vertical_flip)
+{
+	const glm::vec2 right(1.0f, 0.0f);
+	float angle = acosf(glm::dot(right, direction));
+	if (direction.y < 0.0f)angle = -angle;
+
+	Draw(destRect, textureId, angle);
+}
+
+void TextureRendererTest::Draw(glm::vec4 destRect, GLuint textureId,float angle)
+{
+	glm::mat4 model(1.0f);
+	model = glm::translate(model, glm::vec3(destRect.x, destRect.y, 0.0f));
+	model = glm::rotate(model, angle, glm::vec3(0.0, 0.0, 1.0));
+	model = glm::scale(model, glm::vec3(destRect.z, -destRect.w, 1.0f));
+	model = Locator::GetCamera()->GetMatrix()*model;
+
+	m_pShader->UseProgram();
+	glUniformMatrix4fv(m_pShader->u_ortho, 1, GL_FALSE, &model[0][0]);
+	glBindBuffer(GL_ARRAY_BUFFER,m_vbo);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+
+	glEnableVertexAttribArray(0);
+
+	//position attribute pointer
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), (void*)0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	m_pShader->UnuseProgram();
+
+}
+void TextureRendererTest::Render(const float * matrix)
+{
+}
+
+
+
+
+//void TextureRenderer::bindVertexArray() {
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+//	glEnableVertexAttribArray(0);
+//	glEnableVertexAttribArray(1);
+//	glEnableVertexAttribArray(2);
+//
+//	//position attribute pointer
+//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+//	//color attribute pointer
+//	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+//
+//	//uv attribute pointer
+//	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+//}
+
 

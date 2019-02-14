@@ -62,6 +62,8 @@ void PrimitiveRenderer::CreateBox(const glm::vec4& destRect, float angle, const 
 
 void PrimitiveRenderer::DrawBox(const glm::vec4 & destRect, float angle, const glm::vec2& center, const glm::vec4 & color)
 {
+	if (m_disabled) return;
+
 	CreateBox(destRect, angle, center,color);
 	int start = m_vertices.size() - 4;
 
@@ -82,6 +84,8 @@ void PrimitiveRenderer::DrawBox(const glm::vec4 & destRect, float angle, const g
 
 void PrimitiveRenderer::FillBox(const glm::vec4 & destRect, float angle, const glm::vec2& center, const glm::vec4 & color)
 {
+	if (m_disabled) return;
+
 	CreateBox(destRect, angle,center, color);
 	int start = m_vertices.size() - 4;
 
@@ -98,6 +102,8 @@ void PrimitiveRenderer::FillBox(const glm::vec4 & destRect, float angle, const g
 
 
 void PrimitiveRenderer::DrawCircle(const glm::vec2& position, float radius, const glm::vec4&color) {
+
+	if (m_disabled) return;
 
 	static const int NUM_POINTS = 100;
 	int start = m_vertices.size();
@@ -127,6 +133,7 @@ void PrimitiveRenderer::DrawLight(const glm::vec2 & position, float radius, cons
 
 void PrimitiveRenderer::fillCirlce(std::vector<GLuint>&container,const glm::vec2 & position, float radius, const glm::vec4 & centerColor, const glm::vec4 & boundaryColor)
 {
+	if (m_disabled) return;
 
 	float perimeter = 2.0f*radius*3.141592645f;
 	float step = radius / 10.0f;
@@ -157,6 +164,8 @@ void PrimitiveRenderer::fillCirlce(std::vector<GLuint>&container,const glm::vec2
 
 void PrimitiveRenderer::DrawLine(const glm::vec2 & p1, const glm::vec2 & p2, const glm::vec4 & color)
 {
+	if (m_disabled) return;
+
 	int start = m_vertices.size();
 
 	PrimitiveVertex newVertex;
@@ -175,6 +184,8 @@ void PrimitiveRenderer::DrawLine(const glm::vec2 & p1, const glm::vec2 & p2, con
 
 void PrimitiveRenderer::Render(const float*matrix)
 {
+	if (m_disabled) return;
+
 	sendBufferData();
 	if (m_numDrawingElements > 0) {
 		m_pDrawingShader->UseProgram();

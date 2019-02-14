@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- created with http://www.physicseditor.de -->
+<bodydef version="1.0">
+	<bodies>
+
+		<body name="platform2">
+            <anchorpoint>0.0000,0.0000</anchorpoint>
+			<fixtures>
+
+				<fixture>
+					<density>2</density>
+					<friction>0</friction>
+					<restitution>0</restitution>
+					<filter_categoryBits>1</filter_categoryBits>
+					<filter_groupIndex>0</filter_groupIndex>
+					<filter_maskBits>65535</filter_maskBits>
+					<fixture_type>POLYGON</fixture_type>
+
+
+					<polygons>
+
+                        <polygon>  174.0741, 551.8518  ,  48.1481, 477.7778  ,  4.0000, 418.0000  ,  318.5185, 518.5185 </polygon>
+
+                        <polygon>  1903.0000, -4.0000  ,  1889.0000, 470.0000  ,  1156.0000, 515.0000  ,  688.8889, 525.9259  ,  318.5185, 518.5185  ,  4.0000, 418.0000  ,  0.0000, 0.0000 </polygon>
+
+                        <polygon>  1755.5555, 529.6296  ,  1467.0000, 519.0000  ,  1889.0000, 470.0000 </polygon>
+
+                        <polygon>  1467.0000, 519.0000  ,  1156.0000, 515.0000  ,  1889.0000, 470.0000 </polygon>
+
+					</polygons>
+
+				</fixture>
+
+			</fixtures>
+		</body>
+
+	</bodies>
+	<metadata>
+		<format>1</format>
+		<ptm_ratio>32</ptm_ratio>
+	</metadata>
+</bodydef>
+
+
+

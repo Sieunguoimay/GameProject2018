@@ -19,4 +19,5 @@ public:
 	glm::ivec2&GetDimension() { return m_dimension; }
 
 	const std::string&GetName() { return m_name; }
+	void SetName(std::string name) { this->m_name = name; }
 };

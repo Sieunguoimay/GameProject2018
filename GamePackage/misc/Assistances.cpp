@@ -89,3 +89,11 @@ void loadFile(std::vector<unsigned char>& buffer, const std::string& filename) /
 	}
 	SDL_RWclose(rwops);
 }
+
+bool check_overlap(glm::vec4 a, glm::vec4 b) {
+	if (a.x + a.z < b.x)return false;
+	if (a.x > b.x + b.z)return false;
+	if (a.y + a.w < b.y)return false;
+	if (a.y > b.y + b.w)return false;
+	return true;
+}

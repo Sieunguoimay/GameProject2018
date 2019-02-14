@@ -1,48 +1,19 @@
 #pragma once
 #include"Character.h"
 #include"../../misc/StateMachine/StateMachine.h"
-class CharacterBrain;
-class _StandingState:public State<CharacterBrain>{
-public:
-	void Enter(CharacterBrain*entity) override;
-	void Execute(CharacterBrain*entity, float deltaTime) override;
-	void Exit(CharacterBrain*entity) override;
-};
-class _RunningState :public State<CharacterBrain> {
-public:
-	void Enter(CharacterBrain*entity) override;
-	void Execute(CharacterBrain*entity, float deltaTime) override;
-	void Exit(CharacterBrain*entity) override;
-};
-class _JumpingState :public State<CharacterBrain> {
-public:
-	void Enter(CharacterBrain*entity) override;
-	void Execute(CharacterBrain*entity, float deltaTime) override;
-	void Exit(CharacterBrain*entity) override;
-};
-class _JumpingBufferState :public State<CharacterBrain> {
-public:
-	void Enter(CharacterBrain*entity) override;
-	void Execute(CharacterBrain*entity, float deltaTime) override;
-	void Exit(CharacterBrain*entity) override;
-};
-class _StoppingState :public State<CharacterBrain> {
-public:
-	void Enter(CharacterBrain*entity) override;
-	void Execute(CharacterBrain*entity, float deltaTime) override;
-	void Exit(CharacterBrain*entity) override;
-};
-
-
-
+#include"CharacterStates.h"
 
 
 class CharacterBrain :public Brain,public StateMachine<CharacterBrain> {
-	State<CharacterBrain>*m_standing;
-	State<CharacterBrain>*m_running;
-	State<CharacterBrain>*m_jumping;
-	State<CharacterBrain>*m_jumpingBuffer;
-	State<CharacterBrain>*m_stopping;
+	BaseCharacterState*m_standing;
+	BaseCharacterState*m_running;
+	BaseCharacterState*m_jumping;
+	BaseCharacterState*m_falling;
+	BaseCharacterState*m_jumpingBuffer;
+	BaseCharacterState*m_stopping;
+
+	_GlobalCharacterState*m_globalState;
+
 	friend class _StoppingState;
 	friend class _JumpingBufferState;
 public:
@@ -50,4 +21,6 @@ public:
 	~CharacterBrain();
 	void Update(float deltaTime);
 
+	//getters
+	inline BaseCharacterState*GetFallingState()const { return m_falling; }
 };

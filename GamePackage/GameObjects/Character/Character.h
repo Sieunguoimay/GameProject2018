@@ -2,8 +2,7 @@
 #include"Box2D\Box2D.h"
 #include"../Entity.h"
 #include"../SpriterEntity.h"
-#include"BodyKit.h"
-
+#include"../PhysicsEngine/BodyBase.h"
 
 
 
@@ -28,7 +27,7 @@ class Skin {
 public:
 	Skin(SpriterEntity*spriterEntity,float scale, glm::vec2 pos = glm::vec2(0.0,0.0), float angle = 0.0);
 	~Skin();
-	void SetAnimation(std::string name);
+	void SetAnimation(int index);
 	void SetPos(glm::vec2 pos);
 	void SetAngle(float angle);
 	void SetScale(float scale);
@@ -36,7 +35,9 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 	SpriterEntity*GetSpriterEntity();
-	void SetAnimationSwitchingTime(std::string animationA, std::string animationB, int time);
+	void SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time);
+	inline glm::vec2*GetPosPointer() { return &m_pos; }
+	inline const FlipType& GetFlip()const { return m_flip; }
 };
 
 class Brain {

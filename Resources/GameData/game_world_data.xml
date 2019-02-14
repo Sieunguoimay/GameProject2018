@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+<world>
+    <platform id="0" x="762.66699" y="-848.04517" texture="platforms/platform2.png">
+        <polygon id="0">
+            <vertex id="0" x="174.0741" y="551.85181"/>
+            <vertex id="1" x="48.148102" y="477.7778"/>
+            <vertex id="2" x="4" y="418"/>
+            <vertex id="3" x="318.51849" y="518.51849"/>
+        </polygon>
+        <polygon id="1">
+            <vertex id="0" x="1903" y="-4"/>
+            <vertex id="1" x="1889" y="470"/>
+            <vertex id="2" x="1156" y="515"/>
+            <vertex id="3" x="688.88892" y="525.9259"/>
+            <vertex id="4" x="318.51849" y="518.51849"/>
+            <vertex id="5" x="4" y="418"/>
+            <vertex id="6" x="0" y="0"/>
+        </polygon>
+        <polygon id="2">
+            <vertex id="0" x="1755.5555" y="529.62958"/>
+            <vertex id="1" x="1467" y="519"/>
+            <vertex id="2" x="1889" y="470"/>
+        </polygon>
+        <polygon id="3">
+            <vertex id="0" x="1467" y="519"/>
+            <vertex id="1" x="1156" y="515"/>
+            <vertex id="2" x="1889" y="470"/>
+        </polygon>
+    </platform>
+    <platform id="1" x="-942.93341" y="-550.40002" texture="platforms/platform1.png">
+        <polygon id="0">
+            <vertex id="0" x="124.2424" y="396.9697"/>
+            <vertex id="1" x="33" y="298"/>
+            <vertex id="2" x="0" y="0"/>
+            <vertex id="3" x="1898" y="1"/>
+            <vertex id="4" x="1670" y="445"/>
+        </polygon>
+        <polygon id="1">
+            <vertex id="0" x="1788" y="430"/>
+            <vertex id="1" x="1670" y="445"/>
+            <vertex id="2" x="1898" y="1"/>
+            <vertex id="3" x="1903" y="278"/>
+        </polygon>
+        <polygon id="2">
+            <vertex id="0" x="912" y="545"/>
+            <vertex id="1" x="797" y="452"/>
+            <vertex id="2" x="1670" y="445"/>
+            <vertex id="3" x="1533" y="524"/>
+            <vertex id="4" x="1234.2858" y="548.57141"/>
+        </polygon>
+        <polygon id="3">
+            <vertex id="0" x="307" y="455"/>
+            <vertex id="1" x="230" y="403"/>
+            <vertex id="2" x="797" y="452"/>
+            <vertex id="3" x="500" y="477.14291"/>
+        </polygon>
+        <polygon id="4">
+            <vertex id="0" x="797" y="452"/>
+            <vertex id="1" x="230" y="403"/>
+            <vertex id="2" x="1670" y="445"/>
+        </polygon>
+    </platform>
+</world>

@@ -16,9 +16,9 @@ Skin::~Skin()
 	delete m_spriterEntity;//clue of the single-copy property.
 }
 
-void Skin::SetAnimation(std::string name)
+void Skin::SetAnimation(int index)
 {
-	m_spriterEntity->SetAnimation(name);
+	m_spriterEntity->SetAnimation(index);
 }
 
 void Skin::SetPos(glm::vec2 pos)
@@ -56,7 +56,7 @@ SpriterEntity * Skin::GetSpriterEntity()
 	return m_spriterEntity;
 }
 
-void Skin::SetAnimationSwitchingTime(std::string animationA, std::string animationB, int time)
+void Skin::SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time)
 {
 	m_spriterEntity->GetSclmEntity()->animationSwitchingTime
 		.at(m_spriterEntity->GetAnimationIndex(animationA))
@@ -110,8 +110,8 @@ void Character::Update(float deltaTime)
 	m_body->Update(deltaTime);
 	m_skin->Update(deltaTime);
 
-	m_skin->SetPos(m_body->GetBodyKit().GetPosition());
-	m_skin->SetAngle(glm::degrees(m_body->GetBodyKit().GetAngle()));
+	m_skin->SetPos(*m_body->GetPosPointer());
+	m_skin->SetAngle(glm::degrees(m_body->GetBody()->GetAngle()));
 }
 
 void Character::Draw()

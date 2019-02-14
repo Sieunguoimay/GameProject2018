@@ -24,17 +24,19 @@ bool Texture::Init(const char*path) {
 	glTexImage2D(GL_TEXTURE_2D, 0, format, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
 	SDL_FreeSurface(image);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	m_name = path;
-	m_name.erase(0, m_name.find_last_of('/')+1);
+	//m_name = path;
+	//m_name.erase(0, m_name.find_first_of('/')+1);
 	//m_name.erase(m_name.find_last_of('.'), m_name.size());
 	//SDL_Log("Time of Loading Texture %f ", (float)(SDL_GetTicks() - startTime) / 1000.0f);
+
+
 	return true;
 }
 

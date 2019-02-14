@@ -28,6 +28,7 @@ public:
 	SpriterEntity*SpawnSpriterEntity(std::string name);
 	AnimationCollection*SpawnAnimationCollection(const std::string&name);
 	std::string&GetFontPath(int index) { return m_fontPaths[index]; }
+	int GetTextureNum() { return m_textures.size(); }
 private:
 	std::map<std::string, Texture*>m_textures;
 	std::map<std::string, Shaders*>m_shaders;

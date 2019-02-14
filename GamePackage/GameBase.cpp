@@ -6,7 +6,7 @@
 #include"SDL2/SDL_image.h"
 #include"SDL2/SDL_mixer.h"
 #include"SDL2\SDL_rwops.h"
-
+#include"SDL2\SDL_ttf.h"
 
 #include"misc/Assistances.h"
 #include"misc\Locator.h"
@@ -16,13 +16,15 @@
 
 #include"GameObjects\SpriterEntity.h"
 
-#include"GameObjects/Character/Player.h"
 #include"GameObjects/Character/Character.h"
 #include"GameObjects/Character/CharacterBrain.h"
 #include"GameObjects/Character/TerrestrialBody.h"
 
-//#include<ft2build.h>
-//#include FT_FREETYPE_H
+#include"GameObjects\PhysicsEngine\PhysicsFactory.h"
+
+#include"GameObjects\PhysicsEngine\TestBox2d.h"
+
+
 GameBase::GameBase()
 	:m_done(false)
 {
@@ -30,12 +32,14 @@ GameBase::GameBase()
 	SDL_Init(SDL_INIT_EVERYTHING);//for loading files, logging, Timimg, etc 
 	IMG_Init(IMG_INIT_PNG);//to load png image
 	Mix_Init(MIX_INIT_MP3|MIX_INIT_OGG|MIX_INIT_FLAC);//music
+	TTF_Init();
 	SDL_Log("SDL2 Initialized");
 }
 
 
 GameBase::~GameBase()
 {
+	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -44,16 +48,17 @@ GameBase::~GameBase()
 
 int GameBase::Init(int width, int height)
 {
-	m_windowSize.Init(width, height, 1920, 1080);
+	m_windowSize.Init(width, height, 2400, 1348);
 	m_timer.Init(50);
 	m_camera2D.Init(m_windowSize.GetGameSize().w, m_windowSize.GetGameSize().h);
 	SetupOpenGL(width, height);
 
 	m_assetsManager.Init("Resources/assets.xml");
-	TextureRenderer*textureRenderer = new TextureRenderer(m_assetsManager.GetShader("HelloTriangle"));
-	TextConsole*textConsole = new TextConsole(textureRenderer, m_assetsManager.GetFontPath(0).c_str(), 50);// m_assetsManager.GetShader("HelloTriangle"));
+	//TextureRenderer*textureRenderer = new TextureRendererTest(m_assetsManager.GetShader("HelloTriangle"), SortType::TEXTURE);
+	TextureRenderer*textureRenderer = new TextureRenderer(m_assetsManager.GetShader("HelloTriangle"),SortType::TEXTURE);
+	TextConsole*textConsole = new TextConsole(textureRenderer, m_assetsManager.GetFontPath(1).c_str(), 50);// m_assetsManager.GetShader("HelloTriangle"));
 
-	//textConsole->SetPos(-GAME_WIDTH / 2 + 200, GAME_HEIGHT / 2-200);
+	textConsole->SetPos(-GAME_WIDTH / 2 + 200, GAME_HEIGHT / 2-200);
 	textConsole->SetLineSpace(20);
 	textConsole->SetCharSpace(5);
 	textConsole->SetAlign(FreeTypeLoader::ALIGN_LEFT);
@@ -69,53 +74,18 @@ int GameBase::Init(int width, int height)
 	Locator::Provide(textureRenderer);
 	Locator::Provide(textConsole);
 	Locator::Provide(primitiveRenderer);
+	Locator::Provide(&m_controller);
 	Locator::Provide(&m_inputManager);
 	Locator::Provide(&m_assetsManager);
-
-	//m_animation = m_assetsManager.SpawnAnimationCollection("plant.png");
-	//m_animation->SwitchAnimation("walk");
-
-	m_world = new b2World(b2Vec2(0.0, -15.0));
-	m_world->SetDebugDraw(&m_box2DRenderer);
-	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
-
-
-	std::mt19937 generator(time(0));
-	std::uniform_real_distribution<float> dimension(50.0f, 200.0f);
-	std::uniform_real_distribution<float> pos(-5.0f, 5.0f);
-	//for (int i = 0; i < 10; i++){
-	//	float size = dimension(generator);
-	//	m_entities.push_back(new Box(m_world, glm::vec2(pos(generator), pos(generator) / 2.0f), glm::vec2(size, size), m_assetsManager.GetTexture("tile")));
-	//}
-	//m_entities.push_back(new Player(m_world, glm::vec2(pos(generator), 
-	//	pos(generator) / 2.0f), glm::vec2(80, 160), 1.2f*glm::vec2(80, 160),NULL));
-
-	SpriterEntity*spriter = m_assetsManager.SpawnSpriterEntity("tree/deep/rocktree/entity_000");
-		//new SpriterEntity(m_assetsManager.GetScmlObject("tree/deep/rocktree.scml"), 0);
-	spriter->SetAnimation("dancing");
-	m_entities.push_back(spriter);
-
-
-	BodyBase*collisionBody = new TerrestrialBody(m_world,glm::vec2(0,100),glm::vec2(80,160));
-	Skin*skin = new Skin(m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f);
-	Brain*brain = new CharacterBrain(collisionBody,skin);
-	m_entities.push_back(new Character(brain, collisionBody, skin));
+	Locator::Provide(&m_camera2D);
+	Locator::Provide(&m_physicsFactory);
 
 
 
-	b2BodyDef bd;
-	bd.type = b2_staticBody;
-	bd.position.Set(0.0f,-2.0f);//Example: if x is 100 then position.x is 1.0f
-	b2Body*body = m_world->CreateBody(&bd);
 
-	b2PolygonShape ps;
-	ps.SetAsBox(15.0f,0.2f);
 
-	b2FixtureDef fd;
-	fd.shape = &ps;
-	fd.restitution = 0.0f;
-	body->CreateFixture(&fd);
-	SDL_Log("Game Initialized");
+	InitGameObjects();
+
 	return 0;
 }
 void GameBase::SetupOpenGL(float width, float height)
@@ -126,12 +96,109 @@ void GameBase::SetupOpenGL(float width, float height)
 
 	//glClearColor(64.0f / 255.0f, 65.0f / 255.0f, 68.0f / 255.0f, 1.0f);
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	//glClearColor(0.9f, 0.0f, 0.9f, 1.0f);
 	glEnable(GL_BLEND);
 	//glEnable(GL_DEPTH_TEST);	
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	SDL_Log("Opengl ES 2 Initialized");
 }
+
+
+void GameBase::InitGameObjects()
+{
+
+	m_physicsFactory.Init();
+	m_physicsFactory.SetRenderer(&m_box2DRenderer);
+	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
+
+	//Locator::GetTextureRenderer()->Disable();
+	Locator::GetPrimitiveRenderer()->Disable();
+
+	World*gameWorld = new World();
+	//Editor::LoadObjectFromPEXml("Resources/RawData/platform2.xml",gameWorld);
+	//gameWorld->AddPlatform(Editor::LoadObjectFromJson("Resources/RawData/demo.json"));
+	Editor::LoadGameWorldFromXml("Resources/GameData/game_world_data.xml", gameWorld);
+	m_entities.push_back(gameWorld);
+
+
+	//Editor*editor = new Editor(gameWorld);
+	//editor->Init("");
+	//m_entities.push_back(editor);
+
+
+	BodyBase*collisionBody = new TerrestrialBody(glm::vec2(0, 100), glm::vec2(80, 160));
+	Skin*skin = new Skin(m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f);
+	Brain*brain = new CharacterBrain(collisionBody, skin);
+	m_entities.push_back(new Character(brain, collisionBody, skin));
+
+	m_camera2D.SetTarget(collisionBody->GetPosPointer());
+
+
+	std::mt19937 generator(time(0));
+	std::uniform_real_distribution<float> dimension(50.0f, 200.0f);
+	std::uniform_real_distribution<float> pos(-5.0f, 5.0f);
+
+	//SpriterEntity*spriter = m_assetsManager.SpawnSpriterEntity("tree/deep/rocktree/entity_000");
+	//spriter->SetAnimation("dancing");
+	//m_entities.push_back(spriter);
+
+	//for (int i = 0; i < 15; i++) {
+	//	spriter = m_assetsManager.SpawnSpriterEntity("tree/deep/rocktree/entity_000");
+	//	spriter->SetAnimation("standing");
+	//	m_entities.push_back(spriter);
+	//}
+
+	//for (int i = 0; i < 6; i++)
+	//{
+	//	spriter = m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000");
+	//	spriter->SetAnimation("run");
+	//	m_entities.push_back(spriter);
+	//}
+
+
+
+
+
+
+
+
+
+	//collisionBody = new TerrestrialBody(m_world, glm::vec2(200, 100), glm::vec2(80, 160));
+	//skin = new Skin(m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f);
+	//brain = new CharacterBrain(collisionBody, skin);
+	//m_entities.push_back(new Character(brain, collisionBody, skin));
+
+	//collisionBody = new TerrestrialBody(m_world, glm::vec2(400, 100), glm::vec2(80, 160));
+	//skin = new Skin(m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f);
+	//brain = new CharacterBrain(collisionBody, skin);
+	//m_entities.push_back(new Character(brain, collisionBody, skin));
+
+
+	//collisionBody = new TerrestrialBody(m_world, glm::vec2(-200, 100), glm::vec2(80, 160));
+	//skin = new Skin(m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f);
+	//brain = new CharacterBrain(collisionBody, skin);
+	//m_entities.push_back(new Character(brain, collisionBody, skin));
+
+	//collisionBody = new TerrestrialBody(m_world, glm::vec2(-400, 100), glm::vec2(80, 160));
+	//skin = new Skin(m_assetsManager.SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f);
+	//brain = new CharacterBrain(collisionBody, skin);
+	//m_entities.push_back(new Character(brain, collisionBody, skin));
+
+
+
+	//b2PolygonShape ps;
+	//ps.SetAsBox(15.0f, 0.2f);
+	//Locator::GetPhysicsFactory()->CreateBody(
+	//	&ps, b2_staticBody, MaterialType::SOIL, b2Vec2(-3.0f, -2.0f));
+
+	SDL_Log("Game Initialized");
+
+
+	//m_entities.push_back(new TestBox2D(m_physicsFactory.GetB2World()));
+
+}
+
 void GameBase::HandleEvent(const InputEvent & inputEvent)
 {
 
@@ -141,7 +208,7 @@ void GameBase::HandleEvent(const InputEvent & inputEvent)
 	if (inputEvent.type == KEY_UP) {
 		m_inputManager.KeyUp(inputEvent.data.key);
 	}
-	if (inputEvent.type == MOUSE_MOTION|| inputEvent.type == MOUSE_BUTTON_DOWN|| inputEvent.type == MOUSE_BUTTON_UP) {
+	if (inputEvent.type == MOUSE_MOTION || inputEvent.type == MOUSE_BUTTON_DOWN || inputEvent.type == MOUSE_BUTTON_UP) {
 		//how to send mouse pos to world
 		glm::vec2 pos1 = m_windowSize.ScreenToCamera(glm::vec2(inputEvent.data.motion.x, inputEvent.data.motion.y));
 		glm::vec2 pos2 = m_camera2D.CameraToWorld(pos1);
@@ -160,47 +227,64 @@ void GameBase::Update()
 {
 	m_timer.Start();
 	float deltaTime = m_timer.GetDeltaTime();
+	m_physicsFactory.Update(deltaTime);
+	//SDL_Log("FPS: %f", m_timer.GetFPS());
+	//static float angle = 0; angle += deltaTime * 45; 
+	//if (angle > 360)angle = 0;
+	//Locator::GetPrimitiveRenderer()->DrawBox(glm::vec4(50, 50, 50, 20), glm::radians(angle), glm::vec2(0,0));
 
-	static float angle = 0; angle += deltaTime * 45; 
-	if (angle > 360)angle = 0;
-	Locator::GetPrimitiveRenderer()->DrawBox(glm::vec4(50, 50, 50, 20), glm::radians(angle), glm::vec2(0,0));
+	m_controller.Update(Locator::GetInput());
 
-	m_world->Step(deltaTime, 6, 2);
-	m_camera2D.Update(deltaTime);
-
-	//m_animation->Update(deltaTime);
-
-	//if (m_inputManager.IsKeyPressed(KEY_ARROW_UP))
-	//	m_camera2D.SetPos(m_camera2D.GetPosition()+glm::vec2(0,10));
-	//if (m_inputManager.IsKeyPressed(KEY_ARROW_DOWN))
-	//	m_camera2D.SetPos(m_camera2D.GetPosition() + glm::vec2(0, -10));
-	//if (m_inputManager.IsKeyPressed(KEY_ARROW_LEFT))
-	//	m_camera2D.SetPos(m_camera2D.GetPosition() + glm::vec2(-10,0.0f));
-	//if (m_inputManager.IsKeyPressed(KEY_ARROW_RIGHT))
-	//	m_camera2D.SetPos(m_camera2D.GetPosition() + glm::vec2(10,0.0f));
-
-	for (auto&entity : m_entities)
+	for (auto&entity : m_entities) {
 		entity->Update(deltaTime);
+	}
+
+	m_camera2D.Update(deltaTime);
 }
 
 void GameBase::Draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	
-	Locator::GetTextConsole()->Log("Designed by VU DUY DU");
-	Locator::GetTextConsole()->Log(std::string("FPS: ")+_to_string(m_timer.GetFPS()));
 
-	Locator::GetPrimitiveRenderer()->DrawLight(Locator::GetInput()->GetMousePosInWorld(),
-		700, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		glm::vec4(1.0f, 1.0f, 0.0f, 0.0f));
+	//Locator::GetTextConsole()->Log("Designed by VU DUY DU");
 
-	Locator::GetPrimitiveRenderer()->DrawLine(glm::vec2(0, 0), Locator::GetInput()->GetMousePosInWorld());
+	//Locator::GetPrimitiveRenderer()->DrawLight(Locator::GetInput()->GetMousePosInWorld(),
+	//	700, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+	//	glm::vec4(1.0f, 1.0f, 0.0f, 0.0f));
 
-	//m_world->DrawDebugData();
+
+	Locator::GetPrimitiveRenderer()->DrawCircle(Locator::GetInput()->GetMousePosInWorld()-glm::vec2(2,2),4,glm::vec4(1.0,0.0,1.0,1.0));
+
+	//SDL_Log("FPS: %f", m_timer.GetFPS());
+
+	//for (int i = 0; i < 115; i++)
+	//	Locator::GetTextureRenderer()->Draw(
+	//		glm::vec4(100, 10, 100, 100),		//quad mesh
+	//		glm::vec4(0, 0, 1, 1),				// UVs
+	//		i%(m_assetsManager.GetTextureNum())	//texture id
+	//		, 0									//angle
+	//		, glm::vec4(1.0f));					//color
+
+
+
+	//int n = m_assetsManager.GetTextureNum();
+	//for (int i = 0; i < n; i++)
+	//	Locator::GetTextureRenderer()->Draw(
+	//		glm::vec4(-900+i, 100, 100, 100),
+	//		glm::vec4(0.0, 0.0, 1.0, 1.0),
+	//		n - i % n , 0, glm::vec4(1.0f)
+	//		);
+
 
 
 	for (auto&entity : m_entities) entity->Draw();
+
+	char s[256];
+	sprintf(s, "FPS: %d\n%d", (int)m_timer.GetFPS(), Locator::GetTextureRenderer()->GetDrawNum());
+	Locator::GetTextConsole()->Log(s);
+
 	Locator::GetTextConsole()->Draw();
+
 	for(auto&renderer:m_renderers) renderer->Render(&(m_camera2D.GetMatrix()[0][0]));
 	m_timer.End();
 }
@@ -212,9 +296,9 @@ void GameBase::CleanUp()
 	for (auto&entity : m_entities)
 		delete entity;
 
-	if(m_world) delete m_world;
 
 	delete Locator::GetTextConsole();
+	m_physicsFactory.CleanUp();
 	m_assetsManager.CleanUp();
 	SDL_Log("Cleaned up everything");
 }
@@ -229,56 +313,44 @@ SmallTester::SmallTester() {
 
 int SmallTester::Init(int width, int height)
 {
-
-
-	m_windowSize.Init(width, height, 1366, 768);
-	m_timer.Init(50);
-	m_camera2D.Init(m_windowSize.GetGameSize().w, m_windowSize.GetGameSize().h);
-	SetupOpenGL(width, height);
-
-
-	m_assetsManager.Init("Resources/assets.xml");
-	TextureRenderer*textureRenderer = new TextureRenderer(m_assetsManager.GetShader("HelloTriangle"));
-	PrimitiveRenderer*primitiveRenderer = new PrimitiveRenderer(
-		m_assetsManager.GetShader("PrimitiveDrawing"),
-		m_assetsManager.GetShader("PrimitiveFilling"),
-		m_assetsManager.GetShader("2DLighting"));
-	m_renderers.push_back(textureRenderer);
-	m_renderers.push_back(primitiveRenderer);
-
-	Locator::Provide(textureRenderer);
-	Locator::Provide(primitiveRenderer);
-	Locator::Provide(&m_inputManager);
-	Locator::Provide(&m_assetsManager);
-
-
-
+	GameBase::Init(width, height);
+	return 0;
+}
+void SmallTester::InitGameObjects()
+{
 
 	SpriterEntity*spriter = m_assetsManager.SpawnSpriterEntity("tree/deep/rocktree/entity_000");
 	spriter->SetAnimation("dancing");
 	m_entities.push_back(spriter);
-	return 0;
-}
 
+}
 void SmallTester::Update()
 {
 	m_timer.Start();
 	float deltaTime = m_timer.GetDeltaTime();
-	m_camera2D.Update(deltaTime);
-	for (auto&entity : m_entities) 
+
+	m_controller.Update(Locator::GetInput());
+
+	for (auto&entity : m_entities) {
 		entity->Update(deltaTime);
+	}
+
+	m_camera2D.Update(deltaTime);
 }
 
 
 void SmallTester::Draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	Locator::GetPrimitiveRenderer()->DrawLight(Locator::GetInput()->GetMousePosInWorld(),
-		700, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		glm::vec4(1.0f, 1.0f, 0.0f, 0.0f));
-	Locator::GetPrimitiveRenderer()->DrawLine(glm::vec2(0, 0), Locator::GetInput()->GetMousePosInWorld());
 
 	for (auto&entity : m_entities) entity->Draw();
+
+	char s[256];
+	sprintf(s, "FPS: %d\n%d", (int)m_timer.GetFPS(), Locator::GetTextureRenderer()->GetDrawNum());
+	Locator::GetTextConsole()->Log(s);
+
+	Locator::GetTextConsole()->Draw();
+
 	for (auto&renderer : m_renderers) renderer->Render(&(m_camera2D.GetMatrix()[0][0]));
 	m_timer.End();
 }
@@ -289,6 +361,9 @@ void SmallTester::CleanUp()
 		delete renderer;
 	for (auto&entity : m_entities)
 		delete entity;
+
+
+	delete Locator::GetTextConsole();
 	m_assetsManager.CleanUp();
 	SDL_Log("Cleaned up everything");
 }

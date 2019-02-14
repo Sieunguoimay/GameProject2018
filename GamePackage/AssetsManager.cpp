@@ -116,8 +116,10 @@ void AssetsManager::loadFromXml(std::string filename)
 
 					if (tag == "png") {
 						Texture*newTexture = new Texture();
+						//
 						if (newTexture->Init((relative_path + folder_name + name).c_str())) {
 							m_textures.insert(std::pair<std::string, Texture*>(name, newTexture));
+							newTexture->SetName(name);
 						}
 						else {
 							delete newTexture;

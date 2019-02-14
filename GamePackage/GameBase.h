@@ -12,20 +12,18 @@
 
 #include"misc\WindowSizeProblem.h"
 #include"misc\Timer.h"
-#include"Input\InputManager.h"
-#include"GameObjects\Box.h"
-#include"GameObjects\Entity.h"
-#include"AssetsManager.h"
-#include"GameObjects\SpriterEngine\ScmlObject.h"
 
+#include"Input\InputManager.h"
+#include"Input\Controller.h"
+
+#include"AssetsManager.h"
+#include"misc\Editor\Editor.h"
+#include"GameObjects\PhysicsEngine\PhysicsFactory.h"
 
 #define DEFAULT_FPS 40.0f
-class GameAccessor;
 class GameBase
 {
 protected:
-	b2World*m_world;
-
 	std::vector<Entity*>m_entities;
 
 	//Utilities
@@ -35,14 +33,17 @@ protected:
 	WindowSizeProblem m_windowSize;
 	Camera2D m_camera2D;
 
+	Controller m_controller;
 	InputManager m_inputManager;
 	AssetsManager m_assetsManager;
+	PhysicsFactory m_physicsFactory;
 
 	void SetupOpenGL(float width, float height);
 	bool m_done;
 public:
 	GameBase();
 	virtual ~GameBase();
+	virtual void InitGameObjects();
 
 	virtual int Init(int width, int height);
 	virtual void HandleEvent(const InputEvent&inputEvent);
@@ -51,14 +52,18 @@ public:
 	virtual void CleanUp();
 	bool Done() { return m_done; }
 
-	//handler of this class for access from any where
-	friend class GameAccessor;
 };
 
-class SmallTester : public GameBase {
 
+
+
+
+class SmallTester : public GameBase {
+protected:
 public:
 	SmallTester();
+	void InitGameObjects()override;
+
 	virtual int Init(int width, int height);
 	virtual void Update();
 	virtual void Draw();

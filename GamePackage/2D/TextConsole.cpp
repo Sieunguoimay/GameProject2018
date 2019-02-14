@@ -17,16 +17,17 @@ TextConsole::~TextConsole()
 {
 }
 
-void TextConsole::Log(std::string s)
+void TextConsole::Log(const char*s)
 {
-	m_logData += s + "\n";
+	m_logData.append(s);
+	m_logData.append("\n");
 	m_counter++;
 }
 
 void TextConsole::Draw()
 {
 	if (!m_counter) return;
-	m_text.Draw(m_pRenderer, m_logData, m_pos, m_lineSpace, m_charSpace, m_scale, m_align, m_color);
+	m_text.Draw(m_pRenderer, m_logData.c_str(), m_pos, m_lineSpace, m_charSpace, m_scale, m_align, m_color);
 	m_logData.clear();
 	m_counter = 0;
 }

@@ -29,6 +29,7 @@ public:
 		this->m_previousState = previousState;
 		this->m_globalState = globalSate;
 		this->m_currentState->Enter(m_owner);
+		this->m_globalState->Enter(m_owner);
 	}
 	void Update(float deltaTime) {
 		if (!m_owner) return;

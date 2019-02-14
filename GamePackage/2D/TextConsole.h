@@ -18,7 +18,7 @@ class TextConsole{
 public:
 	TextConsole(TextureRenderer*pRenderer,const char*font_file_path,int pixel_height);
 	~TextConsole();
-	void Log(std::string s);
+	void Log(const char*s);
 
 	void Draw();
 	//gettters and setters

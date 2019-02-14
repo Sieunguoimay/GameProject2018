@@ -1,7 +1,8 @@
 #pragma once
 #include"TextureRenderer.h"
-#include<ft2build.h>
-#include FT_FREETYPE_H
+#include<SDL2\SDL_ttf.h>
+//#include<ft2build.h>
+//#include FT_FREETYPE_H
 struct CharacterTexture {
 	GLuint textureId;
 	glm::ivec2 size;
@@ -22,10 +23,11 @@ private:
 	bool m_flag;
 	glm::ivec2 m_standardSize;
 	CharacterTexture m_characters[MAX_CHAR];
-	void createTextures(FT_Face&face);
+	//void createTextures(FT_Face&face);
+	void createTextures(TTF_Font*font);
 public:
 	FreeTypeLoader();
 	~FreeTypeLoader();
 	void Init(const char* font_file, int char_height);
-	void Draw(TextureRenderer*m_pTextureRenderer,std::string text, glm::vec2 pos,int lineSpace = 2, int charSpace = 2,float scale = 1.0f, Alignment align = ALIGN_LEFT, glm::vec4 color = glm::vec4(0.0f,0.0f,0.0f,1.0f));
+	void Draw(TextureRenderer*m_pTextureRenderer,const char*text, glm::vec2 pos,int lineSpace = 2, int charSpace = 2,float scale = 1.0f, Alignment align = ALIGN_LEFT, glm::vec4 color = glm::vec4(0.0f,0.0f,0.0f,1.0f));
 };

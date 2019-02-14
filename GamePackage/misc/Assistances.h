@@ -5,6 +5,7 @@
 #include"Box2D\Box2D.h"
 #include"SDL2\SDL_rwops.h"
 #include"SDL2\SDL.h"
+#include"glm\glm.hpp"
 #define GAME_WIDTH 1920
 #define GAME_HEIGHT 1080
 #define M2P 100.0f
@@ -95,7 +96,7 @@ static void Truncate(b2Vec2&vector, float max_length) {
 	}
 }
 
-
+extern bool check_overlap(glm::vec4 a, glm::vec4 b);
 extern float _atof(const char*a);
 extern float _atoi(const char*a);
 extern std::string _atos(const char*a);
