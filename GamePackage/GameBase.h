@@ -13,7 +13,7 @@
 #include"misc\WindowSizeProblem.h"
 #include"misc\Timer.h"
 
-#include"Input\InputManager.h"
+#include"Input\InputEvent.h"
 #include"Input\Controller.h"
 
 #include"AssetsManager.h"
@@ -24,7 +24,8 @@
 class GameBase
 {
 protected:
-	std::vector<Entity*>m_entities;
+	std::vector<Entity*>m_tools;
+	std::vector<AABBEntity*>m_entities;
 
 	//Utilities
 	Timer m_timer;
@@ -33,10 +34,12 @@ protected:
 	WindowSizeProblem m_windowSize;
 	Camera2D m_camera2D;
 
-	Controller m_controller;
-	InputManager m_inputManager;
+	ControlEvent m_controller;
+	InputEvent m_inputEvent;
 	AssetsManager m_assetsManager;
 	PhysicsFactory m_physicsFactory;
+
+	Editor m_editor;
 
 	void SetupOpenGL(float width, float height);
 	bool m_done;
@@ -46,7 +49,7 @@ public:
 	virtual void InitGameObjects();
 
 	virtual int Init(int width, int height);
-	virtual void HandleEvent(const InputEvent&inputEvent);
+	virtual void HandleEvent(const InputEventDeliver&inputEvent);
 	virtual void Update();
 	virtual void Draw();
 	virtual void CleanUp();

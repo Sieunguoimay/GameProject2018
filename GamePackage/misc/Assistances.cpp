@@ -12,6 +12,12 @@ float getAngle(float x, float y) {
 	if (y < 0) angle = 2.0f*3.141592654f - angle;
 	return angle;
 }
+const glm::vec2& rotateVec2(const glm::vec2&v, float angle) {
+	float c = glm::cos(angle);
+	float s = glm::sin(angle);
+	return glm::vec2(v.x*c - v.y*s, v.x*s + v.y*c);
+}
+
 
 float _atof(const char*a) {
 	if (a) {
@@ -97,3 +103,5 @@ bool check_overlap(glm::vec4 a, glm::vec4 b) {
 	if (a.y > b.y + b.w)return false;
 	return true;
 }
+
+

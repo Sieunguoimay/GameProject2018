@@ -12,6 +12,7 @@
 
 extern void logError(const std::string&error);
 extern float getAngle(float x, float y);
+extern const glm::vec2&rotateVec2(const glm::vec2&, float);
 
 static std::vector<std::string> split(const std::string& s, char seperator)
 {

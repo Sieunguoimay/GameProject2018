@@ -1,20 +1,20 @@
 #include "ContactListener.h"
-#include"BodyBase.h"
-
+//#include"BodyBase.h"
+#include"../EntityHierachy/BodyProtocol.h"
 
 
 
 
 void ContactListener::BeginContact(b2Contact * contact)
 {
-	((BodyBase*)contact->GetFixtureA()->GetBody()->GetUserData())->HandleBeginContact(contact,contact->GetFixtureB());
-	((BodyBase*)contact->GetFixtureB()->GetBody()->GetUserData())->HandleBeginContact(contact, contact->GetFixtureA());
+	//((BodyProtocol*)contact->GetFixtureA()->GetBody()->GetUserData())->OnBeginContact(contact,contact->GetFixtureB());
+	//((BodyProtocol*)contact->GetFixtureB()->GetBody()->GetUserData())->OnBeginContact(contact, contact->GetFixtureA());
 }
 
 void ContactListener::EndContact(b2Contact * contact)
 {
-	((BodyBase*)contact->GetFixtureA()->GetBody()->GetUserData())->HandleEndContact(contact, contact->GetFixtureB());
-	((BodyBase*)contact->GetFixtureB()->GetBody()->GetUserData())->HandleEndContact(contact, contact->GetFixtureA());
+	//((BodyProtocol*)contact->GetFixtureA()->GetBody()->GetUserData())->OnEndContact(contact, contact->GetFixtureB());
+	//((BodyProtocol*)contact->GetFixtureB()->GetBody()->GetUserData())->OnEndContact(contact, contact->GetFixtureA());
 }
 
 void ContactListener::PreSolve(b2Contact * contact, const b2Manifold * oldManifold)

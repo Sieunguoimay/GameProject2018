@@ -34,8 +34,8 @@ public:
 	PrimitiveRenderer(Shaders*drawingShader, Shaders*fillingShader, Shaders*lightShader);
 	~PrimitiveRenderer();
 	void CreateBox(const glm::vec4& destRect, float angle, const glm::vec2& center,const glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	void DrawBox(const glm::vec4& destRect, float angle,const glm::vec2& center = glm::vec2(0.0,0.0),const glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	void FillBox(const glm::vec4& destRect, float angle,const glm::vec2& center = glm::vec2(0.0,0.0), const glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	void DrawBox(const glm::vec4& destRect, float angle = 0,const glm::vec2& center = glm::vec2(0.0,0.0),const glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	void FillBox(const glm::vec4& destRect, float angle = 0,const glm::vec2& center = glm::vec2(0.0,0.0), const glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	
 	void DrawCircle(const glm::vec2& position, float radius, const glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));

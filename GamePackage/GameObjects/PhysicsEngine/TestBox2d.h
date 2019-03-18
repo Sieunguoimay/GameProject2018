@@ -1,14 +1,14 @@
-#include"../Entity.h"
+#include"../EntityHierachy/Entity.h"
 #include"Box2D\Box2D.h"
-class TestBox2D:public Entity,public b2QueryCallback
+class TestBox2D:public b2QueryCallback
 	,public b2RayCastCallback{
 	b2World*m_pWorld;
 	b2Body*body;
 	b2DistanceJoint*dj;
 public:
 	TestBox2D(b2World*pWorld);
-	void Update(float deltaTime)override;
-	void Draw()override;
+	void Update(float deltaTime);
+	void Draw();
 
 	bool ReportFixture(b2Fixture*fixture)override;
 	float32 ReportFixture(b2Fixture*fixture, const b2Vec2&point, const b2Vec2&normal, float32 fraction);

@@ -1,6 +1,6 @@
 #include "Controller.h"
 #define TOUCH_DIFF_LOWER_BOUND 100
-void Controller::Update(InputManager * input)
+void ControlEvent::Update(InputEvent * input)
 {
 	static bool mouse_release_trigger = false;
 	

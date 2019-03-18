@@ -139,7 +139,7 @@ void _GlobalCharacterState::Enter(CharacterBrain * entity)
 void _GlobalCharacterState::Execute(CharacterBrain * entity, float deltaTime)
 {
 	SpriterEntity*spriteEntity = entity->GetSkin()->GetSpriterEntity();
-		if (Locator::GetInput()->IsKeyPressed(Key::KEY_SPACE)) {
+		if (Locator::GetInputEvent()->IsKeyPressed(Key::KEY_SPACE)) {
 			for (auto&bone : m_leftHandBone) {
 				spriteEntity->TakeControl(bone);
 				spriteEntity->ControlAngle(bone, 270.0f);

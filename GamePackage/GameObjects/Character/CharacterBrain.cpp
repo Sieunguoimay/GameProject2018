@@ -2,7 +2,7 @@
 #include"../../misc/Locator.h"
 #include"TerrestrialBody.h"
 
-CharacterBrain::CharacterBrain(BodyBase*body, Skin*skin)
+CharacterBrain::CharacterBrain(BodyBase*body, AnimationSkin*skin)
 	:Brain(body,skin)
 {
 	int runIndex = m_pSkin->GetSpriterEntity()->GetAnimationIndex("run");
@@ -37,7 +37,7 @@ CharacterBrain::CharacterBrain(BodyBase*body, Skin*skin)
 	m_pSkin->SetAnimationSwitchingTime("jump2", "jump", 20);
 	m_pSkin->SetAnimationSwitchingTime("stop", "stand", 300);
 
-	m_pSkin->SetScale(0.85f);
+	//m_pSkin->SetScale(0.85f);
 }
 
 CharacterBrain::~CharacterBrain()
@@ -64,14 +64,14 @@ void CharacterBrain::Update(float deltaTime)
 		if (s_jump_flag) return;
 
 		if ((
-			s_controller->Left() || 
-			s_controller->Right()) &&
-			s_controller->Up()) {//run and jump
+			s_controllEvent->Left() || 
+			s_controllEvent->Right()) &&
+			s_controllEvent->Up()) {//run and jump
 			
 			s_jump_flag = true;
 
-			body->JumpAndRun(s_controller->Right());//called again and again
-			m_pSkin->SetFlip(s_controller->Right() ? FLIP_NONE : HORIZONTAL_FLIP);
+			body->JumpAndRun(s_controllEvent->Right());//called again and again
+			m_pSkin->SetFlip(s_controllEvent->Right() ? FLIP_NONE : HORIZONTAL_FLIP);
 
 			if (StateMachine<CharacterBrain>::IsInState(m_jumping))
 				StateMachine<CharacterBrain>::ChangeState(m_jumpingBuffer);
@@ -79,15 +79,15 @@ void CharacterBrain::Update(float deltaTime)
 				StateMachine<CharacterBrain>::ChangeState(m_jumping);
 		}
 		else if (
-			s_controller->Left() || 
-			s_controller->Right()) {//run
+			s_controllEvent->Left() || 
+			s_controllEvent->Right()) {//run
 
-			body->Run(s_controller->Right());
-			m_pSkin->SetFlip(s_controller->Right() ? FLIP_NONE : HORIZONTAL_FLIP);
+			body->Run(s_controllEvent->Right());
+			m_pSkin->SetFlip(s_controllEvent->Right() ? FLIP_NONE : HORIZONTAL_FLIP);
 
 			StateMachine<CharacterBrain>::ChangeState(m_running);
 		}
-		else if (s_controller->Up()) {
+		else if (s_controllEvent->Up()) {
 
 			s_jump_flag = true;
 

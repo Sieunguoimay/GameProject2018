@@ -17,7 +17,7 @@ class CharacterBrain :public Brain,public StateMachine<CharacterBrain> {
 	friend class _StoppingState;
 	friend class _JumpingBufferState;
 public:
-	CharacterBrain(BodyBase*body, Skin*skin);
+	CharacterBrain(BodyBase*body, AnimationSkin*skin);
 	~CharacterBrain();
 	void Update(float deltaTime);
 

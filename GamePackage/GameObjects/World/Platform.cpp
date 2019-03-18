@@ -5,7 +5,7 @@ Platform::Platform(Texture * pTexture)
 	:BodyBase(glm::vec2(0.0f))
 	,m_pTexture(pTexture)
 {
-	m_specifier = BodySpecifier::GROUND;
+	m_specifier = ObjectType::GROUND;
 }
 
 Platform::~Platform()
@@ -25,7 +25,7 @@ void Platform::createBody(const glm::vec2&pos)
 	m_body = NULL;
 	b2PolygonShape ps;
 	for (auto&a : m_polygons) {
-		assert(a->m_vertices.size() < b2_maxPolygonVertices);
+		assert(a->m_vertices.size() <= b2_maxPolygonVertices);
 
 		std::vector<b2Vec2>vertices;
 		for (int i = 0; i < a->m_vertices.size();i++) {

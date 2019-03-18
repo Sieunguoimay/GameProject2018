@@ -1,7 +1,8 @@
 #pragma once
 #include"Platform.h"
-#include"../Entity.h"
-class World :public Entity{
+#include"../EntityHierachy/Entity.h"
+
+class World :public AABBEntity{
 	std::vector<Platform*>m_platforms;
 
 public:
@@ -10,7 +11,9 @@ public:
 	void Update(float deltaTime)override;
 	void Draw()override;
 
-
+	//implement unused
+	void OnSelect(const glm::vec2&AA, const glm::vec2&BB) {};
+	void OnRelease(const glm::vec2&AA, const glm::vec2&BB) {};
 	//getters and setters
 
 	const std::vector<Platform*>*GetPlatform() { return &m_platforms; }

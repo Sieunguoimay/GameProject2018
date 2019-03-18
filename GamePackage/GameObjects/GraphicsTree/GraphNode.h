@@ -1,7 +1,7 @@
 #pragma once
 #include<vector>
 #include"Transform.h"
-#include"../Entity.h"
+#include"../EntityHierachy/Entity.h"
 class NodeRenderer {
 public:
 	virtual void Draw(Transform world,glm::vec2 localPos);

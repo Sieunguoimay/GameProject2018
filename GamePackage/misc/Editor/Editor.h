@@ -1,6 +1,6 @@
 #pragma once
-#include"../../GameObjects/Entity.h"
-
+#include"../../GameObjects/EntityHierachy/Entity.h"
+#include"Picker.h"
 //editor works with the game-world-data file
 //and that file is also loaded for the game
 //directly. 
@@ -39,12 +39,16 @@ struct EditorObject {
 	bool Update(float deltaTime, glm::vec2 origin = glm::vec2(0,0));
 	void Draw(glm::vec2 origin = glm::vec2(0.0f));
 };
-class Editor :public Entity{
+
+
+
+class Editor:public Entity{
 	World*m_pWorld;
 	//m_vertexObjects;//keeps the position of vertices within a object, origin is 0,0
 	std::vector<std::pair<EditorObject*, std::vector<EditorObject*>*>>m_editorObjects;//keeps the position in the real world
+	Picker m_picker;
 public:
-	Editor(World*pWorld);
+	Editor();
 	~Editor();
 	//this function is for purpose of loading the data from Physics body Editor
 	//and that data once loaded will be stored into the game-world-data-file
@@ -54,10 +58,9 @@ public:
 	static void WriteWorldStructureToFile(const char*filename, World*pWorld);
 	static void LoadGameWorldFromXml(const char*filename, World*pWorld);
 
-	void Init(const char*filename);
-
-
-
-	void Update(float deltaTime)override;
+	void Init(World*pWorld,const char*filename);
+	void Update(float deltaTime) override;
 	void Draw() override;
+
+	inline Picker&GetPicker() { return m_picker; }
 };

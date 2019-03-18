@@ -13,6 +13,7 @@ enum SortType {
 };
 class SpriteMesh {
 public:
+	SpriteMesh(){}
 	SpriteMesh(const glm::vec4& destRect, glm::vec4& uvRect, GLuint textureID, float depth, const glm::vec4& color, bool horizonal_flip = false, bool vertical_flip = false);
 	SpriteMesh(const glm::vec4& destRect, glm::vec4& uvRect, GLuint textureID, float depth, const glm::vec4& color, float angle, const glm::vec2& center , bool horizonal_flip = false, bool vertical_flip = false);
 	GLuint textureID;
@@ -42,9 +43,9 @@ public:
 	TextureRenderer(Shaders*shader,SortType sortType = SortType::FRONT_TO_BACK);
 	virtual ~TextureRenderer() override;
 
-	virtual void Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, bool horizontal_flip = false, bool vertical_flip = false);
-	virtual void Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, float angle, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false,bool vertical_flip = false);
-	virtual void Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false, bool vertical_flip = false);
+	virtual const SpriteMesh& Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, bool horizontal_flip = false, bool vertical_flip = false);
+	virtual const SpriteMesh& Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, float angle, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false,bool vertical_flip = false);
+	virtual const SpriteMesh& Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false, bool vertical_flip = false);
 
 	virtual void Render(const float*matrix) override;
 	int GetDrawNum() { return m_renderBatches.size(); }
@@ -87,25 +88,3 @@ protected:
 
 
 
-
-
-
-
-
-
-class TextureRendererTest :public TextureRenderer {
-	glm::mat4 m_camMatrix;
-	GLuint m_vbo;
-public:
-	TextureRendererTest(Shaders*shader, SortType sortType = SortType::FRONT_TO_BACK);
-	~TextureRendererTest() override;
-
-	void Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, bool horizontal_flip = false, bool vertical_flip = false);
-	void Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, float angle, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false, bool vertical_flip = false);
-	void Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false, bool vertical_flip = false);
-
-	void Draw(glm::vec4 destRect, GLuint textureId, float angle);
-
-	void Render(const float*matrix) override;
-
-};

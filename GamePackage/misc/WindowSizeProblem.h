@@ -11,6 +11,8 @@ class WindowSizeProblem
 	float m_deviceToGame;
 
 	struct Viewport {float x, y, w, h;} m_viewport;
+
+	glm::mat3 m_mat;
 public:
 	WindowSizeProblem();
 	~WindowSizeProblem();
@@ -20,6 +22,7 @@ public:
 	Size&GetGameSize() { return m_gameSize; }
 	Size&GetWindowSize() { return m_windowSize; }
 
-	glm::vec2 ScreenToCamera(glm::vec2 point);
+	const glm::vec2& ScreenToCamera(const glm::vec2&point);
+	const glm::mat3& GetMatrixScreenToCamera();
 };
 

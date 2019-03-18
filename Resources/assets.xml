@@ -28,27 +28,28 @@
 	<folder id="2" name="Textures" >
 		<file id="0" name="platforms/platform1.png" />
 		<file id="1" name="platforms/platform2.png" />
-		<file id="2" name="skin_2/main_character_exported_0000s_0000s_0000_Shape-2-copy.png" />
-		<file id="3" name="skin_2/main_character_exported_0000s_0000s_0001_Shape-2.png" />
-		<file id="4" name="skin_2/main_character_exported_0000s_0000s_0002_Shape-1-copy-2.png" />
-		<file id="5" name="skin_2/main_character_exported_0000s_0000s_0003_Shape-1.png" />
-		<file id="6" name="skin_2/main_character_exported_0000s_0000_body.png" />
-		<file id="7" name="skin_2/main_character_exported_0000s_0000_body_2.png" />
-		<file id="8" name="skin_2/main_character_exported_0000s_0001s_0000_Shape-17.png" />
-		<file id="9" name="skin_2/main_character_exported_0000s_0001s_0001_Shape-16.png" />
-		<file id="10" name="skin_2/main_character_exported_0000s_0001s_0002_Shape-15.png" />
-		<file id="11" name="skin_2/main_character_exported_0000s_0002s_0000_Shape-17.png" />
-		<file id="12" name="skin_2/main_character_exported_0000s_0002s_0001_Shape-16.png" />
-		<file id="13" name="skin_2/main_character_exported_0000s_0002s_0002_Shape-15.png" />
-		<file id="14" name="skin_2/main_character_exported_0000s_0003s_0000s_0001_Shape-10-copy-2.png" />
-		<file id="15" name="skin_2/main_character_exported_0000s_0003s_0000s_0002_Shape-12.png" />
-		<file id="16" name="skin_2/main_character_exported_0000s_0003s_0000_Shape-10-copy.png" />
-		<file id="17" name="skin_2/main_character_exported_0000s_0004s_0000_Shape-11.png" />
-		<file id="18" name="skin_2/main_character_exported_0000s_0004s_0001_Shape-14.png" />
-		<file id="19" name="skin_2/main_character_exported_0000s_0004s_0002_Shape-11-copy.png" />
-		<file id="20" name="skin_2/main_skin.scml" />
-		<file id="21" name="tree/deep/controller_button.png" />
-		<file id="22" name="tree/deep/rock.png" />
-		<file id="23" name="tree/deep/rocktree.scml" />
+		<file id="2" name="platforms/platform3.png" />
+		<file id="3" name="skin_2/main_character_exported_0000s_0000s_0000_Shape-2-copy.png" />
+		<file id="4" name="skin_2/main_character_exported_0000s_0000s_0001_Shape-2.png" />
+		<file id="5" name="skin_2/main_character_exported_0000s_0000s_0002_Shape-1-copy-2.png" />
+		<file id="6" name="skin_2/main_character_exported_0000s_0000s_0003_Shape-1.png" />
+		<file id="7" name="skin_2/main_character_exported_0000s_0000_body.png" />
+		<file id="8" name="skin_2/main_character_exported_0000s_0000_body_2.png" />
+		<file id="9" name="skin_2/main_character_exported_0000s_0001s_0000_Shape-17.png" />
+		<file id="10" name="skin_2/main_character_exported_0000s_0001s_0001_Shape-16.png" />
+		<file id="11" name="skin_2/main_character_exported_0000s_0001s_0002_Shape-15.png" />
+		<file id="12" name="skin_2/main_character_exported_0000s_0002s_0000_Shape-17.png" />
+		<file id="13" name="skin_2/main_character_exported_0000s_0002s_0001_Shape-16.png" />
+		<file id="14" name="skin_2/main_character_exported_0000s_0002s_0002_Shape-15.png" />
+		<file id="15" name="skin_2/main_character_exported_0000s_0003s_0000s_0001_Shape-10-copy-2.png" />
+		<file id="16" name="skin_2/main_character_exported_0000s_0003s_0000s_0002_Shape-12.png" />
+		<file id="17" name="skin_2/main_character_exported_0000s_0003s_0000_Shape-10-copy.png" />
+		<file id="18" name="skin_2/main_character_exported_0000s_0004s_0000_Shape-11.png" />
+		<file id="19" name="skin_2/main_character_exported_0000s_0004s_0001_Shape-14.png" />
+		<file id="20" name="skin_2/main_character_exported_0000s_0004s_0002_Shape-11-copy.png" />
+		<file id="21" name="skin_2/main_skin.scml" />
+		<file id="22" name="tree/deep/controller_button.png" />
+		<file id="23" name="tree/deep/rock.png" />
+		<file id="24" name="tree/deep/rocktree.scml" />
 	</folder>
 </assets>

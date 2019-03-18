@@ -3,6 +3,7 @@
 
 
 WindowSizeProblem::WindowSizeProblem()
+	:m_mat(1.0f)
 {
 }
 
@@ -54,11 +55,21 @@ void WindowSizeProblem::Init(int windowWidth, int windowHeight, int gameWidth, i
 	}
 }
 
-glm::vec2 WindowSizeProblem::ScreenToCamera(glm::vec2 point) {
+const glm::vec2& WindowSizeProblem::ScreenToCamera(const glm::vec2&point) {
 	glm::vec2 pw;
 	pw.x = (point.x - m_viewport.x)*m_deviceToGame - m_gameSize.w / 2.0f;
 	pw.y = -(point.y - m_viewport.y)*m_deviceToGame + m_gameSize.h / 2.0f;
 	return pw;
 
+}
+
+const glm::mat3 & WindowSizeProblem::GetMatrixScreenToCamera()
+{
+	// TODO: insert return statement here
+	m_mat[0][0] = m_deviceToGame;
+	m_mat[1][1] = -m_deviceToGame;
+	m_mat[2][0] = -m_viewport.x*m_deviceToGame - m_gameSize.w / 2.0f;
+	m_mat[2][1] = m_viewport.y*m_deviceToGame + m_gameSize.h / 2.0f;
+	return m_mat;
 }
 

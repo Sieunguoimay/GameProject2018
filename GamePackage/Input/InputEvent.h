@@ -28,9 +28,8 @@ enum Key {
 	KEY_ARROW_RIGHT,
 	NUM_KEYS
 };
-class InputEvent {
-public:
-	InputEvent(EventType type, int arg1, int arg2) 
+struct InputEventDeliver {
+	InputEventDeliver(EventType type, int arg1, int arg2) 
 		:type(type)
 	{
 		if (type == KEY_UP || type == KEY_DOWN)
@@ -48,36 +47,20 @@ public:
 		}motion;
 	}data;
 };
-class InputManager {
+
+class InputEvent {
 	bool keyPressed[NUM_KEYS];
 	bool mousePressed;
 	glm::vec2 motion;
 	glm::vec2 mousePosInWorld;
 	glm::vec2 firstPressedPosInWorld;
 
-/*
-	InputManager&operator=(const InputManager&);
-	InputManager(const InputManager&);
-	static InputManager*s_instance;*/
 public:
-	//void CleanUp();
-	//static InputManager&Instance();
-	InputManager()
-		:mousePressed(false)
-		, firstPressedPosInWorld(-1,-1)
-	{
-		for (int i = 0; i < NUM_KEYS; i++)
-			keyPressed[i] = false;
-		motion.x = 0;
-		motion.y = 0;
-	}
+	InputEvent();
 
-	void KeyDown(Key key) { keyPressed[key] = true; }
-	void KeyUp(Key key) { keyPressed[key] = false; }
-	void MouseDown() { mousePressed = true; if(firstPressedPosInWorld.x == -1) firstPressedPosInWorld = mousePosInWorld; }
-	void MouseUp() { mousePressed = false; firstPressedPosInWorld = glm::vec2(-1, -1); }
-	void SetMousePos(glm::vec2 pos) { motion = pos; }
-	void SetMousePosInWorld(glm::vec2 pos) { mousePosInWorld = pos; }
+	void ProcessInputEvent(const InputEventDeliver&inputEvent, 
+		const glm::mat3& screenToCamera,
+		const glm::vec2& cameraPos);
 
 	const bool IsKeyPressed(Key key) const { return keyPressed[key]; }
 	const bool IsMousePressed() { return mousePressed; }
@@ -85,5 +68,3 @@ public:
 	glm::vec2 GetMousePosInWorld() { return mousePosInWorld; }
 	glm::vec2 GetFirstPressedPosInWorld() { return firstPressedPosInWorld; }
 };
-//
-//#define Input InputManager::Instance()

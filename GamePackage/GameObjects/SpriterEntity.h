@@ -1,8 +1,8 @@
 #pragma once
-#include"Entity.h"
+#include"EntityHierachy/Entity.h"
 #include"SpriterEngine\ScmlObject.h"
 
-class SpriterEntity:public Entity {	
+class SpriterEntity{	
 	int m_actualAnimationIndex = 0;
 	int m_animationIndex = 0;
 	int m_currentTime = 0;
@@ -24,7 +24,7 @@ public:
 
 	void Update(float deltaTime);
 
-	void Draw()override;//for testing purpose
+	void Draw();//for testing purpose
 	void Draw(glm::vec2 pos, float angle, float scaleX, float scaleY,FlipType flip = FLIP_NONE);
 	void Draw(glm::vec2 pos, float angle, float scale);
 	void Draw(glm::vec4 destRect, float angle);
@@ -48,4 +48,6 @@ public:
 	inline const int& GetCurrentAnimationIndex()const { return m_animationIndex; }
 	inline const int& GetActualAnimationIndex()const { return m_actualAnimationIndex; }
 	bool HasDone();//passing the signal for noLooping animation
+
+	inline const glm::vec4&GetAABB() { return m_animationContainer->at(m_animationIndex)->GetAABB(); }
 };

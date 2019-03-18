@@ -3,8 +3,8 @@
 #include"../Locator.h"
 #include"../../misc/tinyXML2/tinyxml2.h"
 
-Editor::Editor(World*pWorld)
-	:m_pWorld(pWorld)
+Editor::Editor()
+	:m_pWorld(NULL)
 {
 }
 
@@ -18,8 +18,9 @@ Editor::~Editor()
 	}
 }
 
-void Editor::Init(const char * filename)
+void Editor::Init(World*pWorld,const char * filename)
 {
+	m_pWorld = pWorld;
 	for(auto&platform:*m_pWorld->GetPlatform()){
 		std::vector<EditorObject*>*vertexObjects = new std::vector<EditorObject*>();
 		for (auto&a : platform->GetPolygons())
@@ -41,8 +42,8 @@ void Editor::Init(const char * filename)
 void Editor::Update(float deltaTime)
 {
 	static bool save_flag = false;
-	if (Locator::GetInput()->IsKeyPressed(KEY_CTRL) &&
-		Locator::GetInput()->IsKeyPressed(KEY_S)) {
+	if (Locator::GetInputEvent()->IsKeyPressed(KEY_CTRL) &&
+		Locator::GetInputEvent()->IsKeyPressed(KEY_S)) {
 		if (!save_flag) {
 			WriteWorldStructureToFile("Resources/GameData/game_world_data.xml",m_pWorld);
 			save_flag = true;
@@ -102,7 +103,7 @@ bool EditorObject::Update(float deltaTime,glm::vec2 origin)
 {
 	m_clickEvent = false;
 	m_hover = false;
-	if (Locator::GetInput()->IsMousePressed()) {
+	if (Locator::GetInputEvent()->IsMousePressed()) {
 		if (!m_hold) {
 			//fist click
 			m_clickEvent = true;
@@ -119,7 +120,7 @@ bool EditorObject::Update(float deltaTime,glm::vec2 origin)
 		box.z = m_pSize->x;
 		box.w = m_pSize->y;
 	}
-	glm::vec4 point(Locator::GetInput()->GetMousePosInWorld(), 1, 1);
+	glm::vec4 point(Locator::GetInputEvent()->GetMousePosInWorld(), 1, 1);
 	if (check_overlap(point, box))
 	{
 		m_hover = true;
@@ -131,7 +132,7 @@ bool EditorObject::Update(float deltaTime,glm::vec2 origin)
 	}
 
 	if (m_clickOnBox) {
-		*m_pPos = oldpos + Locator::GetInput()->GetMousePosInWorld() - oldmouse;
+		*m_pPos = oldpos + Locator::GetInputEvent()->GetMousePosInWorld() - oldmouse;
 		return true;
 	}
 
@@ -260,8 +261,9 @@ void Editor::LoadObjectFromPEXml(const char * filename, World*pWorld)
 			tinyxml2::XMLElement*pBody = pBodies->FirstChildElement("body");
 			while (pBody) {
 
-				std::string texture = std::string("platforms/")+ pBody->Attribute("name")+".png";
-				Platform *newPlatform = new Platform(Locator::GetAssets()->GetTexture(texture));
+				std::string texture_name = std::string("platforms/")+ pBody->Attribute("name")+".png";
+				Texture*texture = Locator::GetAssets()->GetTexture(texture_name);
+				Platform *newPlatform = new Platform(texture);
 
 				tinyxml2::XMLElement*pAnchorPoint = pBody->FirstChildElement("anchorpoint");
 				if (pAnchorPoint) {
@@ -269,8 +271,8 @@ void Editor::LoadObjectFromPEXml(const char * filename, World*pWorld)
 					glm::vec2 pos;
 					tinyxml2::XMLUtil::ToFloat(origin[0].c_str(), &pos.x);
 					tinyxml2::XMLUtil::ToFloat(origin[1].c_str(), &pos.y);
-					pos.x = -pos.x;
-					pos.y = -pos.y;
+					pos.x = -pos.x*texture->GetWidth();
+					pos.y = -pos.y*texture->GetHeight();
 					newPlatform->SetPosition(pos);
 				}
 				tinyxml2::XMLElement*pFixtures = pBody->FirstChildElement("fixtures");

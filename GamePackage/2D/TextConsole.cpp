@@ -5,8 +5,8 @@ TextConsole::TextConsole(TextureRenderer * pRenderer, const char * font_file_pat
 	m_pos(0.0f,0.0f),
 	m_color(0.0f,0.0f,0.0f,1.0f),
 	m_align(FreeTypeLoader::ALIGN_LEFT),
-	m_charSpace(2),
-	m_lineSpace(10),
+	m_charSpace(5),
+	m_lineSpace(20),
 	m_scale(1.0f),
 	m_counter(0)
 {

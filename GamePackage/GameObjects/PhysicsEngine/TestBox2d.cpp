@@ -83,7 +83,7 @@ void TestBox2D::Draw()
 
 
 	//ray cast 
-	const glm::vec2&pos = Locator::GetInput()->GetMousePosInWorld();
+	const glm::vec2&pos = Locator::GetInputEvent()->GetMousePosInWorld();
 	b2Vec2 p1 = b2Vec2(0.0,0.0);
 	b2Vec2 p2 = b2Vec2(pos.x/ M2P, pos.y/ M2P);
 	m_pWorld->RayCast(this,p1,p2);
