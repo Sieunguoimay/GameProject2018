@@ -14,8 +14,8 @@ void ControlEvent::Update(InputEvent * input)
 	m_enter = input->IsKeyPressed(KEY_ENTER);
 
 	//mouse | touch
-	if (input->IsMousePressed()) {
-		m_touchDir = input->GetMousePosInWorld() - input->GetFirstPressedPosInWorld();
+	if (input->GetLeftMouse().IsMousePressed()) {
+		m_touchDir = input->GetLeftMouse().GetMousePosInWorld() - input->GetLeftMouse().GetFirstPressedPosInWorld();
 	
 		if (m_touchDir.x > TOUCH_DIFF_LOWER_BOUND) 
 			m_right = true;

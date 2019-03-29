@@ -29,7 +29,7 @@ void _JumpingState::Enter(CharacterBrain * entity)
 
 void _JumpingState::Execute(CharacterBrain * entity, float deltaTime)
 {
-	if (entity->GetBody()->GetBody()->GetLinearVelocity().y < 0)
+	if (entity->GetBodyBase()->GetBody()->GetLinearVelocity().y < 0)
 		entity->ChangeState(entity->GetFallingState());
 }
 
@@ -60,7 +60,7 @@ _RunningState::_RunningState(Timeline * pPelvisBone)
 void _RunningState::Enter(CharacterBrain * entity)
 {
 
-	TerrestrialBody*body = ((TerrestrialBody*)(entity->GetBody()->GetBody()->GetUserData()));
+	TerrestrialBody*body = ((TerrestrialBody*)(entity->GetBodyBase()->GetBody()->GetUserData()));
 
 	entity->GetSkin()->GetSpriterEntity()->ControlAngle(m_pPelvisBone,
 		calculatePelvisAngle(
@@ -75,7 +75,7 @@ void _RunningState::Execute(CharacterBrain * entity, float deltaTime)
 {
 
 
-	TerrestrialBody*body = ((TerrestrialBody*)(entity->GetBody()->GetBody()->GetUserData()));
+	TerrestrialBody*body = ((TerrestrialBody*)(entity->GetBodyBase()->GetBody()->GetUserData()));
 	if (!body->IsOnGround())return;
 
 	entity->GetSkin()->GetSpriterEntity()->ControlAngle(m_pPelvisBone,

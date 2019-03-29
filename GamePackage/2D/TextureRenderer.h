@@ -39,16 +39,18 @@ struct RenderBatch {
 //NOTE: limit 1500 draw calls per frame. why?
 class TextureRenderer:public Renderer
 {
+	glm::vec4*m_pWindow;
 public:
-	TextureRenderer(Shaders*shader,SortType sortType = SortType::FRONT_TO_BACK);
+	TextureRenderer(Shaders*shader,SortType sortType = SortType::FRONT_TO_BACK, glm::vec4*m_pWindow=NULL);
 	virtual ~TextureRenderer() override;
 
-	virtual const SpriteMesh& Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, bool horizontal_flip = false, bool vertical_flip = false);
-	virtual const SpriteMesh& Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, float angle, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false,bool vertical_flip = false);
-	virtual const SpriteMesh& Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false, bool vertical_flip = false);
+	virtual const SpriteMesh* Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, bool horizontal_flip = false, bool vertical_flip = false);
+	virtual const SpriteMesh* Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, float angle, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false,bool vertical_flip = false);
+	virtual const SpriteMesh* Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureId, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center = glm::vec2(0, 0), bool horizontal_flip = false, bool vertical_flip = false);
 
 	virtual void Render(const float*matrix) override;
 	int GetDrawNum() { return m_renderBatches.size(); }
+	void CleanBuffer();
 protected:
 	void createRenderBatches();
 	void sortGlyphs();

@@ -38,25 +38,38 @@ public:
 class AnimationSkin:public Skin {
 	SpriterEntity*m_spriterEntity;
 
+	bool m_firstTimeFlag;
+	glm::vec4 m_originalAABB;
+	glm::vec2 m_originalCenter;
+	glm::vec4 m_AABBBuffer;
+	glm::vec2 m_scale;
 public:
 	AnimationSkin(SpriterEntity*spriterEntity, float scale, glm::vec2 pos = glm::vec2(0.0, 0.0), float angle = 0.0);
 	~AnimationSkin();
 
 	void Draw()override;
 
+	void SetAABB(const glm::vec4&AABB);
+	const glm::vec4& GetAABB() { return m_AABBBuffer; }
+	const glm::vec2& GetScale() { return m_scale; }
 	//the are specific functions, to use it, you have to cast the Skin Object.
+	void SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time);
 	void Update(float deltaTime);
 	inline void SetAnimation(int index) {m_spriterEntity->SetAnimation(index);}
-	void SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time);
 	inline SpriterEntity*GetSpriterEntity() { return m_spriterEntity; }
 };
 
 //a skin that use static texture
 class NoAnimationSkin :public Skin{
 	Texture*m_pTexture;
+	glm::vec4 m_AABB;
+	glm::vec2 m_center;
 public:
-	NoAnimationSkin(Texture*texture);
+	NoAnimationSkin(Texture*texture, const glm::vec2& pos=glm::vec2(0,0),const glm::vec2& size=glm::vec2(-1.0f), const float& angle=0.0);
 	~NoAnimationSkin() { m_pTexture = NULL; }
 
 	void Draw()override;
+	inline Texture*GetTexture() { return m_pTexture; }
+	inline const glm::vec4&GetAABB() { return m_AABB; }
+	inline void SetCenter(const glm::vec2&center) { m_center = center; }
 };

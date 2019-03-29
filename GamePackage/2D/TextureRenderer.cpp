@@ -1,8 +1,6 @@
 #include "TextureRenderer.h"
-#include<algorithm>
-#include"glm\glm.hpp"
 #include "Renderer.h"
-#include"../misc/Locator.h"
+#include"../misc/Assistances.h"
 
 SpriteMesh::SpriteMesh(const glm::vec4 & destRect, glm::vec4 & uvRect, GLuint textureID, float depth, const glm::vec4 & color, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/)
 	:textureID(textureID), depth(depth)
@@ -90,8 +88,8 @@ glm::vec2 SpriteMesh::rotatePoint(glm::vec2 point, float angle)
 	return glm::vec2(x, y);
 }
 
-TextureRenderer::TextureRenderer(Shaders*shader, SortType sortType)
-	:m_pShader(shader),m_vbo(0)
+TextureRenderer::TextureRenderer(Shaders*shader, SortType sortType, glm::vec4*pWindow)
+	:m_pShader(shader),m_vbo(0),m_pWindow(pWindow)
 {
 
 	m_sortType = sortType;
@@ -115,35 +113,29 @@ TextureRenderer::~TextureRenderer()
 
 
 
-#include"../misc/Locator.h"
-#include"../misc/Assistances.h"
-const SpriteMesh&  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
-	if (m_disabled||!check_overlap(Locator::GetCamera()->GetCamRect(), destRect))
-		return SpriteMesh();
-
+const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
+	if (m_disabled||!check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 
 	m_meshes.emplace_back(SpriteMesh(destRect, uvRect, textureID, depth, color, horizontal_flip, vertical_flip));
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
-	return m_meshes.back();
+	return &m_meshes.back();
 }
-const SpriteMesh&  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, float angle, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
-	if (m_disabled || !check_overlap(Locator::GetCamera()->GetCamRect(), destRect))
-		return SpriteMesh();
+const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, float angle, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
+	if (m_disabled || !check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 
 	m_meshes.emplace_back(destRect, uvRect, textureID, depth, color, angle,center, horizontal_flip,vertical_flip);
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
-	return m_meshes.back();
+	return &m_meshes.back();
 }
-const SpriteMesh&  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
-	if (m_disabled || !check_overlap(Locator::GetCamera()->GetCamRect(), destRect))
-		return SpriteMesh();
+const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
+	if (m_disabled || !check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 
 	const glm::vec2 right(1.0f, 0.0f);
-	float angle = acosf(glm::dot(right, direction));
+	float angle = glm::cos(glm::dot(right, direction));
 	if (direction.y < 0.0f)angle = -angle;
 	m_meshes.emplace_back(destRect, uvRect, textureID, depth, color, angle,center, horizontal_flip, vertical_flip);
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
-	return m_meshes.back();
+	return &m_meshes.back();
 }
 
 void TextureRenderer::Render(const float*matrix) {
@@ -203,7 +195,11 @@ void TextureRenderer::Render(const float*matrix) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	m_pShader->UnuseProgram();
+	CleanBuffer();
+}
 
+void TextureRenderer::CleanBuffer()
+{
 	m_meshes.clear();
 	m_pMeshes.clear();
 }

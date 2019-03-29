@@ -1,16 +1,5 @@
 #include "Timer.h"
 
-
-
-Timer::Timer()
-{
-}
-
-
-Timer::~Timer()
-{
-}
-
 void Timer::Init(float fps)
 {
 	//timming

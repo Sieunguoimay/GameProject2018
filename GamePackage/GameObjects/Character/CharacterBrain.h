@@ -23,4 +23,18 @@ public:
 
 	//getters
 	inline BaseCharacterState*GetFallingState()const { return m_falling; }
+
+private:
+	//control
+	bool m_jump;
+	bool m_right;
+	bool m_left;
+};
+
+class Player :public Character{
+public:
+	Player();
+	Player(const glm::vec4&AABB);
+	Spawner*Spawn(InfoPacket*info)override;
+	void SetupBody(bool atRunTime=false)override;
 };

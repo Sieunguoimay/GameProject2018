@@ -7,8 +7,12 @@ enum EventType {
 	KEY_UP,
 
 	//mouse type
-	MOUSE_BUTTON_DOWN,
-	MOUSE_BUTTON_UP,
+	LMOUSE_BUTTON_DOWN,
+	LMOUSE_BUTTON_UP,
+
+	RMOUSE_BUTTON_DOWN,
+	RMOUSE_BUTTON_UP,
+
 	MOUSE_MOTION
 };
 enum Key {
@@ -19,6 +23,7 @@ enum Key {
 	KEY_W,
 	KEY_Z,
 	KEY_SPACE,
+	KEY_SHIFT,
 	KEY_ENTER,
 	KEY_ESCAPE,
 	KEY_CTRL,
@@ -28,8 +33,8 @@ enum Key {
 	KEY_ARROW_RIGHT,
 	NUM_KEYS
 };
-struct InputEventDeliver {
-	InputEventDeliver(EventType type, int arg1, int arg2) 
+struct InputEventPackage {
+	InputEventPackage(EventType type, int arg1, int arg2) 
 		:type(type)
 	{
 		if (type == KEY_UP || type == KEY_DOWN)
@@ -48,23 +53,43 @@ struct InputEventDeliver {
 	}data;
 };
 
-class InputEvent {
-	bool keyPressed[NUM_KEYS];
+class MouseEvent {
+	friend class InputEvent;
 	bool mousePressed;
 	glm::vec2 motion;
 	glm::vec2 mousePosInWorld;
 	glm::vec2 firstPressedPosInWorld;
 
+	//one time events
+	bool clickSignal = false;
+	bool releaseSignal = false;
+public:
+	MouseEvent() :mousePressed(false), firstPressedPosInWorld(-1, -1),motion(0,0){}
+	inline bool& IsMousePressed() { return mousePressed; }
+	inline glm::vec2& GetMousePos() { return motion; }
+	inline glm::vec2& GetMousePosInWorld() { return mousePosInWorld; }
+	inline glm::vec2& GetFirstPressedPosInWorld() { return firstPressedPosInWorld; }
+
+	inline bool& IsClickSignalled() { return clickSignal; }
+	inline bool& IsReleaseSignalled() { return releaseSignal; }
+};
+
+
+
+class InputEvent {
+	bool keyPressed[NUM_KEYS] = { false };
+	MouseEvent m_leftMouse;
+	MouseEvent m_rightMouse;
 public:
 	InputEvent();
 
-	void ProcessInputEvent(const InputEventDeliver&inputEvent, 
+	void ProcessInputEvent(const InputEventPackage&inputEvent, 
 		const glm::mat3& screenToCamera,
 		const glm::vec2& cameraPos);
+	void ClearEvent();
 
 	const bool IsKeyPressed(Key key) const { return keyPressed[key]; }
-	const bool IsMousePressed() { return mousePressed; }
-	glm::vec2 GetMousePos() { return motion; }
-	glm::vec2 GetMousePosInWorld() { return mousePosInWorld; }
-	glm::vec2 GetFirstPressedPosInWorld() { return firstPressedPosInWorld; }
+
+	inline MouseEvent&GetLeftMouse() { return m_leftMouse; }
+	inline MouseEvent&GetRightMouse() { return m_rightMouse; }
 };

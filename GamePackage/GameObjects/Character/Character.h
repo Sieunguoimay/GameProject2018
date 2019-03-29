@@ -1,6 +1,6 @@
 #pragma once
 #include"Box2D\Box2D.h"
-#include"../EntityHierachy/Entity.h"
+#include"../EntityHierachy/HavingBodyEntity.h"
 #include"../SpriterEntity.h"
 #include"../PhysicsEngine/BodyBase.h"
 #include"../Skin.h"
@@ -21,35 +21,28 @@
 class Brain {
 
 public:
-	Brain(BodyBase*body, AnimationSkin*AnimationSkin);
-	virtual ~Brain(){}
-	virtual void Update(float deltaTime);
-
-	
-	
-	AnimationSkin*GetSkin() { return m_pSkin; }
-	BodyBase*GetBody() { return m_pBody; }
+	Brain(BodyBase*bodyBase, AnimationSkin*skin):m_pBodyBase(bodyBase),m_pSkin(skin){}
+	inline virtual ~Brain(){}
+	virtual void Update(float deltaTime) = 0;
+	inline AnimationSkin*GetSkin() { return m_pSkin; }
+	inline BodyBase*GetBodyBase() { return m_pBodyBase; }
 protected:	
-	BodyBase*m_pBody;
 	AnimationSkin*m_pSkin;
+	BodyBase*m_pBodyBase;
 };
 
 
 
 
-class Character :public Entity {
-
-	Brain*m_brain;
-	BodyBase*m_body;
-	AnimationSkin*m_skin;
-
+class Character :public AnimationBodyEntity {
+protected:
+	Brain*m_brain;			//take in the bodyBase for controlling and Skin for animation change	
+	BodyBase*m_bodyBase;	//take in the b2Body* of this entity
 public:
-	Character(
-		Brain*brain,
-		BodyBase*body,
-		AnimationSkin*AnimationSkin);
+	Character(AnimationSkin*animationSkin,const glm::vec4&AABB);
 	virtual ~Character();
-
 	virtual void Update(float deltaTime);
-	virtual void Draw();
+
+	inline void AttachBrain(Brain*brain) { m_brain = brain; }
+	inline void AttachBodyBase(BodyBase*bodyBase) { m_bodyBase = bodyBase; }
 };

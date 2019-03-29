@@ -23,7 +23,6 @@ private:
 	bool m_flag;
 	glm::ivec2 m_standardSize;
 	CharacterTexture m_characters[MAX_CHAR];
-	//void createTextures(FT_Face&face);
 	void createTextures(TTF_Font*font);
 public:
 	FreeTypeLoader();

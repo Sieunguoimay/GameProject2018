@@ -17,15 +17,24 @@
 #include"Input\Controller.h"
 
 #include"AssetsManager.h"
-#include"misc\Editor\Editor.h"
 #include"GameObjects\PhysicsEngine\PhysicsFactory.h"
-
+#include"misc\List.h"
 #define DEFAULT_FPS 40.0f
 class GameBase
 {
+	enum ToolType {
+		OBJECT_POOL,
+		WORLD,
+		EDITOR,
+		CAMERA,
+		CAMERA_DRAG,
+		MOUSE_CURSOR,
+		INPUT_HANDLER,
+		TOOL_NUM
+	};
 protected:
-	std::vector<Entity*>m_tools;
-	std::vector<AABBEntity*>m_entities;
+	Entity*m_tools[TOOL_NUM] = {0};
+	List<AABBEntity*>m_entities;
 
 	//Utilities
 	Timer m_timer;
@@ -34,14 +43,13 @@ protected:
 	WindowSizeProblem m_windowSize;
 	Camera2D m_camera2D;
 
-	ControlEvent m_controller;
 	InputEvent m_inputEvent;
 	AssetsManager m_assetsManager;
 	PhysicsFactory m_physicsFactory;
 
-	Editor m_editor;
+	//Editor m_editor;
 
-	void SetupOpenGL(float width, float height);
+	void setupOpenGL(float width, float height);
 	bool m_done;
 public:
 	GameBase();
@@ -49,7 +57,7 @@ public:
 	virtual void InitGameObjects();
 
 	virtual int Init(int width, int height);
-	virtual void HandleEvent(const InputEventDeliver&inputEvent);
+	virtual void HandleEvent(const InputEventPackage&inputEvent);
 	virtual void Update();
 	virtual void Draw();
 	virtual void CleanUp();

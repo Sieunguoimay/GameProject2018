@@ -1,23 +1,18 @@
 #pragma once
 #include"Platform.h"
-#include"../EntityHierachy/Entity.h"
+#include"../EntityHierachy/MultiEntity.h"
+//if you want your multiEntity class to support
+//high level services such as Selecting provided by Editor
+//you must Give all the Entities to the higher level container i.e. m_entities
+//And you keep one copy of them for further needs other then highlevel services.
 
-class World :public AABBEntity{
-	std::vector<Platform*>m_platforms;
-
+//now you don't have full control over the entities any more: no deletion
+class World :public MultiEntity<Platform>{
 public:
-	World();
-	~World();
+	World(ObjectPool*pObjectPool):MultiEntity<Platform>(pObjectPool){}
+	void Init()override;
 	void Update(float deltaTime)override;
-	void Draw()override;
-
-	//implement unused
-	void OnSelect(const glm::vec2&AA, const glm::vec2&BB) {};
-	void OnRelease(const glm::vec2&AA, const glm::vec2&BB) {};
-	//getters and setters
-
-	const std::vector<Platform*>*GetPlatform() { return &m_platforms; }
-	void AddPlatform(Platform*newPlatform) { m_platforms.push_back(newPlatform); }
+	void AddEntity(Platform*platform);//my own Adding function
 };
 
 

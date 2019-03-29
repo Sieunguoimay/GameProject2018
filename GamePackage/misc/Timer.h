@@ -8,12 +8,12 @@ class Timer
 	float m_FPS;
 	int m_frameDelay;
 public:
-	Timer();
-	~Timer();
 	void Init(float fps);
+
 	void Start();
 	void End();
-	float GetDeltaTime() { return m_deltaTime; }
-	float GetFPS() { return m_FPS; }
+
+	inline const float& GetDeltaTime() { return m_deltaTime; }
+	inline const float& GetFPS() { return m_FPS; }
 };
 

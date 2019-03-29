@@ -73,6 +73,7 @@ void SpriterEntity::Draw(glm::vec2 pos, float angle, float scaleX, float scaleY,
 	m_pScmlObject->currentEntity = m_scmlEntityIndex;
 	m_pScmlObject->currentAnimation = m_animationIndex;
 	m_currentTime = m_pScmlObject->Draw(m_currentTime, flip);
+
 }
 
 void SpriterEntity::Draw(glm::vec2 pos, float angle, float scale)

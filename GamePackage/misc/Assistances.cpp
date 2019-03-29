@@ -1,4 +1,5 @@
 #include"Assistances.h"
+#include"SDL2\SDL_rwops.h"
 void logError(const std::string&error) {
 	SDL_Log("Error: %s", error.c_str());
 	exit(69);
@@ -17,6 +18,27 @@ const glm::vec2& rotateVec2(const glm::vec2&v, float angle) {
 	float s = glm::sin(angle);
 	return glm::vec2(v.x*c - v.y*s, v.x*s + v.y*c);
 }
+
+std::vector<std::string> split(const std::string& s, char seperator)
+{
+	std::vector<std::string> output;
+
+	std::string::size_type prev_pos = 0, pos = 0;
+
+	while ((pos = s.find(seperator, pos)) != std::string::npos)
+	{
+		std::string substring(s.substr(prev_pos, pos - prev_pos));
+
+		output.push_back(substring);
+
+		prev_pos = ++pos;
+	}
+
+	output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
+
+	return output;
+}
+
 
 
 float _atof(const char*a) {
@@ -37,6 +59,8 @@ std::string _atos(const char*a) {
 	}
 	return "";
 }
+
+
 
 void loadFile(char*&buffer, const std::string& filename) {
 	SDL_RWops* rwops = SDL_RWFromFile(filename.c_str(), "rb");
@@ -96,7 +120,7 @@ void loadFile(std::vector<unsigned char>& buffer, const std::string& filename) /
 	SDL_RWclose(rwops);
 }
 
-bool check_overlap(glm::vec4 a, glm::vec4 b) {
+bool check_AABB_overlap(const glm::vec4& a, const glm::vec4& b){
 	if (a.x + a.z < b.x)return false;
 	if (a.x > b.x + b.z)return false;
 	if (a.y + a.w < b.y)return false;
@@ -104,4 +128,49 @@ bool check_overlap(glm::vec4 a, glm::vec4 b) {
 	return true;
 }
 
+bool check_AABB_against_point(const glm::vec4& AABB,const glm::vec2 & point)
+{
+	if (point.x < AABB.x) return false;
+	if (point.x > AABB.z) return false;
+	if (point.y < AABB.y) return false;
+	if (point.y > AABB.w) return false;
+	return true;
+}
 
+
+b2Vec2 PointToWorldSpace(const b2Vec2 &point,
+	const b2Vec2 &AgentHeading,
+	const b2Vec2 &AgentSide,
+	const b2Vec2 &AgentPosition)
+{
+	b2Vec2 head = point.x*AgentHeading;
+	b2Vec2 side = point.y*AgentSide;
+	b2Vec2 transPoint = AgentPosition + head + side;
+	return transPoint;
+}
+
+b2Vec2 PointToLocalSpace(const b2Vec2 &point,
+	const b2Vec2 &AgentHeading,
+	const b2Vec2 &AgentSide,
+	const b2Vec2 &AgentPosition)
+{
+	b2Vec2 _point = point - AgentPosition;
+	float x = b2Dot(AgentHeading, _point) / AgentHeading.Length();
+	float y = b2Dot(AgentSide, _point) / AgentSide.Length();
+
+	return b2Vec2(x, y);
+}
+b2Vec2 VectorToWorldSpace(const b2Vec2 &vector,
+	const b2Vec2 &AgentHeading,
+	const b2Vec2 &AgentSide)
+{
+	b2Vec2 head = vector.x*AgentHeading;
+	b2Vec2 side = vector.y*AgentSide;
+	return b2Vec2(head.x + side.x, head.y + side.y);
+}
+void Truncate(b2Vec2&vector, float max_length) {
+	if (vector.LengthSquared() > max_length*max_length) {
+		vector.Normalize();
+		vector *= max_length;
+	}
+}

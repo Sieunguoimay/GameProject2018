@@ -1,34 +1,35 @@
 #pragma once
 #include"../EntityHierachy/HavingBodyEntity.h"
+
 class Animal :public AnimationBodyEntity{
-	glm::vec2 m_pos;
 public:
-	Animal(glm::vec2 pos = glm::vec2(0,0));
+	Animal(const glm::vec2& pos = glm::vec2(0, 0));
+	Animal(const glm::vec4&aabb);
 	~Animal();
-	void SetupBody()override;
+	void SetupBody(bool atRunTime = false)override;
 	void OnBeginContact(b2Contact*contact, b2Fixture*fixture)override;
 	void Update(float deltaTime)override;
+
+	Spawner*Spawn(InfoPacket*info)override;
 };
 
 class Rock :public NoAnimationBodyEntity {
 public:
 	Rock();
-	void SetupBody()override;
+	void SetupBody(bool atRunTime = false)override;
+
 };
 
 #include"../EntityHierachy/NoBodyEntity.h"
 class Grass : public AnimationNoBodyEntity {
 public:
-	Grass();
+	Grass(const glm::vec2&pos=glm::vec2(0,0));
+	Spawner*Spawn(InfoPacket*info)override;
 };
 
 class Leaf :public NoAnimationNoBodyEntity {
 public:
-	Leaf();
+	Leaf(const glm::vec2&pos = glm::vec2(0, 0));
+	Spawner*Spawn(InfoPacket*info)override;
 };
 
-#include"../EntityHierachy/MultiEntity.h"
-class FlockOfAnimal :public MultiEntity<AnimationBodyEntity>{
-public:
-	FlockOfAnimal();
-};

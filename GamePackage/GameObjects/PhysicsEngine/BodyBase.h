@@ -8,19 +8,20 @@
 enum ObjectType{
 	UNDEFINED,
 	GROUND,
-	PLAYER
+	OID_PLAYER
 };
+
 class BodyBase {
 protected:
-	glm::vec2 m_pos;//buffer
 	ObjectType m_specifier;
 public:
-	BodyBase(glm::vec2 pos):m_pos(pos),m_specifier(UNDEFINED){}
-	virtual void Update(float deltaTime) {}				//not compulsory
-	virtual void HandleBeginContact(b2Contact*contact,b2Fixture*fixture) {}	//not compulsory
-	virtual void HandleEndContact(b2Contact*contact, b2Fixture*fixture) {}	//not compulsory
-	virtual b2Body*GetBody() { return NULL; };			//be careful babe
+
+	BodyBase():m_specifier(UNDEFINED){}
+
+	virtual void Update(float deltaTime) {}				
+	virtual void HandleBeginContact(b2Contact*contact,b2Fixture*fixture) {}	
+	virtual void HandleEndContact(b2Contact*contact, b2Fixture*fixture) {}	
 
 	inline const ObjectType& GetSpecifier() const { return m_specifier; }
-	inline glm::vec2*GetPosPointer() { return &m_pos; }
+	inline virtual b2Body*GetBody() { return NULL; };			//be careful babe
 };

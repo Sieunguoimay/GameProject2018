@@ -4,7 +4,7 @@
 
 class TerrestrialBody:public BodyBase {
 
-	b2Body*m_body;
+	b2Body**m_ppBody;
 	Leg m_leg;
 	//debug purpose
 	//b2WorldManifold m_manifold;
@@ -14,14 +14,14 @@ class TerrestrialBody:public BodyBase {
 	float m_jumpSpeed;
 	float m_runSpeed;
 
-	void setupBody(glm::vec2,glm::vec2);
 public:
-	TerrestrialBody(glm::vec2 pos, glm::vec2 dimension);
+	TerrestrialBody(b2Body**ppBody);
 	~TerrestrialBody();
+	void SetupBody(glm::vec2, glm::vec2);
 
 	void Update(float deltaTime) override;
 	void HandleBeginContact(b2Contact*contact, b2Fixture*fixture)override;
-	inline b2Body*GetBody()override { return m_body; }
+	inline b2Body*GetBody()override { return *m_ppBody; }
 
 
 
@@ -29,8 +29,6 @@ public:
 	void Run(bool left_right);//true is right, false is left
 	void Jump();
 	void JumpAndRun(bool left_right);
-
 	bool IsOnGround();
-
 	inline Leg& GetLeg() { return m_leg; }
 };

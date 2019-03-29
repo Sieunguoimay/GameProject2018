@@ -44,6 +44,9 @@ public:
 	void SetAnimation(const char* name);
 	void SetAnimation(int newAnimationIndex);
 
+	//dont use this function at all. this is to serve for the Editor only.
+	void SetAnimationStrictly(int index) { m_animationIndex = index; m_currentTime = 0; }
+
 	int GetAnimationIndex(const char* name);
 	inline const int& GetCurrentAnimationIndex()const { return m_animationIndex; }
 	inline const int& GetActualAnimationIndex()const { return m_actualAnimationIndex; }

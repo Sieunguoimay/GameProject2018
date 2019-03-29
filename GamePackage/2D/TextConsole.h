@@ -1,8 +1,7 @@
 
 #pragma once
 #include"FreeTypeLoader.h"
-#include"Renderer.h"
-class TextConsole{
+class TextConsole:public Renderer{
 	FreeTypeLoader m_text;
 	TextureRenderer*m_pRenderer;
 
@@ -14,13 +13,11 @@ class TextConsole{
 	float m_scale;
 
 	std::string m_logData;
-	int m_counter;
 public:
 	TextConsole(TextureRenderer*pRenderer,const char*font_file_path,int pixel_height);
-	~TextConsole();
-	void Log(const char*s);
+	void Log(const char*s, bool oneTimeFlag=false);
 
-	void Draw();
+	void Render(const float*matrix) override;
 	//gettters and setters
 	void SetPos(float x, float y) { m_pos.x = x; m_pos.y = y; }
 	void SetColor(float r, float g, float b, float a) { m_color = glm::vec4(r,g,b,a); }
@@ -29,4 +26,5 @@ public:
 	void SetCharSpace(int space) { m_charSpace = space; }
 	void SetScale(float scale) { m_scale = scale; }
 
+	FreeTypeLoader*GetFreeTypeLoader() { return &m_text; }
 };

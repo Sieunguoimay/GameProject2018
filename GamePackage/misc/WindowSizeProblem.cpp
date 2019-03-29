@@ -14,10 +14,10 @@ WindowSizeProblem::~WindowSizeProblem()
 
 void WindowSizeProblem::Init(int windowWidth, int windowHeight, int gameWidth, int gameHeight)
 {
-	m_windowSize.w = windowWidth;
-	m_windowSize.h = windowHeight;
-	m_gameSize.w = gameWidth;
-	m_gameSize.h = gameHeight;
+	m_windowSize.x = windowWidth;
+	m_windowSize.y = windowHeight;
+	m_gameSize.x = gameWidth;
+	m_gameSize.y = gameHeight;
 
 
 	float gameSizeOrPerspectiveRatio = (float)gameWidth / (float)gameHeight;
@@ -57,8 +57,8 @@ void WindowSizeProblem::Init(int windowWidth, int windowHeight, int gameWidth, i
 
 const glm::vec2& WindowSizeProblem::ScreenToCamera(const glm::vec2&point) {
 	glm::vec2 pw;
-	pw.x = (point.x - m_viewport.x)*m_deviceToGame - m_gameSize.w / 2.0f;
-	pw.y = -(point.y - m_viewport.y)*m_deviceToGame + m_gameSize.h / 2.0f;
+	pw.x = (point.x - m_viewport.x)*m_deviceToGame - m_gameSize.x / 2.0f;
+	pw.y = -(point.y - m_viewport.y)*m_deviceToGame + m_gameSize.y / 2.0f;
 	return pw;
 
 }
@@ -68,8 +68,8 @@ const glm::mat3 & WindowSizeProblem::GetMatrixScreenToCamera()
 	// TODO: insert return statement here
 	m_mat[0][0] = m_deviceToGame;
 	m_mat[1][1] = -m_deviceToGame;
-	m_mat[2][0] = -m_viewport.x*m_deviceToGame - m_gameSize.w / 2.0f;
-	m_mat[2][1] = m_viewport.y*m_deviceToGame + m_gameSize.h / 2.0f;
+	m_mat[2][0] = -m_viewport.x*m_deviceToGame - m_gameSize.x / 2.0f;
+	m_mat[2][1] = m_viewport.y*m_deviceToGame + m_gameSize.y / 2.0f;
 	return m_mat;
 }
 

@@ -56,41 +56,26 @@ public:
 		n++;
 	}
 	
-	void push_back(T data) {
-		insert(tail->prev, data);
-	}
-	void push_front(T data) {
-		insert(head, data);
-	}
-	void pop_front() {
-		if (head->next != tail)
-			erase(head->next);
-	}
-	void pop_back() {
-		if (tail->prev != head)
-			erase(tail->prev);
-	}
-
+	inline void push_back(T data) {insert(tail->prev, data);}
+	inline void push_front(T data) {insert(head, data);}
+	inline void pop_front() {if (head->next != tail)erase(head->next);}
+	inline void pop_back() {if (tail->prev != head) erase(tail->prev);}
 	bool clear() {
 		for (Node<T>*iter = head->next; iter != tail; iter = iter->next)
 			iter = erase(iter);
 		return true;
 	}
-	bool empty()const {
-		return(n == 0);
-	}
-	int size()const {
-		return this->n;
-	}
-	Node<T>*first() {
-		return head->next;
-	}
-	Node<T>*last(){
-		return tail->prev;
-	}
+
+	inline bool empty(){return(n == 0);}
+	inline int size()const {return this->n;}
+
+	inline Node<T>*first() { return head->next; }
+	inline Node<T>*last() { return tail->prev; }
+
 	//two controling nodes
 	Node<T>*head;
 	Node<T>*tail;
 	int n;
 };
+
 #endif // !DOUBLY_LINKED_LIST_H
