@@ -11,6 +11,7 @@ Character::~Character()
 void Character::Update(float deltaTime)
 {
 	m_brain->Update(deltaTime);
+	m_bodyBase->Update(deltaTime);
 	AnimationBodyEntity::Update(deltaTime);
 }
 

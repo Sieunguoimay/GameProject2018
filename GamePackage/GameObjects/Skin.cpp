@@ -26,13 +26,14 @@ void AnimationSkin::Draw()
 	m_spriterEntity->Draw(m_pos, m_angle, m_scale.x, m_scale.y, m_flip);
 }
 
+//this function represents the  problem of born 
 void AnimationSkin::SetAABB(const glm::vec4&AABB)
 {
-	m_AABBBuffer = AABB;
-	m_scale.x = (AABB.z - AABB.x) / (m_originalAABB.z - m_originalAABB.x);
-	m_scale.y = (AABB.w - AABB.y) / (m_originalAABB.w - m_originalAABB.y);
+	//m_AABBBuffer = AABB;
+	//m_scale.x = (AABB.z - AABB.x) / (m_originalAABB.z - m_originalAABB.x);
+	//m_scale.y = (AABB.w - AABB.y) / (m_originalAABB.w - m_originalAABB.y);
 
-	m_pos = glm::vec2(AABB.x, AABB.y) + m_originalCenter*m_scale;
+	//m_pos = glm::vec2(AABB.x, AABB.y) + m_originalCenter*m_scale;
 }
 
 void AnimationSkin::SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time)
@@ -52,6 +53,19 @@ void AnimationSkin::Update(float deltaTime)
 	m_AABBBuffer.z = p.x+d.x;
 	m_AABBBuffer.w = p.y+d.y;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 NoAnimationSkin::NoAnimationSkin(Texture * texture, const glm::vec2 & pos, const glm::vec2 & size, const float & angle)
@@ -75,11 +89,8 @@ void NoAnimationSkin::Draw()
 		m_flip==FlipType::HORIZONTAL_FLIP,				//horizontal flip
 		m_flip == FlipType::VERTICAL_FLIP);				//vertical flip
 
-	if (a == NULL) {
-		m_AABB = glm::vec4(rect.x, rect.y, rect.x, rect.y);
-		return;
-	}
-
+	//Handle NULL 
+	if (!a) {m_AABB = glm::vec4(rect.x, rect.y, rect.x, rect.y);return;}
 
 	//calculate AABB
 	glm::vec2 p[3] = { a->bottomLeft.position,

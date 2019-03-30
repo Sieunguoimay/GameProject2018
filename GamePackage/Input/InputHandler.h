@@ -7,6 +7,10 @@ public:
 	//this is also a magic, not wasting a variable, and the constructor is unchanged
 	//the price is that, one more function is added, though it's inline :)))
 	inline virtual const bool& IsUnderInputHandler() { return true; }
+	//->what do you mean by this??? -> whether this command is under inputhandler or other handler ???
+
+
+
 	virtual void Execute() = 0;
 };
 
@@ -17,6 +21,8 @@ class InputHandler :public Entity{
 public:
 	enum HandleType{
 		HT_KEY_A,
+		HT_KEY_D,
+		HT_KEY_W,
 		HT_CTRL,
 		HT_CTRL_A,
 		HT_CTRL_S,

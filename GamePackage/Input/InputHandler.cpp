@@ -31,9 +31,6 @@ Command * InputHandler::handleInput()
 		&& Locator::GetInputEvent()->IsKeyPressed(KEY_CTRL))
 		return m_commands[HT_CTRL];
 
-	if (m_commands[HT_KEY_A]
-		&& Locator::GetInputEvent()->IsKeyPressed(KEY_A))
-		return m_commands[HT_KEY_A];
 
 	if (m_commands[HT_SHIFT_D]
 		&& Locator::GetInputEvent()->IsKeyPressed(KEY_SHIFT)
@@ -44,6 +41,18 @@ Command * InputHandler::handleInput()
 		&& Locator::GetInputEvent()->IsKeyPressed(KEY_SHIFT))
 		return m_commands[HT_SHIFT];
 
+	//control command
+	if (m_commands[HT_KEY_A]
+		&& Locator::GetInputEvent()->IsKeyPressed(KEY_A))
+		{m_commands[HT_KEY_A]->Execute();}
+	
+	if (m_commands[HT_KEY_D]
+		&& Locator::GetInputEvent()->IsKeyPressed(KEY_D))
+		{m_commands[HT_KEY_D]->Execute();}
+
+	if (m_commands[HT_KEY_W]
+		&& Locator::GetInputEvent()->IsKeyPressed(KEY_W))
+		{m_commands[HT_KEY_W]->Execute();}
 
 	return NULL;
 	//want more??... 

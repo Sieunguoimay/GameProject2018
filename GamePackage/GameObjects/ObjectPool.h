@@ -22,18 +22,24 @@ class ObjectPool :public Entity {
 	//in the end, when they are all fixed, should we use the id num only??
 	//for the purpose of faster loading....
 	//---> we would love to consider that suggestion at that point. 
+	AABBEntity*m_objectPrototypes[ObjectId::OID_OBJECT_NUM] = { 0 };
 	std::map<const char*, ObjectId::ObjectId,cmp_str>m_nameMap;
 	std::map<ObjectId::ObjectId,const char*>m_idMap;
-	AABBEntity*m_objectPrototypes[ObjectId::OID_OBJECT_NUM] = { 0 };
+	
+	//Utilities
 	void insertMap(const char*name, const ObjectId::ObjectId&id);
+	void selectObjects(AABBEntity*entity);
 	//pointers
 	List<AABBEntity*>*m_pContainer;
+	std::map<ObjectId::ObjectId,AABBEntity*>m_objectsOfInterest;
 public:
 	ObjectPool(List<AABBEntity*>*pContainer);
 	~ObjectPool();
 	void Init()override;
-	void Update(float deltaTime)override;
+	inline void Update(float deltaTime)override{}
+
 	AABBEntity*CreateNewObject(InfoPacket*packet, bool atRunTime=false);
 	const ObjectId::ObjectId&GetObjectId(const char*name);
 	const char*GetObjectName(const ObjectId::ObjectId&id);
+	AABBEntity*GetSavedObject(const ObjectId::ObjectId&id);
 };

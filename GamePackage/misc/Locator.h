@@ -44,5 +44,6 @@ public:
 	static TextConsole*GetTextConsole() { return s_pTextConsole; }
 	static AssetsManager*GetAssets() { return s_pAssets; }
 	static PhysicsFactory*GetPhysicsFactory() { return s_physicsFactory; }
+	static Camera2D*GetCamera() { return s_pCamera; }
 };
 

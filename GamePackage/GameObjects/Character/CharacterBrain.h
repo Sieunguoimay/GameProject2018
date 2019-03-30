@@ -29,6 +29,7 @@ private:
 	bool m_jump;
 	bool m_right;
 	bool m_left;
+	friend class Player;
 };
 
 class Player :public Character{
@@ -37,4 +38,9 @@ public:
 	Player(const glm::vec4&AABB);
 	Spawner*Spawn(InfoPacket*info)override;
 	void SetupBody(bool atRunTime=false)override;
+
+	void JumpSignal() { ((CharacterBrain*)m_brain)->m_jump = true; }
+	void RightSignal() { ((CharacterBrain*)m_brain)->m_right = true; }
+	void LeftSignal() { ((CharacterBrain*)m_brain)->m_left = true; }
 };
+

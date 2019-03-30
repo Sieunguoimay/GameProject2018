@@ -69,7 +69,7 @@ void Editor::ExecuteCommand(char command)
 	}
 	if (command == 4) m_picker.EnableAttach();
 
-	if (command == 3) m_putter.Trigger(ObjectId::OID_ANIMAL);
+	if (command == 3) m_putter.Trigger(ObjectId::OID_PLAYER);
 
 
 }

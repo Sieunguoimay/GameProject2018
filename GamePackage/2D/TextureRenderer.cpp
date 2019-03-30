@@ -112,7 +112,6 @@ TextureRenderer::~TextureRenderer()
 }
 
 
-
 const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
 	if (m_disabled||!check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 

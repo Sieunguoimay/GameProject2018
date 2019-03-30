@@ -59,6 +59,7 @@ _RunningState::_RunningState(Timeline * pPelvisBone)
 
 void _RunningState::Enter(CharacterBrain * entity)
 {
+	SDL_Log("Running\n");
 
 	TerrestrialBody*body = ((TerrestrialBody*)(entity->GetBodyBase()->GetBody()->GetUserData()));
 

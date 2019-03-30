@@ -54,15 +54,15 @@ void Leg::Update(float deltaTime)
 	Locator::GetPhysicsFactory()->GetB2World()->RayCast(this, p1, p2);
 
 	b2Vec2 hitPoint = (m_minRayCastFraction*(p2 - p1) + p1);
-	Locator::GetPrimitiveRenderer()->DrawLine(M2P*glm::vec2(p1.x,p1.y),M2P*glm::vec2(hitPoint.x, hitPoint.y));
+	//Locator::GetPrimitiveRenderer()->DrawLine(M2P*glm::vec2(p1.x,p1.y),M2P*glm::vec2(hitPoint.x, hitPoint.y));
 	//Locator::GetPrimitiveRenderer()->DrawBox(glm::vec4(M2P*hitPoint.x, M2P*hitPoint.y, 10, 10), 0, glm::vec2(0, 0));
 
 	//ground line
 	b2Vec2 s1 = hitPoint - b2Vec2(-m_groundNormal.y, m_groundNormal.x);
 	b2Vec2 s2 = hitPoint + b2Vec2(-m_groundNormal.y, m_groundNormal.x);
-	Locator::GetPrimitiveRenderer()->DrawLine(M2P*glm::vec2(s1.x,s1.y), 
+	/*Locator::GetPrimitiveRenderer()->DrawLine(M2P*glm::vec2(s1.x,s1.y), 
 		M2P*glm::vec2(s2.x, s2.y),
-		glm::vec4(1.0,0.0,0.0,1.0));
+		glm::vec4(1.0,0.0,0.0,1.0));*/
 
 	//leg circle
 	//if (!m_flag) {
@@ -131,8 +131,8 @@ void Leg::Update(float deltaTime)
 	//ground normal
 	s1 = hitPoint;
 	s2 = hitPoint+0.5f*m_groundNormal;
-	Locator::GetPrimitiveRenderer()->DrawLine(M2P*glm::vec2(s1.x, s1.y), M2P*glm::vec2(s2.x, s2.y),
-		glm::vec4(0.0, 0.0, 1.0, 1.0));
+	//Locator::GetPrimitiveRenderer()->DrawLine(M2P*glm::vec2(s1.x, s1.y), M2P*glm::vec2(s2.x, s2.y),
+	//	glm::vec4(0.0, 0.0, 1.0, 1.0));
 
 	//b2Vec2 points[] = { b2Vec2(-1,0),b2Vec2(-1,1),b2Vec2(1,1),b2Vec2(1,0) };
 

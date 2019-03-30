@@ -31,8 +31,8 @@ void HighLevelCamera::Update(float deltaTime)
 
 void HighLevelCamera::Draw()
 {
-	std::string pos = _to_string((int)m_pCamera->GetPosition().x)+" "+ _to_string((int)m_pCamera->GetPosition().y);
-	m_pFreeTypeLoader->Draw(Locator::GetTextureRenderer(), pos.c_str(), m_pCamera->GetPosition()-m_pCamera->GetSize()*0.45f);
+	//std::string pos = _to_string((int)m_pCamera->GetPosition().x)+" "+ _to_string((int)m_pCamera->GetPosition().y);
+	//m_pFreeTypeLoader->Draw(Locator::GetTextureRenderer(), pos.c_str(), m_pCamera->GetPosition()-m_pCamera->GetSize()*0.45f);
 }
 
 void HighLevelCamera::Execute()

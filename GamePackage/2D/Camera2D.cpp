@@ -8,7 +8,6 @@ Camera2D::Camera2D()
 	,m_orthoMatrix(1.0f)
 	,m_cameraMatrix(1.0f)
 {
-	m_AABB = glm::vec4((m_position - 0.5f*m_size), m_size);
 }
 
 
@@ -17,6 +16,7 @@ void Camera2D::Init(const glm::vec2 & size, const glm::vec2 & physicalSize)
 	m_size = size;
 	m_physicalSize = physicalSize;
 	m_orthoMatrix = glm::ortho(-size.x / 2.0f, size.x /2.0f, -size.y/2.0f, size.y/2.0f);
+	m_AABB = glm::vec4((m_position - 0.5f*m_size), m_size);
 }
 
 void Camera2D::Update(float deltaTime) {

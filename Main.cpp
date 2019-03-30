@@ -29,66 +29,82 @@ void HandleEvent(ESContext *esContext, int type,int key, int x, int y)
 {
 	if (type == WM_KEYDOWN) {
 		if(key== 65)//a
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_A, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_A, Key::NULL_KEY));
 		if (key == 83)//s
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_S, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_S, Key::NULL_KEY));
 		if (key == 68)//d
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_D, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_D, Key::NULL_KEY));
 		if (key == 87)//w
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_W, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_W, Key::NULL_KEY));
+		if (key == 16)//shift
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_SHIFT, Key::NULL_KEY));
 		if (key == 32)//space
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_SPACE, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_SPACE, Key::NULL_KEY));
 		if (key == 13)//enter
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_ENTER, Key::NULL_KEY));
-		if (key == 27) {//escape
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_ESCAPE, Key::NULL_KEY));
-		}
-		if (key == 38)//w
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_ARROW_UP, Key::NULL_KEY));
-		if (key == 40)//space
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_ARROW_DOWN, Key::NULL_KEY));
-		if (key == 37)//enter
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_ARROW_LEFT, Key::NULL_KEY));
-		if (key == 39) {//escape
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_DOWN, Key::KEY_ARROW_RIGHT, Key::NULL_KEY));
-		}
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_ENTER, Key::NULL_KEY));
+		if (key == 27) //escape
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_ESCAPE, Key::NULL_KEY));
+		if (key == 17) //ctrl
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_CTRL, Key::NULL_KEY));
+
+		if (key == 38)//up
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_ARROW_UP, Key::NULL_KEY));
+		if (key == 40)//down
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_ARROW_DOWN, Key::NULL_KEY));
+		if (key == 37)//left
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_ARROW_LEFT, Key::NULL_KEY));
+		if (key == 39) //right
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_DOWN, Key::KEY_ARROW_RIGHT, Key::NULL_KEY));
+		
 		//SDL_Log("KEY DOWN %d", (int)key);
 	}else if (type == WM_KEYUP) {
 		if (key == 65)//a
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_A, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_A, Key::NULL_KEY));
 		if (key == 83)//s
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_S, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_S, Key::NULL_KEY));
 		if (key == 68)//d
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_D, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_D, Key::NULL_KEY));
 		if (key == 87)//w
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_W, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_W, Key::NULL_KEY));
+		if (key == 16)//shift
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_SHIFT, Key::NULL_KEY));
 		if (key == 32)//space
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_SPACE, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_SPACE, Key::NULL_KEY));
 		if (key == 13)//enter
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_ENTER, Key::NULL_KEY));
-		if (key == 27) {//escape
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_ESCAPE, Key::NULL_KEY));
-		}
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_ENTER, Key::NULL_KEY));
+		if (key == 27) //escape
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_ESCAPE, Key::NULL_KEY));
+		if (key == 17) //ctrl
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_CTRL, Key::NULL_KEY));
+
+
 		if (key == 38)//up
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_ARROW_UP, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_ARROW_UP, Key::NULL_KEY));
 		if (key == 40)//down
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_ARROW_DOWN, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_ARROW_DOWN, Key::NULL_KEY));
 		if (key == 37)//left
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_ARROW_LEFT, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_ARROW_LEFT, Key::NULL_KEY));
 		if (key == 39) {//right
-			g_gameBase->HandleEvent(InputEvent(EventType::KEY_UP, Key::KEY_ARROW_RIGHT, Key::NULL_KEY));
+			g_gameBase->HandleEvent(InputEventPackage(EventType::KEY_UP, Key::KEY_ARROW_RIGHT, Key::NULL_KEY));
 		}
 		//SDL_Log("KEY UP %d", (int)key);
 	}
-	if (type == WM_MOUSEMOVE) {
-		g_gameBase->HandleEvent(InputEvent(EventType::MOUSE_MOTION, x, y));
-	}
-	if (type == WM_LBUTTONDOWN) {
-		g_gameBase->HandleEvent(InputEvent(EventType::MOUSE_BUTTON_DOWN, x, y));
-	}
-	if (type == WM_LBUTTONUP) {
-		g_gameBase->HandleEvent(InputEvent(EventType::MOUSE_BUTTON_UP, x, y));
-	}
+	if (type == WM_MOUSEMOVE) 
+		g_gameBase->HandleEvent(InputEventPackage(EventType::MOUSE_MOTION, x, y));
+	
+	if (type == WM_LBUTTONDOWN) 
+		g_gameBase->HandleEvent(InputEventPackage(EventType::LMOUSE_BUTTON_DOWN, x, y));
+	
+	if (type == WM_LBUTTONUP) 
+		g_gameBase->HandleEvent(InputEventPackage(EventType::LMOUSE_BUTTON_UP, x, y));
+
+	if (type == WM_RBUTTONDOWN) 
+		g_gameBase->HandleEvent(InputEventPackage(EventType::RMOUSE_BUTTON_DOWN, x, y));
+	
+
+	if (type == WM_RBUTTONUP)
+		g_gameBase->HandleEvent(InputEventPackage(EventType::RMOUSE_BUTTON_UP, x, y));
+
 }
 
 void CleanUp()
@@ -103,8 +119,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	g_gameBase = new GameBase();//SmallTester();//
 
 	esInitContext(&esContext);
-	esCreateWindow(&esContext, "Hello Triangle", 900, 600, ES_WINDOW_ALPHA | ES_WINDOW_DEPTH);
-
+	esCreateWindow(&esContext, "Hello Triangle", 1200, 700, ES_WINDOW_ALPHA | ES_WINDOW_DEPTH);
+	ShowCursor(false);
 	if (Init(&esContext) == 0) {
 		DisplayMemoryInfo();
 

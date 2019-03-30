@@ -20,6 +20,7 @@
 #include"GameObjects/Character/CharacterBrain.h"
 #include"GameObjects/Character/TerrestrialBody.h"
 #include"GameObjects/Character/Animal.h"
+#include"GameObjects/Character/PlayerControl.h"
 #include"GameObjects/ObjectPool.h"
 
 #include"GameObjects/PhysicsEngine/PhysicsFactory.h"
@@ -62,16 +63,17 @@ int GameBase::Init(int width, int height)
 
 	TextureRenderer*textureRenderer = new TextureRenderer(m_assetsManager.GetShader("HelloTriangle"),SortType::TEXTURE,m_camera2D.GetAABB());
 	PrimitiveRenderer*primitiveRenderer = new PrimitiveRenderer(m_assetsManager.GetShader("PrimitiveDrawing"),m_assetsManager.GetShader("PrimitiveFilling"),m_assetsManager.GetShader("2DLighting"));
-	TextConsole*textConsole = new TextConsole(textureRenderer, m_assetsManager.GetFontPath(1).c_str(), 50);
-	textConsole->SetPos(-m_windowSize.GetGameSize().x/ 2 + 500, m_windowSize.GetGameSize().y / 2 - 200);
-	m_renderers.push_back(textConsole);//at first
+	//TextConsole*textConsole = new TextConsole(textureRenderer, m_assetsManager.GetFontPath(1).c_str(), 50);
+	//textConsole->SetPos(-m_windowSize.GetGameSize().x/ 2 + 500, m_windowSize.GetGameSize().y / 2 - 200);
+	//m_renderers.push_back(textConsole);//at first
 	m_renderers.push_back(textureRenderer);
 	m_renderers.push_back(primitiveRenderer);
 
 	m_physicsFactory.Init();
 
+	//Locator::Provide(&m_camera2D);
 	Locator::Provide(textureRenderer);
-	Locator::Provide(textConsole);
+	//Locator::Provide(textConsole);
 	Locator::Provide(primitiveRenderer);
 	Locator::Provide(&m_inputEvent);
 	Locator::Provide(&m_assetsManager);
@@ -112,23 +114,16 @@ void GameBase::InitGameObjects()
 {
 	ObjectPool*objectPool = new ObjectPool(&m_entities);
 	World*gameWorld = new World(objectPool);
-	HighLevelCamera*camera = new HighLevelCamera(&m_camera2D,Locator::GetTextConsole()->GetFreeTypeLoader());;
-
-	//for the purpose of editing
-	//Locator::GetTextureRenderer()->Disable();
-	//Locator::GetPrimitiveRenderer()->Disable();
-	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
-	m_physicsFactory.SetRenderer(&m_box2DRenderer);
-	SpriteTimelineKey::s_drawAABBTrigger = false;
-	AABBEntity::s_drawAABBTrigger = true;
 
 	Editor*editor = new Editor(gameWorld, objectPool);
-	InputHandler*inputHandler = new EditorPurposeHandler(editor, camera);
-	m_tools[EDITOR] = editor;
-	m_tools[INPUT_HANDLER] = inputHandler;
+	HighLevelCamera*camera = new HighLevelCamera(&m_camera2D, Locator::GetTextConsole()->GetFreeTypeLoader());;
+	//InputHandler*inputHandler = new EditorPurposeHandler(editor, camera);
+	InputHandler*inputHandler = new PlayerControl(objectPool);
 
 
 	m_tools[OBJECT_POOL] = objectPool;
+	m_tools[EDITOR] = editor;
+	m_tools[INPUT_HANDLER] = inputHandler;
 	m_tools[WORLD] = gameWorld;
 	m_tools[CAMERA_DRAG] = camera;
 	m_tools[MOUSE_CURSOR] = new MouseCursor();
@@ -137,7 +132,22 @@ void GameBase::InitGameObjects()
 	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Init();
 	//Editor::LoadGameWorldFromXml("Resources/GameData/game_world_data.xml", gameWorld, objectPool, NULL);
 	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next) it->data->Init();
+
+
+
 	Editor::SortEntitiesBySize(m_entities);//sort if you want to pick them up
+
+
+
+	//for the purpose of editing
+	//Locator::GetTextureRenderer()->Disable();
+	Locator::GetPrimitiveRenderer()->Disable();
+	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
+	m_physicsFactory.SetRenderer(&m_box2DRenderer);
+	SpriteTimelineKey::s_drawAABBTrigger = false;
+	AABBEntity::s_drawAABBTrigger = true;
+
+
 	Locator::GetTextureRenderer()->CleanBuffer();//some entities init requiring calls of draw() function
 	SDL_Log("Game Initialized");
 }
@@ -187,7 +197,7 @@ void GameBase::Draw()
 	//Locator::GetPrimitiveRenderer()->DrawLight(Locator::GetInput()->GetMousePosInWorld(),
 	//	700, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
 	//	glm::vec4(1.0f, 1.0f, 0.0f, 0.0f));
-	Locator::GetTextConsole()->Log(("FPS: "+std::to_string((int)m_timer.GetFPS())+"\nTEX: "+ std::to_string(Locator::GetTextureRenderer()->GetDrawNum())).c_str(),true);
+	//Locator::GetTextConsole()->Log(("FPS: "+std::to_string((int)m_timer.GetFPS())+"\nTEX: "+ std::to_string(Locator::GetTextureRenderer()->GetDrawNum())).c_str(),true);
 
 	//RENDERER::END: push them up to the sky
 	for(auto&renderer:m_renderers) renderer->Render(&(m_camera2D.GetMatrix()[0][0]));

@@ -59,15 +59,14 @@ void CharacterBrain::Update(float deltaTime)
 	//when to do what logics
 	//to deal with the 2 loops in one jump
 	static bool s_jump_flag = false;
-	TerrestrialBody*body = (TerrestrialBody*)(m_pBodyBase);
-	if (body->IsOnGround()) {
+	TerrestrialBody*bodyBase = (TerrestrialBody*)(m_pBodyBase);
+	if (bodyBase->IsOnGround()) {
 		if (s_jump_flag) return;
 
 		if ((m_left|| m_right) &&m_jump) {//run and jump
-			
 			s_jump_flag = true;
 
-			body->JumpAndRun(m_right);//called again and again
+			bodyBase->JumpAndRun(m_right);//called again and again
 			m_pSkin->SetFlip(m_right? FLIP_NONE : HORIZONTAL_FLIP);
 
 			if (StateMachine<CharacterBrain>::IsInState(m_jumping))
@@ -77,8 +76,8 @@ void CharacterBrain::Update(float deltaTime)
 		}
 		else if (m_left || m_right) {//run
 
-			body->Run(m_right);
-			m_pSkin->SetFlip(m_left? FLIP_NONE : HORIZONTAL_FLIP);
+			bodyBase->Run(m_right);
+			m_pSkin->SetFlip(m_right ? FLIP_NONE : HORIZONTAL_FLIP);
 
 			StateMachine<CharacterBrain>::ChangeState(m_running);
 		}
@@ -86,7 +85,7 @@ void CharacterBrain::Update(float deltaTime)
 
 			s_jump_flag = true;
 
-			body->Jump();
+			bodyBase->Jump();
 
 			if (StateMachine<CharacterBrain>::IsInState(m_jumping))
 				StateMachine<CharacterBrain>::ChangeState(m_jumpingBuffer);
@@ -96,7 +95,7 @@ void CharacterBrain::Update(float deltaTime)
 		}
 		else {//stand
 
-			body->Stop();
+			bodyBase->Stop();
 
 			if(StateMachine<CharacterBrain>::IsInState(m_running)|| 
 				StateMachine<CharacterBrain>::IsInState(m_stopping))
@@ -109,6 +108,10 @@ void CharacterBrain::Update(float deltaTime)
 	else {//on air
 		s_jump_flag = false;
 	}
+
+	m_jump = false;
+	m_right = false;
+	m_left = false;
 }
 
 #include"../../misc/Assistances.h"
@@ -117,7 +120,7 @@ Player::Player() :Character(NULL, glm::vec4()){}
 Player::Player(const glm::vec4 & AABB)
 	:Character(new AnimationSkin(Locator::GetAssets()->SpawnSpriterEntity("skin_2/main_skin/entity_000"),1.0f),AABB)
 {
-	m_bodyBase = new TerrestrialBody(&m_body);
+	m_bodyBase = new TerrestrialBody();
 	m_brain = new CharacterBrain(m_bodyBase, m_skin);
 }
 
@@ -142,5 +145,7 @@ Spawner * Player::Spawn(InfoPacket * info)
 void Player::SetupBody(bool atRunTime)
 {
 	glm::vec2 pos = glm::vec2((m_AABB.z + m_AABB.x) / 2.0f, (m_AABB.w + m_AABB.y) / 2.0f);
-	((TerrestrialBody*)m_bodyBase)->SetupBody(pos, glm::vec2(80, 160));
+	((TerrestrialBody*)m_bodyBase)->SetupBody(pos, glm::vec2(80, 160), m_body);
+	((TerrestrialBody*)m_bodyBase)->GetLeg().Init(m_body);
 }
+
