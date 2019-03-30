@@ -1,63 +1,133 @@
-<?xml version="1.0" encoding="UTF - 8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <world>
-    <platform id="0" x="762.66699" y="-848.04517" texture="platforms/platform2.png">
-        <polygon id="0">
-            <vertex id="0" x="174.0741" y="551.85181"/>
-            <vertex id="1" x="48.148102" y="477.7778"/>
-            <vertex id="2" x="4" y="418"/>
-            <vertex id="3" x="318.51849" y="518.51849"/>
+    <platform id="0" aa_x="-4856" aa_y="-758" bb_x="-856.00024" bb_y="2242" texture="platforms/platform3.png" num="16">
+        <polygon id="0" num="3">
+            <vertex id="0" x="25.749998" y="8.2299995"/>
+            <vertex id="1" x="17.233332" y="12.766667"/>
+            <vertex id="2" x="16.599998" y="12.71"/>
         </polygon>
-        <polygon id="1">
-            <vertex id="0" x="1903" y="-4"/>
-            <vertex id="1" x="1889" y="470"/>
-            <vertex id="2" x="1156" y="515"/>
-            <vertex id="3" x="688.88892" y="525.9259"/>
-            <vertex id="4" x="318.51849" y="518.51849"/>
-            <vertex id="5" x="4" y="418"/>
-            <vertex id="6" x="0" y="0"/>
+        <polygon id="1" num="3">
+            <vertex id="0" x="16.599998" y="12.71"/>
+            <vertex id="1" x="16.289997" y="12.87"/>
+            <vertex id="2" x="12.355555" y="12.966667"/>
         </polygon>
-        <polygon id="2">
-            <vertex id="0" x="1755.5555" y="529.62958"/>
-            <vertex id="1" x="1467" y="519"/>
-            <vertex id="2" x="1889" y="470"/>
+        <polygon id="2" num="3">
+            <vertex id="0" x="28.789997" y="7.6299996"/>
+            <vertex id="1" x="25.749998" y="8.2299995"/>
+            <vertex id="2" x="28.529997" y="4.52"/>
         </polygon>
-        <polygon id="3">
-            <vertex id="0" x="1467" y="519"/>
-            <vertex id="1" x="1156" y="515"/>
-            <vertex id="2" x="1889" y="470"/>
+        <polygon id="3" num="3">
+            <vertex id="0" x="32.489994" y="8.3299999"/>
+            <vertex id="1" x="28.789997" y="7.6299996"/>
+            <vertex id="2" x="28.529997" y="4.52"/>
+        </polygon>
+        <polygon id="4" num="3">
+            <vertex id="0" x="39.999996" y="11.21"/>
+            <vertex id="1" x="37.869995" y="10.96"/>
+            <vertex id="2" x="36.311108" y="10.488889"/>
+        </polygon>
+        <polygon id="5" num="5">
+            <vertex id="0" x="25.749998" y="8.2299995"/>
+            <vertex id="1" x="25.099998" y="8.9888887"/>
+            <vertex id="2" x="24.519997" y="9.4299994"/>
+            <vertex id="3" x="17.51111" y="12.911112"/>
+            <vertex id="4" x="17.233332" y="12.766667"/>
+        </polygon>
+        <polygon id="6" num="4">
+            <vertex id="0" x="11.819999" y="13.24"/>
+            <vertex id="1" x="9.0444441" y="13.311111"/>
+            <vertex id="2" x="6.9111104" y="13.277778"/>
+            <vertex id="3" x="3.2399998" y="12"/>
+        </polygon>
+        <polygon id="7" num="4">
+            <vertex id="0" x="23.677776" y="11.066668"/>
+            <vertex id="1" x="23.309998" y="11.52"/>
+            <vertex id="2" x="20.977776" y="12.744444"/>
+            <vertex id="3" x="17.51111" y="12.911112"/>
+        </polygon>
+        <polygon id="8" num="5">
+            <vertex id="0" x="12.355555" y="12.966667"/>
+            <vertex id="1" x="12.159999" y="13.13"/>
+            <vertex id="2" x="11.819999" y="13.24"/>
+            <vertex id="3" x="3.2399998" y="12"/>
+            <vertex id="4" x="3.2631576" y="11.526316"/>
+        </polygon>
+        <polygon id="9" num="8">
+            <vertex id="0" x="28.529997" y="4.52"/>
+            <vertex id="1" x="25.749998" y="8.2299995"/>
+            <vertex id="2" x="16.599998" y="12.71"/>
+            <vertex id="3" x="12.355555" y="12.966667"/>
+            <vertex id="4" x="3.2631576" y="11.526316"/>
+            <vertex id="5" x="3.1199996" y="10.88"/>
+            <vertex id="6" x="3.6599996" y="9.3999996"/>
+            <vertex id="7" x="5.4699993" y="5.1099997"/>
+        </polygon>
+        <polygon id="10" num="5">
+            <vertex id="0" x="23.309998" y="11.52"/>
+            <vertex id="1" x="23.139997" y="12.09"/>
+            <vertex id="2" x="22.639997" y="12.73"/>
+            <vertex id="3" x="22.066666" y="12.833333"/>
+            <vertex id="4" x="20.977776" y="12.744444"/>
+        </polygon>
+        <polygon id="11" num="4">
+            <vertex id="0" x="24.519997" y="9.4299994"/>
+            <vertex id="1" x="24.333332" y="10.522223"/>
+            <vertex id="2" x="23.677776" y="11.066668"/>
+            <vertex id="3" x="17.51111" y="12.911112"/>
+        </polygon>
+        <polygon id="12" num="3">
+            <vertex id="0" x="6.9111104" y="13.277778"/>
+            <vertex id="1" x="4.7111106" y="13.244444"/>
+            <vertex id="2" x="3.2399998" y="12"/>
+        </polygon>
+        <polygon id="13" num="4">
+            <vertex id="0" x="4.7111106" y="13.244444"/>
+            <vertex id="1" x="3.5999997" y="13.42"/>
+            <vertex id="2" x="3.3999996" y="12.977778"/>
+            <vertex id="3" x="3.2399998" y="12"/>
+        </polygon>
+        <polygon id="14" num="4">
+            <vertex id="0" x="12.159999" y="13.13"/>
+            <vertex id="1" x="12.139998" y="14.13"/>
+            <vertex id="2" x="11.789999" y="14.12"/>
+            <vertex id="3" x="11.819999" y="13.24"/>
+        </polygon>
+        <polygon id="15" num="5">
+            <vertex id="0" x="40.049995" y="4.25"/>
+            <vertex id="1" x="39.999996" y="11.21"/>
+            <vertex id="2" x="36.311108" y="10.488889"/>
+            <vertex id="3" x="32.489994" y="8.3299999"/>
+            <vertex id="4" x="28.529997" y="4.52"/>
         </polygon>
     </platform>
-    <platform id="1" x="-942.93341" y="-550.40002" texture="platforms/platform1.png">
-        <polygon id="0">
-            <vertex id="0" x="124.2424" y="396.9697"/>
-            <vertex id="1" x="33" y="298"/>
-            <vertex id="2" x="0" y="0"/>
-            <vertex id="3" x="1898" y="1"/>
-            <vertex id="4" x="1670" y="445"/>
+    <platform id="1" aa_x="-614" aa_y="-772" bb_x="1306" bb_y="308" texture="platforms/platform2.png" num="4">
+        <polygon id="0" num="3">
+            <vertex id="0" x="18.889999" y="4.6999998"/>
+            <vertex id="1" x="14.67" y="5.1900001"/>
+            <vertex id="2" x="11.559999" y="5.1500001">
+                <object name="player" extra="652.511108 -308.170349 1187.184937 56.088196"/>
+            </vertex>
         </polygon>
-        <polygon id="1">
-            <vertex id="0" x="1788" y="430"/>
-            <vertex id="1" x="1670" y="445"/>
-            <vertex id="2" x="1898" y="1"/>
-            <vertex id="3" x="1903" y="278"/>
+        <polygon id="1" num="3">
+            <vertex id="0" x="18.889999" y="4.6999998"/>
+            <vertex id="1" x="17.555555" y="5.2962956"/>
+            <vertex id="2" x="14.67" y="5.1900001"/>
         </polygon>
-        <polygon id="2">
-            <vertex id="0" x="912" y="545"/>
-            <vertex id="1" x="797" y="452"/>
-            <vertex id="2" x="1670" y="445"/>
-            <vertex id="3" x="1533" y="524"/>
-            <vertex id="4" x="1234.2858" y="548.57141"/>
+        <polygon id="2" num="7">
+            <vertex id="0" x="19.029999" y="-0.039999999"/>
+            <vertex id="1" x="18.889999" y="4.6999998"/>
+            <vertex id="2" x="11.559999" y="5.1500001"/>
+            <vertex id="3" x="6.8888888" y="5.2592587">
+            </vertex>
+            <vertex id="4" x="3.185185" y="5.185185"/>
+            <vertex id="5" x="0.039999999" y="4.1799998"/>
+            <vertex id="6" x="0" y="0"/>
         </polygon>
-        <polygon id="3">
-            <vertex id="0" x="307" y="455"/>
-            <vertex id="1" x="230" y="403"/>
-            <vertex id="2" x="797" y="452"/>
-            <vertex id="3" x="500" y="477.14291"/>
-        </polygon>
-        <polygon id="4">
-            <vertex id="0" x="797" y="452"/>
-            <vertex id="1" x="230" y="403"/>
-            <vertex id="2" x="1670" y="445"/>
+        <polygon id="3" num="4">
+            <vertex id="0" x="3.185185" y="5.185185"/>
+            <vertex id="1" x="1.7407409" y="5.518518"/>
+            <vertex id="2" x="0.48148102" y="4.7777777"/>
+            <vertex id="3" x="0.039999999" y="4.1799998"/>
         </polygon>
     </platform>
 </world>
