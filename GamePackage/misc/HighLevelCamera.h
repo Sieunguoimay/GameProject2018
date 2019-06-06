@@ -1,8 +1,8 @@
 #pragma once
-#include"../../2D/Camera2D.h"
-#include"../../2D/FreeTypeLoader.h"
-#include"../../GameObjects/EntityHierachy/Entity.h"
-#include"../../Input/InputHandler.h"
+#include"../2D/Camera2D.h"
+#include"../2D/FreeTypeLoader.h"
+#include"../GameObjects/EntityHierachy/Entity.h"
+#include"../Input/InputHandler.h"
 
 class HighLevelCamera :public Command,public Entity, Camera2D{
 	Camera2D*m_pCamera;

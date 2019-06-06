@@ -7,7 +7,7 @@ public:
 	Animal(const glm::vec4&aabb);
 	~Animal();
 	void SetupBody(bool atRunTime = false)override;
-	void OnBeginContact(b2Contact*contact, b2Fixture*fixture)override;
+	//void OnBeginContact(b2Contact*contact, b2Fixture*fixture)override;
 	void Update(float deltaTime)override;
 
 	Spawner*Spawn(InfoPacket*info)override;

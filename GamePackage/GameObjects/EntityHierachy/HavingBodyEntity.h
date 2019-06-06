@@ -5,13 +5,13 @@
 #include"../PhysicsEngine/BodyDragAndDrop.h"
 //Don't inherit this class (though doing so is harmless)
 //Inherit the 2 children of it.
-class HavingBodyEntity :public AABBEntity,public BodyProtocol,public BodyDragAndDrop{
+class HavingBodyEntity :public AABBEntity/*,public BodyProtocol*//*,public BodyDragAndDrop*/{
 protected:
 	//one object can have different skin, while body and brain define the object
-	Skin*m_skinBase;
 	b2Body*m_body;
+	BodyDragAndDrop m_bodyDragAndDrop;
 
-	HavingBodyEntity(Skin*skin, ObjectType type);
+	HavingBodyEntity(/*ObjectType type*/);
 
 public:
 	virtual ~HavingBodyEntity();
@@ -24,13 +24,6 @@ public:
 	void OnSelect(const glm::vec4&AABB)override;
 	void OnRelease(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;
-
-	//update is a must.
-	virtual void Update(float deltaTime)override;
-	//no need to implement this.
-	void Draw()override;
-
-	inline b2Body*GetBody() { return m_body; }
 };
 
 
@@ -46,11 +39,12 @@ protected:
 	//no deleting.
 	AnimationSkin*m_skin;
 public:
-	AnimationBodyEntity(AnimationSkin*skin, ObjectType type,glm::vec4 AABB);
+	AnimationBodyEntity(AnimationSkin*skin/*, ObjectType type*/,glm::vec4 AABB);
 	virtual ~AnimationBodyEntity();
 
 	//animation skin requires updating
 	virtual void Update(float deltaTime)override;
+	virtual void Draw()override;
 	inline const glm::vec4& CalculateAABB() override { return m_skin->GetAABB(); };
 	//optional from the higher level
 	void OnSelect(const glm::vec4&AABB)override;
@@ -70,10 +64,11 @@ protected:
 	//no deleting.
 	NoAnimationSkin*m_skin;
 public:
-	NoAnimationBodyEntity(NoAnimationSkin*skin, ObjectType,glm::vec4 AABB);
+	NoAnimationBodyEntity(NoAnimationSkin*skin/*, ObjectType*/,glm::vec4 AABB);
 	virtual ~NoAnimationBodyEntity();
 	const glm::vec4& CalculateAABB() override { return m_skin->GetAABB(); }
-
+	virtual void Update(float deltaTime)override;
+	virtual void Draw()override;
 	//optional from the higher level
 	void OnSelect(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;

@@ -1,19 +1,20 @@
 #pragma once
 #include"../../GameObjects/EntityHierachy/Entity.h"
 #include"../../Input/InputEvent.h"
-#include"VertexObject.h"
-
+#include"../../GameObjects/World/World.h"
 class Picker {
 	friend class Editor;
 	AABBEntity*m_pPickedEntity = NULL;
 	int m_zoomFlag = 0;
 
 	bool m_attachFlag = false;
-	std::map<AABBEntity*, VertexObject*>m_attachedEntityMap;
-	void attach(AABBEntity*e, VertexObject*v);
+	//std::map<AABBEntity*, VertexObject*>m_attachedEntityMap;
+	//void attach(AABBEntity*e, VertexObject*v);
 	AABBEntity*m_pObjectA;
 	AABBEntity*m_pObjectB;
+	World*m_pWorld;
 public:
+	Picker(World*pWorld) :m_pWorld(pWorld),m_pObjectA(NULL),m_pObjectB(NULL){}
 	void Process(AABBEntity*entity,MouseEvent&inputEvent);
 	inline AABBEntity*GetAABBEntity() { return m_pPickedEntity; }
 	inline void SetZoomFlag(int f) { m_zoomFlag = f; }

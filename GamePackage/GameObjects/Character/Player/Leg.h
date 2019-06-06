@@ -1,6 +1,6 @@
 #pragma once
 #include"Box2D\Box2D.h"
-#include"../../misc/StateMachine/StateMachine.h"
+#include"../../../misc/StateMachine/StateMachine.h"
 class Leg 
 	:public b2QueryCallback
 	,public b2RayCastCallback {

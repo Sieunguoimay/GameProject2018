@@ -29,29 +29,25 @@ void AnimationSkin::Draw()
 //this function represents the  problem of born 
 void AnimationSkin::SetAABB(const glm::vec4&AABB)
 {
-	//m_AABBBuffer = AABB;
-	//m_scale.x = (AABB.z - AABB.x) / (m_originalAABB.z - m_originalAABB.x);
-	//m_scale.y = (AABB.w - AABB.y) / (m_originalAABB.w - m_originalAABB.y);
+	m_AABBBuffer = AABB;
+	m_scale.x = (AABB.z - AABB.x) / (m_originalAABB.z - m_originalAABB.x);
+	m_scale.y = (AABB.w - AABB.y) / (m_originalAABB.w - m_originalAABB.y);
 
-	//m_pos = glm::vec2(AABB.x, AABB.y) + m_originalCenter*m_scale;
+	m_pos = glm::vec2(AABB.x, AABB.y) + m_originalCenter*m_scale;
 }
 
-void AnimationSkin::SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time)
-{
-	m_spriterEntity->GetSclmEntity()->animationSwitchingTime
-		.at(m_spriterEntity->GetAnimationIndex(animationA))
-		.at(m_spriterEntity->GetAnimationIndex(animationB)) = time;
-}
+
 
 void AnimationSkin::Update(float deltaTime)
 {
-	m_spriterEntity->Update(deltaTime);
 	glm::vec2 p = m_pos-m_originalCenter*m_scale;
 	glm::vec2 d = glm::vec2(m_AABBBuffer.z - m_AABBBuffer.x, m_AABBBuffer.w - m_AABBBuffer.y);
 	m_AABBBuffer.x = p.x;
 	m_AABBBuffer.y = p.y;
 	m_AABBBuffer.z = p.x+d.x;
 	m_AABBBuffer.w = p.y+d.y;
+
+	m_spriterEntity->Update(deltaTime);
 }
 
 

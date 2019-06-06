@@ -3,12 +3,12 @@
 #include"../../misc/Locator.h"
 #include"../ObjectPool.h"
 Platform::Platform()
-	: NoAnimationBodyEntity(NULL, ObjectType::NULL_TYPE, glm::vec4())
+	: NoAnimationBodyEntity(NULL,/* ObjectType::NULL_TYPE,*/ glm::vec4())
 	,InfoPacket(ObjectId::OID_PLATFORM, NULL)
 {
 }
 Platform::Platform(Texture*pTexture, const glm::vec4& AABB)
-	:NoAnimationBodyEntity(new NoAnimationSkin(pTexture),ObjectType::NULL_TYPE,AABB)
+	:NoAnimationBodyEntity(new NoAnimationSkin(pTexture),/*ObjectType::NULL_TYPE,*/AABB)
 	,InfoPacket(ObjectId::OID_PLATFORM,NULL)
 	, m_scaleBuffer(1.0f,1.0f)
 {
@@ -32,8 +32,8 @@ void Platform::Update(float deltaTime)
 	if (AABBEntity::IsSelected())return;
 
 	b2Vec2 pos = M2P*m_body->GetPosition();
-	m_skinBase->SetPos(glm::vec2(pos.x, pos.y)+m_skin->GetSize()/2.0f);
-	m_skinBase->SetAngle(m_body->GetAngle());
+	m_skin->SetPos(glm::vec2(pos.x, pos.y)+m_skin->GetSize()/2.0f);
+	m_skin->SetAngle(m_body->GetAngle());
 }
 
 //infrastructure is ready for creating physics body for platform

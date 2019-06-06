@@ -1,7 +1,7 @@
 #include "Leg.h"
-#include"../../misc/Locator.h"
-#include"../../misc/Assistances.h"
-#include"../../misc/Math/Geometry.h"
+#include"../../../misc/Locator.h"
+#include"../../../misc/Assistances.h"
+#include"../../../misc/Math/Geometry.h"
 Leg::Leg(){}
 Leg::~Leg(){}
 

@@ -1,6 +1,8 @@
 #include "VertexObject.h"
-#include"../Assistances.h"
-#include"../Locator.h"
+#include"../../misc/Assistances.h"
+#include"../../misc/Locator.h"
+#include"Platform.h"
+
 VertexObject::VertexObject():m_pPlatform(NULL){}
 
 VertexObject::VertexObject(Platform * platform, const glm::ivec2& vertexIndex /*= glm::ivec2(0, 0)*/)

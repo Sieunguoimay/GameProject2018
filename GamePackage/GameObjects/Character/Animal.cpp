@@ -8,7 +8,7 @@ Animal::Animal(const glm::vec2& pos)
 Animal::Animal(const glm::vec4 & aabb)
 	:AnimationBodyEntity(new AnimationSkin(
 		Locator::GetAssets()->SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f),
-		ObjectType::NULL_TYPE, aabb)
+		/*ObjectType::NULL_TYPE,*/ aabb)
 {
 	m_skin->SetAnimation(m_skin->GetSpriterEntity()->GetAnimationIndex("run"));
 }
@@ -38,10 +38,10 @@ void Animal::SetupBody(bool atRunTime /*= false*/)
 }
 
 
-
-void Animal::OnBeginContact(b2Contact * contact, b2Fixture * fixture)
-{
-}
+//
+//void Animal::OnBeginContact(b2Contact * contact, b2Fixture * fixture)
+//{
+//}
 
 void Animal::Update(float deltaTime)
 {
@@ -81,7 +81,7 @@ Rock::Rock()
 	:NoAnimationBodyEntity(
 		new NoAnimationSkin(
 			Locator::GetAssets()->GetTexture("tree/deep/controller_button.png"))
-		,ObjectType::NULL_TYPE,
+		,/*ObjectType::NULL_TYPE,*/
 		glm::vec4(100,100,100,100))
 {
 }

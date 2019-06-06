@@ -1,10 +1,45 @@
 #include "World.h"
 #include"../../misc/Locator.h"
 #include"../../misc/Editor/Editor.h"
+#include"../../misc/GameDataLoader.h"
+
+void World::Attach(AABBEntity * e, VertexObject * v)
+{
+	auto&pos = m_attachedEntityMap.find(e);
+	if (pos != m_attachedEntityMap.end()) {
+		pos->second->Dettach(e);
+		m_attachedEntityMap[e] = v;
+	}
+	else
+		m_attachedEntityMap.insert(std::pair<AABBEntity*, VertexObject*>(e, v));
+
+	v->Attach(e);
+}
+void World::AddVertexObject(int i, int j, Platform * platform)
+{
+	VertexObjectData data;
+	data.m_vertexIndex.x = i;
+	data.m_vertexIndex.y = j;
+	data.m_pPlatform = platform;
+
+	VertexObject*a = (VertexObject*)m_pObjectPool->CreateNewObject(new InfoPacket(ObjectId::OID_VERTEX_OBJECT, (void*)&data));
+
+	m_verexObjects.push_back(a);
+}
+
+VertexObject * World::GetVertexObject(int i)
+{
+	if (i >= m_verexObjects.size())
+		return NULL;
+	return m_verexObjects[i];
+}
+
+
 
 
 void World::Init()
 {
+	GameLoader::LoadGameWorldFromXml("Resources/GameData/game_world_data.xml", this, m_pObjectPool);
 	SDL_Log("Game World Initialized.");
 }
 

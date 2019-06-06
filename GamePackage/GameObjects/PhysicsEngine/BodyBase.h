@@ -8,7 +8,8 @@
 enum ObjectType{
 	UNDEFINED,
 	GROUND,
-	OID_PLAYER
+	OID_PLAYER,
+	OID_TOUCH_POINT,
 };
 
 class BodyBase {

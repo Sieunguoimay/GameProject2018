@@ -1,6 +1,6 @@
 #include "TerrestrialBody.h"
-#include"../../misc/Assistances.h"
-#include"../../misc/Locator.h"
+#include"../../../misc/Assistances.h"
+#include"../../../misc/Locator.h"
 
 void TerrestrialBody::SetupBody(glm::vec2 pos,glm::vec2 dimension, b2Body*&body)
 {
@@ -15,6 +15,7 @@ void TerrestrialBody::SetupBody(glm::vec2 pos,glm::vec2 dimension, b2Body*&body)
 	body->CreateFixture(&Locator::GetPhysicsFactory()->GetFixture(MEAT));
 
 	//sensor shape
+
 	//cs.m_radius = (dimension.x+10.0f) / M2P;
 	//cs.m_p.Set(0.0f, 0.0f);
 	//m_body->CreateFixture(&Locator::GetPhysicsFactory()->GetFixture(SENSOR,&cs));
@@ -23,13 +24,17 @@ void TerrestrialBody::SetupBody(glm::vec2 pos,glm::vec2 dimension, b2Body*&body)
 	body->SetUserData(this);
 	m_pBody = body;
 
+
+	//m_leg.Init(body);
+
 	SDL_Log("Player's Mass: %f", body->GetMass());
+
 }
 
 TerrestrialBody::TerrestrialBody()
 	:m_onGround(false)
-	, m_jumpSpeed(5.0f)
-	, m_runSpeed(3.0f)
+	, m_jumpSpeed(3.50f)
+	, m_runSpeed(2.0f)
 	,m_pBody(NULL)
 {
 }
@@ -41,6 +46,34 @@ TerrestrialBody::~TerrestrialBody()
 
 void TerrestrialBody::Update(float deltaTime)
 {
+	//work with normal Ground angle
+	if (m_newGroundNormal) {
+		//calculate pelvis angle -> costly
+		m_normalAngle = glm::degrees(b2Atan2(m_groundNormal.y, m_groundNormal.x));
+		if (m_normalAngle< 0)m_normalAngle += 360.0f;
+		else if (m_normalAngle >= 360.0f)m_normalAngle -= 360.0f;
+		m_newGroundNormal = false;
+	}
+
+	//ray cast
+	b2Vec2 p1 = m_pBody->GetPosition();
+	b2Vec2 p2 = p1 + b2Vec2(0.0, -2.0f);
+	m_minRayCastFraction = 1.0f;//initial
+	Locator::GetPhysicsFactory()->GetB2World()->RayCast(this, p1, p2);
+
+
+
+	//AABB Query
+	m_pTouchPoint = NULL;
+	b2AABB aabb;
+	aabb.lowerBound = m_pBody->GetPosition() - b2Vec2(1.0f, 1.0f);
+	aabb.upperBound = m_pBody->GetPosition() + b2Vec2(1.0f, 1.0f);
+	Locator::GetPhysicsFactory()->GetB2World()->QueryAABB(this, aabb);
+	Locator::GetPrimitiveRenderer()->DrawBox(glm::vec4(
+		aabb.lowerBound.x*M2P, aabb.lowerBound.y*M2P,
+		(aabb.upperBound.x - aabb.lowerBound.x)*M2P,
+		(aabb.upperBound.y - aabb.lowerBound.y)*M2P), 0);
+
 	//reset
 	//if (m_pBody->GetPosition().y < -500.0f/M2P) {
 	//	Locator::GetPhysicsFactory()->GetB2World()->DestroyBody(m_pBody);
@@ -86,15 +119,43 @@ void TerrestrialBody::Update(float deltaTime)
 
 	//debug draw
 
-	m_leg.Update(deltaTime);
+	//m_leg.Update(deltaTime);
+}
+float32 TerrestrialBody::ReportFixture(b2Fixture * fixture, const b2Vec2 & point, const b2Vec2 & normal, float32 fraction)
+{
+	for (b2Fixture*a = m_pBody->GetFixtureList(); a; a = a->GetNext())
+		if (fixture == a)
+			return -1;
+
+	if (fraction < m_minRayCastFraction) {//this is ground fixture
+		m_minRayCastFraction = fraction;
+		if (m_groundNormal != normal) {
+			m_groundNormal = normal;
+			m_newGroundNormal = true;
+		}
+	}
+
+	return fraction;
 }
 
-void TerrestrialBody::HandleBeginContact(b2Contact * contact, b2Fixture*fixture)
+//Handle AABB Query 
+bool TerrestrialBody::ReportFixture(b2Fixture * fixture)
 {
-	//contact->GetWorldManifold(&m_manifold);
-	//if (((BodyBase*)fixture->GetBody()->GetUserData())->GetSpecifier() == BodySpecifier::GROUND)
-	//	m_groundFixture = fixture;
+	//for (b2Fixture*a = m_pBody->GetFixtureList(); a; a = a->GetNext()) 
+	//	if (fixture == a)
+	//		return true;
+	BodyBase*body = ((BodyBase*)(fixture->GetBody()->GetUserData()));
+	if (body == this) return true;
 
+	if (body->GetSpecifier() == ObjectType::OID_TOUCH_POINT) {
+		m_pTouchPoint = ((TouchPoint*)body);
+		b2AABB aabb = fixture->GetAABB(0);
+		Locator::GetPrimitiveRenderer()->DrawBox(glm::vec4(
+			aabb.lowerBound.x*M2P, aabb.lowerBound.y*M2P,
+			(aabb.upperBound.x - aabb.lowerBound.x)*M2P,
+			(aabb.upperBound.y - aabb.lowerBound.y)*M2P), 0);
+	}
+	return true;
 }
 
 
@@ -130,9 +191,3 @@ void TerrestrialBody::JumpAndRun(bool left_right)
 	m_pBody->SetLinearVelocity(vel);
 
 }
-
-bool TerrestrialBody::IsOnGround()
-{
-	return m_onGround;
-}
-

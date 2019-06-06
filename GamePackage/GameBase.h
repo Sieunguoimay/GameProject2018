@@ -22,6 +22,7 @@
 #define DEFAULT_FPS 40.0f
 class GameBase
 {
+protected:
 	enum ToolType {
 		OBJECT_POOL,
 		WORLD,
@@ -32,7 +33,7 @@ class GameBase
 		INPUT_HANDLER,
 		TOOL_NUM
 	};
-protected:
+
 	Entity*m_tools[TOOL_NUM] = {0};
 	List<AABBEntity*>m_entities;
 
@@ -54,11 +55,11 @@ protected:
 public:
 	GameBase();
 	virtual ~GameBase();
-	virtual void InitGameObjects();
+	virtual void InitGameObjects()=0;
 
 	virtual int Init(int width, int height);
 	virtual void HandleEvent(const InputEventPackage&inputEvent);
-	virtual void Update();
+	virtual void Update()=0;
 	virtual void Draw();
 	virtual void CleanUp();
 	bool Done() { return m_done; }
@@ -66,17 +67,3 @@ public:
 };
 
 
-
-
-
-class SmallTester : public GameBase {
-protected:
-public:
-	SmallTester();
-	void InitGameObjects()override;
-
-	virtual int Init(int width, int height);
-	virtual void Update();
-	virtual void Draw();
-	virtual void CleanUp();
-};

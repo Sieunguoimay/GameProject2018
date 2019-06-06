@@ -1,6 +1,6 @@
 #include "HighLevelCamera.h"
-#include"../Locator.h"
-#include"../Assistances.h"
+#include"Locator.h"
+#include"Assistances.h"
 HighLevelCamera::HighLevelCamera(Camera2D*pCamera,FreeTypeLoader * pFreeTypeLoader)
 	:m_pFreeTypeLoader(pFreeTypeLoader) 
 	,m_pCamera(pCamera){}

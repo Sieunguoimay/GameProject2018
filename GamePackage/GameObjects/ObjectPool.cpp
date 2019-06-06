@@ -1,7 +1,8 @@
 #include "ObjectPool.h"
 #include"Character\Animal.h"
-#include"../misc/Editor/VertexObject.h"
-#include"Character\CharacterBrain.h"
+#include"Character/Player/Player.h"
+#include"../GameObjects/World/Platform.h"
+#include"../GameObjects/World/VertexObject.h"
 ObjectPool::ObjectPool(List<AABBEntity*>* pContainer)
 	:m_pContainer(pContainer)
 {

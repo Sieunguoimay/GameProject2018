@@ -29,6 +29,7 @@ public:
 		HT_CTRL_D,
 		HT_SHIFT,
 		HT_SHIFT_D,
+		HT_SPACE,
 		HANDLE_TYPE_NUM
 	};
 	virtual ~InputHandler();

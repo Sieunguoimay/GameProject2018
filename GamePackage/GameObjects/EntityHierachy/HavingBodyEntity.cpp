@@ -2,29 +2,29 @@
 #include"../../misc/Locator.h"
 #include"../../misc/Assistances.h"
 
-HavingBodyEntity::HavingBodyEntity(Skin * skin, ObjectType type)
-	:BodyProtocol(type)
-	, BodyDragAndDrop(Locator::GetPhysicsFactory()->GetB2World())
-	,m_skinBase(skin), m_body(NULL)
+HavingBodyEntity::HavingBodyEntity(/* ObjectType type*/)
+	:/*BodyProtocol(type)
+	, */m_bodyDragAndDrop(Locator::GetPhysicsFactory()->GetB2World())
+	, m_body(NULL)
 {
 }
 
 HavingBodyEntity::~HavingBodyEntity()
 {
-	if(m_body) Locator::GetPhysicsFactory()->GetB2World()->DestroyBody(m_body);
-	if(m_skinBase) delete m_skinBase;
 }
 
 void HavingBodyEntity::OnSelect(const glm::vec4 & AABB)
 {
+	if (m_body == NULL)return;
 	if(m_body->GetType()!=b2_staticBody)
-		DragStart(m_body, b2Vec2((AABB.x + AABB.z) / (2.0f*M2P), (AABB.y + AABB.w) / (2.0f*M2P)));
+		m_bodyDragAndDrop.DragStart(m_body, b2Vec2((AABB.x + AABB.z) / (2.0f*M2P), (AABB.y + AABB.w) / (2.0f*M2P)));
 }
 
 void HavingBodyEntity::OnRelease(const glm::vec4 & AABB)
 {
+	if (m_body == NULL)return;
 	if (m_body->GetType() != b2_staticBody) 
-		Drop();
+		m_bodyDragAndDrop.Drop();
 
 	else{//in case of static body
 		Locator::GetPhysicsFactory()->GetB2World()->DestroyBody(m_body);
@@ -34,43 +34,17 @@ void HavingBodyEntity::OnRelease(const glm::vec4 & AABB)
 
 void HavingBodyEntity::ApplyAABB(const glm::vec4 & AABB)
 {
+	if (m_body == NULL)return;
 	if (m_body->GetType() != b2_staticBody)
-		SetTarget(b2Vec2((AABB.x + AABB.z) / (2.0f*M2P), (AABB.y + AABB.w) / (2.0f*M2P)));
-}
-
-void HavingBodyEntity::Update(float deltaTime)
-{
-	//super
-	AABBEntity::Update(deltaTime);
-	if (AABBEntity::IsSelected())return;
-
-	b2Vec2 pos = M2P*m_body->GetPosition();
-	m_skinBase->SetPos(glm::vec2(pos.x, pos.y));
-	m_skinBase->SetAngle(m_body->GetAngle());
-
-}
-
-void HavingBodyEntity::Draw()
-{
-	//super
-	AABBEntity::Draw();
-
-	m_skinBase->Draw();
+		m_bodyDragAndDrop.SetTarget(b2Vec2((AABB.x + AABB.z) / (2.0f*M2P), (AABB.y + AABB.w) / (2.0f*M2P)));
 }
 
 
 
-
-
-
-
-
-AnimationBodyEntity::AnimationBodyEntity(AnimationSkin * skin, ObjectType type, glm::vec4 AABB)
-	:HavingBodyEntity(skin,type)
+AnimationBodyEntity::AnimationBodyEntity(AnimationSkin * skin, /*ObjectType type,*/ glm::vec4 AABB)
+	:/*HavingBodyEntity(type),*/m_skin(skin)
 {
-	if (m_skinBase == NULL) return;
-
-	m_skin = (AnimationSkin*)m_skinBase;
+	if (m_skin== NULL) return;
 
 	if (AABB.z <= AABB.x) {
 		const glm::vec4&aabb = m_skin->GetAABB();
@@ -83,15 +57,26 @@ AnimationBodyEntity::AnimationBodyEntity(AnimationSkin * skin, ObjectType type, 
 
 AnimationBodyEntity::~AnimationBodyEntity()
 {
+	if(m_skin) delete m_skin;
 }
 
 void AnimationBodyEntity::Update(float deltaTime)
 {
 	//super
-	HavingBodyEntity::Update(deltaTime);
+	AABBEntity::Update(deltaTime);
 	if (AABBEntity::IsSelected())return;
 
+	b2Vec2 pos = M2P*m_body->GetPosition();
+	m_skin->SetPos(glm::vec2(pos.x, pos.y));
+	m_skin->SetAngle(m_body->GetAngle());
+
 	m_skin->Update(deltaTime);
+}
+
+void AnimationBodyEntity::Draw()
+{
+	AABBEntity::Draw();
+	m_skin->Draw();
 }
 
 void AnimationBodyEntity::OnSelect(const glm::vec4 & AABB)
@@ -116,12 +101,12 @@ void AnimationBodyEntity::ApplyAABB(const glm::vec4 & AABB)
 
 
 
-NoAnimationBodyEntity::NoAnimationBodyEntity(NoAnimationSkin * skin, ObjectType type, glm::vec4 AABB)
-	:HavingBodyEntity(skin, type)
+NoAnimationBodyEntity::NoAnimationBodyEntity(NoAnimationSkin * skin, /*ObjectType type, */glm::vec4 AABB)
+	:/*HavingBodyEntity(type),*/m_skin(skin)
 {
-	if (m_skinBase == NULL) return;
+	if (m_skin == NULL) return;
 
-	m_skin = (NoAnimationSkin*)m_skinBase;
+	//m_skin = (NoAnimationSkin*)m_skinBase;
 
 	if (AABB.z <= AABB.x) {
 		AABB.z = m_skin->GetSize().x + AABB.x;
@@ -138,6 +123,22 @@ NoAnimationBodyEntity::NoAnimationBodyEntity(NoAnimationSkin * skin, ObjectType 
 
 NoAnimationBodyEntity::~NoAnimationBodyEntity()
 {
+	if (m_skin) delete m_skin;
+}
+
+void NoAnimationBodyEntity::Update(float deltaTime)
+{
+	AABBEntity::Update(deltaTime);
+	if (AABBEntity::IsSelected())return;
+	b2Vec2 pos = M2P*m_body->GetPosition();
+	m_skin->SetPos(glm::vec2(pos.x, pos.y));
+	m_skin->SetAngle(m_body->GetAngle());
+}
+
+void NoAnimationBodyEntity::Draw()
+{
+	AABBEntity::Draw();
+	m_skin->Draw();
 }
 
 void NoAnimationBodyEntity::OnSelect(const glm::vec4 & AABB)

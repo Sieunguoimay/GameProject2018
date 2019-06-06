@@ -8,7 +8,8 @@
 class BodyProtocol {
 public:
 	enum ObjectType {
-		NULL_TYPE
+		NULL_TYPE,
+		PLAYER,
 	};
 	
 	BodyProtocol(ObjectType type):m_objectType(type){}

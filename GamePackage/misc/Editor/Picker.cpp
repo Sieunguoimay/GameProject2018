@@ -1,16 +1,16 @@
 #include "Picker.h"
 #include"../../GameObjects/ObjectPool.h"
-void Picker::attach(AABBEntity * e, VertexObject * v)
-{
-	auto&pos = m_attachedEntityMap.find(e);
-	if (pos != m_attachedEntityMap.end()) {
-		pos->second->Dettach(e);
-		m_attachedEntityMap[e]= v;
-	}else
-		m_attachedEntityMap.insert(std::pair<AABBEntity*, VertexObject*>(e, v));
-
-	v->Attach(e);
-}
+//void Picker::attach(AABBEntity * e, VertexObject * v)
+//{
+//	auto&pos = m_attachedEntityMap.find(e);
+//	if (pos != m_attachedEntityMap.end()) {
+//		pos->second->Dettach(e);
+//		m_attachedEntityMap[e]= v;
+//	}else
+//		m_attachedEntityMap.insert(std::pair<AABBEntity*, VertexObject*>(e, v));
+//
+//	v->Attach(e);
+//}
 
 void Picker::Process(AABBEntity * entity, MouseEvent & inputEvent)
 {
@@ -83,7 +83,7 @@ void Picker::Process(AABBEntity * entity, MouseEvent & inputEvent)
 
 	if(m_pObjectA!=NULL&&m_pObjectB!=NULL){
 		
-		attach(m_pObjectA, ((VertexObject*)m_pObjectB));
+		m_pWorld->Attach(m_pObjectA, ((VertexObject*)m_pObjectB));
 		m_pObjectA = NULL;
 		m_pObjectB = NULL;
 		SDL_Log("DONE");

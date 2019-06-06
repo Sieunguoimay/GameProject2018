@@ -4,7 +4,7 @@ PhysicsFactory::~PhysicsFactory(){}
 
 void PhysicsFactory::Init()
 {
-	m_world = new b2World(b2Vec2(0.0f, -15.0f));
+	m_world = new b2World(b2Vec2(0.0f, -10.0f));
 	m_world->SetContactListener(&m_contactListener);
 	createFixtureList();
 }

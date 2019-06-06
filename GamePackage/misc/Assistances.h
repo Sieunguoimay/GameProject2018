@@ -11,6 +11,9 @@
 #define GAME_HEIGHT 1080
 #define M2P 100.0f
 #define DEBUG_MODE true
+
+inline static glm::vec2 b2ToGlm(const b2Vec2&v) { return glm::vec2(v.x, v.y); }
+
 extern void logError(const std::string&error);
 extern float getAngle(float x, float y);
 extern const glm::vec2&rotateVec2(const glm::vec2&, float);

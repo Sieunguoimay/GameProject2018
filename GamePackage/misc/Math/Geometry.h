@@ -23,3 +23,10 @@ public:
 			BezierCurve3(p2, p3,p4, variance), variance);
 	}
 };
+
+extern float _linear(float a, float b, float t);
+extern float angle_linear(float angleA, float angleB, int spin, float t);
+extern float quadratic(float a, float b, float c, float t);
+extern float cubic(float a, float b, float c, float d, float t);
+extern float quartic(float a, float b, float c, float d, float e, float t);
+extern float quintic(float a, float b, float c, float d, float e, float f, float t);

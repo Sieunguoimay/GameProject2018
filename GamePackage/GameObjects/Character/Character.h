@@ -18,31 +18,31 @@
 //that data to the draw function...
 
 
-class Brain {
+//class Brain {
+//
+//public:
+//	Brain(BodyBase*bodyBase, AnimationSkin*skin):m_pBodyBase(bodyBase),m_pSkin(skin){}
+//	inline virtual ~Brain(){}
+//	virtual void Update(float deltaTime) = 0;
+//	inline AnimationSkin*GetSkin() { return m_pSkin; }
+//	inline BodyBase*GetBodyBase() { return m_pBodyBase; }
+//protected:	
+//	AnimationSkin*m_pSkin;
+//	BodyBase*m_pBodyBase;
+//};
+//
 
-public:
-	Brain(BodyBase*bodyBase, AnimationSkin*skin):m_pBodyBase(bodyBase),m_pSkin(skin){}
-	inline virtual ~Brain(){}
-	virtual void Update(float deltaTime) = 0;
-	inline AnimationSkin*GetSkin() { return m_pSkin; }
-	inline BodyBase*GetBodyBase() { return m_pBodyBase; }
-protected:	
-	AnimationSkin*m_pSkin;
-	BodyBase*m_pBodyBase;
-};
 
 
-
-
-class Character :public AnimationBodyEntity {
-protected:
-	Brain*m_brain;			//take in the bodyBase for controlling and Skin for animation change	
-	BodyBase*m_bodyBase;	//take in the b2Body* of this entity
-public:
-	Character(AnimationSkin*animationSkin,const glm::vec4&AABB);
-	virtual ~Character();
-	virtual void Update(float deltaTime);
-
-	inline void AttachBrain(Brain*brain) { m_brain = brain; }
-	inline void AttachBodyBase(BodyBase*bodyBase) { m_bodyBase = bodyBase; }
-};
+//class Character :public AnimationBodyEntity {
+//protected:
+//	//Brain*m_brain;			//take in the bodyBase for controlling and Skin for animation change	
+//	BodyBase*m_bodyBase;	//take in the b2Body* of this entity
+//public:
+//	Character(AnimationSkin*animationSkin = NULL,const glm::vec4&AABB=glm::vec4());
+//	virtual ~Character();
+//	virtual void Update(float deltaTime);
+//
+//	//inline void AttachBrain(Brain*brain) { m_brain = brain; }
+//	inline void AttachBodyBase(BodyBase*bodyBase) { m_bodyBase = bodyBase; }
+//};

@@ -22,3 +22,29 @@ void Geometry::Intersection(const b2Vec2 & c_p, const float & c_r, const b2Vec2 
 	output->p2.y = c_p.y + (-D*d.x + b2Abs(d.y)*b2Sqrt(delta)) / (dr*dr);
 }
 
+float _linear(float a, float b, float t)
+{
+	return ((b - a)*t) + a;
+}
+
+float quadratic(float a, float b, float c, float t)
+{
+	return _linear(_linear(a, b, t), _linear(b, c, t), t);
+}
+float cubic(float a, float b, float c, float d, float t)
+{
+	return _linear(quadratic(a, b, c, t), quadratic(b, c, d, t), t);
+}
+
+
+float quartic(float a, float b, float c, float d, float e, float t)
+{
+	return _linear(cubic(a, b, c, d, t), cubic(b, c, d, e, t), t);
+}
+
+float quintic(float a, float b, float c, float d, float e, float f, float t)
+{
+	return _linear(quartic(a, b, c, d, e, t), quartic(b, c, d, e, f, t), t);
+}
+
+

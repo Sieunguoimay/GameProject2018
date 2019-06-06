@@ -9,7 +9,6 @@
 #include"SDL2\SDL_ttf.h"
 
 #include"misc/Assistances.h"
-#include"misc\Locator.h"
 #include"AssetsManager.h"
 #include"2D\TextureRenderer.h"
 #include"2D\TextConsole.h"
@@ -17,10 +16,7 @@
 #include"GameObjects\SpriterEntity.h"
 
 #include"GameObjects/Character/Character.h"
-#include"GameObjects/Character/CharacterBrain.h"
-#include"GameObjects/Character/TerrestrialBody.h"
 #include"GameObjects/Character/Animal.h"
-#include"GameObjects/Character/PlayerControl.h"
 #include"GameObjects/ObjectPool.h"
 
 #include"GameObjects/PhysicsEngine/PhysicsFactory.h"
@@ -54,7 +50,7 @@ GameBase::~GameBase()
 
 int GameBase::Init(int width, int height)
 {
-	m_windowSize.Init(width, height, 2400, 1348);
+	m_windowSize.Init(width, height, 1920, 1080);
 	m_camera2D.Init(m_windowSize.GetGameSize(), m_windowSize.GetWindowSize());
 	m_timer.Init(50);
 	setupOpenGL(width, height);
@@ -110,80 +106,18 @@ std::uniform_real_distribution<float> dimension(50.0f, 200.0f);
 */
 
 
-void GameBase::InitGameObjects()
-{
-	ObjectPool*objectPool = new ObjectPool(&m_entities);
-	World*gameWorld = new World(objectPool);
-
-	Editor*editor = new Editor(gameWorld, objectPool);
-	HighLevelCamera*camera = new HighLevelCamera(&m_camera2D, Locator::GetTextConsole()->GetFreeTypeLoader());;
-	//InputHandler*inputHandler = new EditorPurposeHandler(editor, camera);
-	InputHandler*inputHandler = new PlayerControl(objectPool);
-
-
-	m_tools[OBJECT_POOL] = objectPool;
-	m_tools[EDITOR] = editor;
-	m_tools[INPUT_HANDLER] = inputHandler;
-	m_tools[WORLD] = gameWorld;
-	m_tools[CAMERA_DRAG] = camera;
-	m_tools[MOUSE_CURSOR] = new MouseCursor();
-
-
-	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Init();
-	//Editor::LoadGameWorldFromXml("Resources/GameData/game_world_data.xml", gameWorld, objectPool, NULL);
-	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next) it->data->Init();
-
-
-
-	Editor::SortEntitiesBySize(m_entities);//sort if you want to pick them up
-
-
-
-	//for the purpose of editing
-	//Locator::GetTextureRenderer()->Disable();
-	Locator::GetPrimitiveRenderer()->Disable();
-	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
-	m_physicsFactory.SetRenderer(&m_box2DRenderer);
-	SpriteTimelineKey::s_drawAABBTrigger = false;
-	AABBEntity::s_drawAABBTrigger = true;
-
-
-	Locator::GetTextureRenderer()->CleanBuffer();//some entities init requiring calls of draw() function
-	SDL_Log("Game Initialized");
-}
+//here the old InitGameObject()
 
 void GameBase::HandleEvent(const InputEventPackage & inputEvent)
 {
-	m_inputEvent.ProcessInputEvent(inputEvent, 
+	m_inputEvent.ProcessInputEvent(inputEvent,
 		m_windowSize.GetMatrixScreenToCamera(),
 		m_camera2D.GetPosition());
 
 	//INPUTEVENT::BEGIN: range of input event Usage
 }
 
-void GameBase::Update()
-{
-	m_timer.Start();
-	//TIMER::BEGIN: timer start to count
-	float deltaTime = m_timer.GetDeltaTime();
-	m_physicsFactory.Update(deltaTime);
-
-	for (int i = 0; i < TOOL_NUM; i++) if(m_tools[i]) m_tools[i]->Update(deltaTime);
-	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next){
-		it->data->Update(deltaTime);
-
-		if(m_tools[EDITOR])((Editor*)m_tools[EDITOR])->GetPicker().Process(it->data,m_inputEvent.GetLeftMouse());
-
-		if (it->data->HasDone()) {
-			delete it->data;
-			it=m_entities.erase(it);
-		}
-	}
-
-	m_camera2D.Update(deltaTime);
-	//INPUTEVENT::END: range of input event Usage
-	m_inputEvent.ClearEvent();
-}
+//here the old Update()
 
 void GameBase::Draw()
 {
@@ -217,82 +151,5 @@ void GameBase::CleanUp()
 	m_physicsFactory.CleanUp();
 	m_assetsManager.CleanUp();
 
-	SDL_Log("Cleaned up everything");
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SmallTester::SmallTester() {
-
-}
-
-
-int SmallTester::Init(int width, int height)
-{
-	GameBase::Init(width, height);
-	return 0;
-}
-void SmallTester::InitGameObjects()
-{
-
-}
-void SmallTester::Update()
-{
-	m_timer.Start();
-	float deltaTime = m_timer.GetDeltaTime();
-
-
-	//for (auto&entity : m_entities) {
-	//	entity->Update(deltaTime);
-	//}
-
-	m_camera2D.Update(deltaTime);
-}
-
-
-void SmallTester::Draw()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//for (auto&entity : m_entities) entity->Draw();
-
-	char s[256];
-	sprintf(s, "FPS: %d\n%d", (int)m_timer.GetFPS(), Locator::GetTextureRenderer()->GetDrawNum());
-	Locator::GetTextConsole()->Log(s);
-
-	for (auto&renderer : m_renderers) renderer->Render(&(m_camera2D.GetMatrix()[0][0]));
-	m_timer.End();
-}
-
-void SmallTester::CleanUp()
-{
-	for (auto&renderer : m_renderers)
-		delete renderer;
-	//for (auto&entity : m_entities)
-	//	delete entity;
-
-
-	delete Locator::GetTextConsole();
-	m_assetsManager.CleanUp();
 	SDL_Log("Cleaned up everything");
 }

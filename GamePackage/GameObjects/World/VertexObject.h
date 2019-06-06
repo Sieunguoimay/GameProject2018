@@ -1,6 +1,7 @@
 #pragma once
-#include"../../GameObjects/World/World.h"
-#include"../List.h"
+#include"../../misc/list.h"
+#include"../EntityHierachy/Entity.h"
+class Platform;
 struct VertexObjectData {
 	Platform*m_pPlatform;
 	glm::ivec2 m_vertexIndex;

@@ -41,7 +41,12 @@ Command * InputHandler::handleInput()
 		&& Locator::GetInputEvent()->IsKeyPressed(KEY_SHIFT))
 		return m_commands[HT_SHIFT];
 
+
 	//control command
+	if (m_commands[HT_SPACE]
+		&& Locator::GetInputEvent()->IsKeyPressed(KEY_SPACE))
+		m_commands[HT_SPACE]->Execute();
+
 	if (m_commands[HT_KEY_A]
 		&& Locator::GetInputEvent()->IsKeyPressed(KEY_A))
 		{m_commands[HT_KEY_A]->Execute();}

@@ -36,25 +36,29 @@ public:
 //assume that the SpriterEntity class already solve problem of boundary rectangle
 //of an animation object.
 class AnimationSkin:public Skin {
-	SpriterEntity*m_spriterEntity;
 
 	bool m_firstTimeFlag;
 	glm::vec4 m_originalAABB;
 	glm::vec2 m_originalCenter;
 	glm::vec4 m_AABBBuffer;
 	glm::vec2 m_scale;
+
+protected:
+	SpriterEntity*m_spriterEntity;
+
 public:
 	AnimationSkin(SpriterEntity*spriterEntity, float scale, glm::vec2 pos = glm::vec2(0.0, 0.0), float angle = 0.0);
-	~AnimationSkin();
+	virtual ~AnimationSkin();
 
 	void Draw()override;
+	virtual void Update(float deltaTime);
 
 	void SetAABB(const glm::vec4&AABB);
 	const glm::vec4& GetAABB() { return m_AABBBuffer; }
 	const glm::vec2& GetScale() { return m_scale; }
+
+
 	//the are specific functions, to use it, you have to cast the Skin Object.
-	void SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time);
-	void Update(float deltaTime);
 	inline void SetAnimation(int index) {m_spriterEntity->SetAnimation(index);}
 	inline SpriterEntity*GetSpriterEntity() { return m_spriterEntity; }
 };

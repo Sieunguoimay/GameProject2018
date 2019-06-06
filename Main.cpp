@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include <conio.h>
-#include"GamePackage/GameBase.h"
+#include"RealGame.h"
 #include "../Utilities/utilities.h"
 GameBase*g_gameBase;
 bool running = true;
@@ -116,10 +116,10 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	ESContext esContext;
 
-	g_gameBase = new GameBase();//SmallTester();//
+	g_gameBase = new RealGame();//GameBase();//SmallTester();//
 
 	esInitContext(&esContext);
-	esCreateWindow(&esContext, "Hello Triangle", 1200, 700, ES_WINDOW_ALPHA | ES_WINDOW_DEPTH);
+	esCreateWindow(&esContext, "Hello Triangle", 1366, 768, ES_WINDOW_ALPHA | ES_WINDOW_DEPTH);
 	ShowCursor(false);
 	if (Init(&esContext) == 0) {
 		DisplayMemoryInfo();
