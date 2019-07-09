@@ -9,27 +9,20 @@ ObjectPool::ObjectPool(List<AABBEntity*>* pContainer)
 }
 ObjectPool::~ObjectPool()
 {
-	for (int i = 0; i < ObjectId::OID_OBJECT_NUM; i++) 
+	for (int i = 0; i < GWOID_OBJECT_NUM; i++) 
 		if(m_objectPrototypes[i]) delete m_objectPrototypes[i];
 
 	m_pContainer = NULL;
 }
 void ObjectPool::Init()
 {
-	insertMap("player", ObjectId::OID_PLAYER);
-	insertMap("animal", ObjectId::OID_ANIMAL);
-	insertMap("grass", ObjectId::OID_GRASS);
-	insertMap("leaf", ObjectId::OID_LEAF);
-	insertMap("leaf", ObjectId::OID_VERTEX_OBJECT);
-	insertMap("leaf", ObjectId::OID_PLATFORM);
-
-	m_objectPrototypes[ObjectId::OID_PLAYER] = new Player();
-	m_objectPrototypes[ObjectId::OID_ANIMAL] = new Animal();
-	m_objectPrototypes[ObjectId::OID_GRASS] = new Grass();
-	m_objectPrototypes[ObjectId::OID_LEAF] = new Leaf();
-	m_objectPrototypes[ObjectId::OID_VERTEX_OBJECT] = new VertexObject();
-	m_objectPrototypes[ObjectId::OID_PLATFORM] = new Platform();
-
+	insertMap("player", GWOID_PLAYER, new Player());
+	insertMap("animal", GWOID_ANIMAL, new Animal());
+	insertMap("grass", GWOID_GRASS, new Grass());
+	insertMap("leaf", GWOID_LEAF, new Leaf());
+	insertMap("leaf", GWOID_VERTEX_OBJECT, new VertexObject());
+	insertMap("leaf", GWOID_PLATFORM, new Platform());
+	
 	SDL_Log("Object Pool Initialized.");
 }
 
@@ -39,7 +32,7 @@ AABBEntity*ObjectPool::CreateNewObject(InfoPacket * packet, bool atRunTime /*= f
 	AABBEntity*a = (AABBEntity*)m_objectPrototypes[packet->GetId()]->Spawn(packet);
 	if (atRunTime) {
 		m_pContainer->push_front(a);
-		m_pContainer->head->next->data->Init();
+		m_pContainer->first()->data->Init();
 	}else
 		m_pContainer->push_back(a);
 
@@ -48,39 +41,40 @@ AABBEntity*ObjectPool::CreateNewObject(InfoPacket * packet, bool atRunTime /*= f
 	return a;
 }
 
-const ObjectId::ObjectId & ObjectPool::GetObjectId(const char*name)
+const GameWorldObjectId & ObjectPool::GetObjectId(const char*name)
 {
 	// TODO: insert return statement here
 	auto&a = m_nameMap.find(name);
 	if (a != m_nameMap.end()) return a->second;
-	return ObjectId::OID_OBJECT_NUM;//check for it 
+	return GWOID_OBJECT_NUM;//check for it 
 }
-const char * ObjectPool::GetObjectName(const ObjectId::ObjectId & id)
+const char * ObjectPool::GetObjectName(const GameWorldObjectId& id)
 {
 	auto&a = m_idMap.find(id);
 	if (a != m_idMap.end()) return a->second;
 	return "";//check for it 
 }
-AABBEntity * ObjectPool::GetSavedObject(const ObjectId::ObjectId & id)
+AABBEntity * ObjectPool::GetSavedObject(const GameWorldObjectId & id)
 {
 	auto&a = m_objectsOfInterest.find(id);
 	if (a != m_objectsOfInterest.end()) return a->second;
 	return NULL;
 }
-void ObjectPool::insertMap(const char * name, const ObjectId::ObjectId & id)
+void ObjectPool::insertMap(const char * name, const GameWorldObjectId & id,AABBEntity*entity)
 {
-	m_nameMap.insert(std::pair<const char*, ObjectId::ObjectId>(name, id));
-	m_idMap.insert(std::pair<ObjectId::ObjectId, const char*>(id, name));
+	m_nameMap.insert(std::pair<const char*, GameWorldObjectId>(name, id));
+	m_idMap.insert(std::pair<GameWorldObjectId, const char*>(id, name));
+	m_objectPrototypes[id] = entity;
 }
 
 void ObjectPool::selectObjects(AABBEntity * entity)
 {
 	switch (entity->GetId()) {
-	case ObjectId::OID_PLAYER:
-		if (GetSavedObject(ObjectId::OID_PLAYER))
-			m_objectsOfInterest[ObjectId::OID_PLAYER] = entity;
+	case GWOID_PLAYER:
+		if (GetSavedObject(GWOID_PLAYER))
+			m_objectsOfInterest[GWOID_PLAYER] = entity;
 		else 
-			m_objectsOfInterest.insert(std::pair<ObjectId::ObjectId,AABBEntity*>(ObjectId::OID_PLAYER,entity));
+			m_objectsOfInterest.insert(std::pair<GameWorldObjectId,AABBEntity*>(GWOID_PLAYER,entity));
 		break;
 	}
 }

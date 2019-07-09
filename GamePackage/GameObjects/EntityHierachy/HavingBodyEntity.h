@@ -1,24 +1,24 @@
 #pragma once
 #include"Entity.h"
 #include"../Skin.h"
-#include"BodyProtocol.h"
 #include"../PhysicsEngine/BodyDragAndDrop.h"
+#include"../PhysicsEngine/BodyBase.h"
 //Don't inherit this class (though doing so is harmless)
 //Inherit the 2 children of it.
-class HavingBodyEntity :public AABBEntity/*,public BodyProtocol*//*,public BodyDragAndDrop*/{
+
+class HavingBodyEntity :public AABBEntity ,public BodyBase{
 protected:
 	//one object can have different skin, while body and brain define the object
-	b2Body*m_body;
 	BodyDragAndDrop m_bodyDragAndDrop;
-
 	HavingBodyEntity(/*ObjectType type*/);
-
 public:
 	virtual ~HavingBodyEntity();
 
 	inline virtual void Init()override { SetupBody(); }
 	//must implement
 	virtual void SetupBody(bool atRunTime = false) = 0;
+	void HandleBeginContact(b2Contact*contact, b2Fixture*fixture)override {}
+	void HandleEndContact(b2Contact*contact, b2Fixture*fixture) override {}
 
 	//optional from the higher level
 	void OnSelect(const glm::vec4&AABB)override;

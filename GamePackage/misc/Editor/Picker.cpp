@@ -30,14 +30,14 @@ void Picker::Process(AABBEntity * entity, MouseEvent & inputEvent)
 			m_pPickedEntity = entity;
 
 			if (m_attachFlag) {
-				if (entity->GetId() != ObjectId::OID_PLATFORM) {
+				if (entity->GetId() != GWOID_PLATFORM) {
 					if (m_pObjectA == NULL&&m_pObjectB == NULL) {
-						if (entity->GetId() != ObjectId::OID_VERTEX_OBJECT) {
+						if (entity->GetId() != GWOID_VERTEX_OBJECT) {
 							SDL_Log("One1");
 							m_pObjectA = entity;
 						}
 					}else if (m_pObjectA != NULL) {
-						if (entity->GetId() == ObjectId::OID_VERTEX_OBJECT) {
+						if (entity->GetId() == GWOID_VERTEX_OBJECT) {
 							SDL_Log("Two");
 							m_pObjectB = entity;
 						}

@@ -4,12 +4,12 @@
 #include"../ObjectPool.h"
 Platform::Platform()
 	: NoAnimationBodyEntity(NULL,/* ObjectType::NULL_TYPE,*/ glm::vec4())
-	,InfoPacket(ObjectId::OID_PLATFORM, NULL)
+	,InfoPacket(GWOID_PLATFORM, NULL)
 {
 }
 Platform::Platform(Texture*pTexture, const glm::vec4& AABB)
 	:NoAnimationBodyEntity(new NoAnimationSkin(pTexture),/*ObjectType::NULL_TYPE,*/AABB)
-	,InfoPacket(ObjectId::OID_PLATFORM,NULL)
+	,InfoPacket(GWOID_PLATFORM,NULL)
 	, m_scaleBuffer(1.0f,1.0f)
 {
 	m_originalDimension = glm::vec2(m_AABB.z - m_AABB.x, m_AABB.w - m_AABB.y);
@@ -27,6 +27,10 @@ Spawner * Platform::Spawn(InfoPacket * info)
 //override entire NoAnimationBodyEntity::Update()
 void Platform::Update(float deltaTime)
 {
+
+	if (m_contactInfo.hasContact) {
+		SDL_Log("Platform %d is contacting with %d", m_bodyId, m_contactInfo.other->GetSpecifier());
+	}
 	//super
 	AABBEntity::Update(deltaTime);
 	if (AABBEntity::IsSelected())return;
@@ -64,6 +68,9 @@ void Platform::SetupBody(bool atRunTime /*= false*/)
 		else 
 			m_body->CreateFixture(&Locator::GetPhysicsFactory()->GetFixture(MaterialType::SOIL));
 		
+		m_body->SetUserData(this);
+		m_bodyId = BodyObjectType::BOT_GROUND;
+		id = 1;
+		_id = 1;
 	}
-	m_body->SetUserData(this);
 }

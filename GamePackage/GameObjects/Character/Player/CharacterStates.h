@@ -20,11 +20,9 @@ public:
 };
 
 class _RunningState :public BaseCharacterState {
-	BodySegment* m_pPelvisBone;
 	float m_pelvisAngle;
 	float calculatePelvisAngle(float normalAngle, bool flip);
 public:
-	_RunningState(int pPelvisBone, Player * entity);
 
 	void Enter(Player*entity) override;
 	void Execute(Player*entity, float deltaTime) override;
@@ -55,13 +53,8 @@ public:
 
 
 class _GlobalCharacterState :public BaseCharacterState {
-	enum BoneName {
-		LEFT_HAND,
-		NUM_CONTROLED_BONES
-	};
-	int m_boneIndex;
 public:
-	_GlobalCharacterState(int boneIndex);
 	void Enter(Player*entity) override;
 	void Execute(Player*entity, float deltaTime) override;
+
 };

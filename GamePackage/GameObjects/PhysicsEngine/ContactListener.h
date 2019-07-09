@@ -1,15 +1,17 @@
 #pragma once
 #include"Box2D\Box2D.h"
+#include"BodyBase.h"
 class ContactListener :public b2ContactListener {
 public:
-	~ContactListener() override {}
+	ContactListener();
+	~ContactListener() override;
 	/// Called when two fixtures begin to touch.
-	virtual void BeginContact(b2Contact* contact) override;
+	void BeginContact(b2Contact* contact) override;
 	/// Called when two fixtures cease to touch.
-	virtual void EndContact(b2Contact* contact) override;
+	void EndContact(b2Contact* contact) override;
 	/// Called when two fixtures about to touch.
-	virtual void PreSolve(b2Contact* contact, const b2Manifold* oldManifold)override;
+	void PreSolve(b2Contact* contact, const b2Manifold* oldManifold)override;
 	/// Called when two fixtures no more touch.
-	virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)override;
+	void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)override;
 
 };

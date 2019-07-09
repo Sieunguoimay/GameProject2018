@@ -6,6 +6,7 @@
 AnimationNoBodyEntity::AnimationNoBodyEntity(AnimationSkin * skin, glm::vec4 AABB)
 	:m_skin(skin)
 {
+	if (m_skin == NULL)return;
 	//if given AABB has no dimesion spefified, the we copy the dimension of original AABB of SKin;
 	if (AABB.z <= AABB.x) {
 		const glm::vec4&aabb = m_skin->GetAABB();
@@ -17,7 +18,8 @@ AnimationNoBodyEntity::AnimationNoBodyEntity(AnimationSkin * skin, glm::vec4 AAB
 
 AnimationNoBodyEntity::~AnimationNoBodyEntity()
 {
-	delete m_skin;
+	if(m_skin!=NULL)
+		delete m_skin;
 }
 
 void AnimationNoBodyEntity::Update(float deltaTime)

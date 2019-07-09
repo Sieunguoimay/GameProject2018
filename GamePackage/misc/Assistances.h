@@ -12,7 +12,8 @@
 #define M2P 100.0f
 #define DEBUG_MODE true
 
-inline static glm::vec2 b2ToGlm(const b2Vec2&v) { return glm::vec2(v.x, v.y); }
+inline static glm::vec2 b2Vec2ToGlmVec2(const b2Vec2&v) { return glm::vec2(v.x, v.y); }
+inline static b2Vec2 glmVec2ToB2Vec2(const glm::vec2&v) { return b2Vec2(v.x, v.y); }
 
 extern void logError(const std::string&error);
 extern float getAngle(float x, float y);

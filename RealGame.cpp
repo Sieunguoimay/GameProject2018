@@ -12,7 +12,7 @@
 #include"GamePackage\misc\HighLevelCamera.h"
 #include"GamePackage\Input\MouseCursor.h"
 
-#include"GamePackage\GameObjects\Character\TouchPoint.h"
+#include"GamePackage\GameObjects\Character\MovableBox.h"
 
 void RealGame::InitGameObjects()
 {
@@ -33,22 +33,24 @@ void RealGame::InitGameObjects()
 	m_tools[CAMERA_DRAG] = camera;
 	m_tools[MOUSE_CURSOR] = new MouseCursor();
 
+	m_entities.push_back(new MovableBox(new NoAnimationSkin(m_assetsManager.GetTexture("tree/deep/rock.png")), glm::vec4(0, 100, 100, 200)));
 
 	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Init();
 	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next) it->data->Init();
 
+	/*static TouchPoint touchPoint;
+	touchPoint.SetPos(b2Vec2(0, -1.5f));
+	touchPoint.Init();
+*/
+	
 
-	static TouchPoint touchPoint(b2Vec2(0,-1.5f));
 	//Editor::SortEntitiesBySize(m_entities);//sort if you want to pick them up
-
-
 
 										   //for the purpose of editing
 										   //Locator::GetTextureRenderer()->Disable();
 	//Locator::GetPrimitiveRenderer()->Disable();
 	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
 	m_physicsFactory.SetRenderer(&m_box2DRenderer);
-	SpriteTimelineKey::s_drawAABBTrigger = false;
 	AABBEntity::s_drawAABBTrigger = true;
 
 	Locator::GetTextureRenderer()->CleanBuffer();//some entities init requiring calls of draw() function

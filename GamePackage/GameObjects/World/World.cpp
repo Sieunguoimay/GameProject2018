@@ -22,7 +22,7 @@ void World::AddVertexObject(int i, int j, Platform * platform)
 	data.m_vertexIndex.y = j;
 	data.m_pPlatform = platform;
 
-	VertexObject*a = (VertexObject*)m_pObjectPool->CreateNewObject(new InfoPacket(ObjectId::OID_VERTEX_OBJECT, (void*)&data));
+	VertexObject*a = (VertexObject*)m_pObjectPool->CreateNewObject(new InfoPacket(GWOID_VERTEX_OBJECT, (void*)&data));
 
 	m_verexObjects.push_back(a);
 }

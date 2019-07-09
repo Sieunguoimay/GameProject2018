@@ -103,8 +103,7 @@ void Rock::SetupBody(bool atRunTime /*= false*/)
 
 
 Grass::Grass(const glm::vec2&pos)
-	:AnimationNoBodyEntity(new AnimationSkin(
-		Locator::GetAssets()->SpawnSpriterEntity("tree/deep/rocktree/entity_000"), 1.0f),
+	:AnimationNoBodyEntity(NULL,
 		glm::vec4(pos.x, pos.y, pos.x, pos.y))
 {
 }
@@ -113,6 +112,8 @@ Spawner * Grass::Spawn(InfoPacket * info)
 {
 	glm::vec2 pos = *(const glm::vec2*)info->GetData();
 	Spawner*a=(new Grass(pos))->SetId(info->GetId());
+	((Grass*)a)->m_skin = new AnimationSkin(
+		Locator::GetAssets()->SpawnSpriterEntity("tree/deep/rocktree/entity_000"), 1.0f);
 	delete info;
 	return a;
 }

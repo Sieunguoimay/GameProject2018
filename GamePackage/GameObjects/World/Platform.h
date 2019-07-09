@@ -17,4 +17,6 @@ public:
 	//unchanged from the beginning till the end
 	std::vector<std::vector<b2Vec2>>m_polygons;
 	glm::vec2 m_scaleBuffer;
+
+
 };

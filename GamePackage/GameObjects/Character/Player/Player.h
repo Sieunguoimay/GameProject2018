@@ -11,6 +11,7 @@ class Player :public AnimationBodyEntity, public StateMachine<Player> {
 	BaseCharacterState*m_falling;
 	BaseCharacterState*m_jumpingBuffer;
 	BaseCharacterState*m_stopping;
+	BaseCharacterState*m_walkingBackward;
 
 	_GlobalCharacterState*m_globalState;
 
@@ -23,7 +24,7 @@ class Player :public AnimationBodyEntity, public StateMachine<Player> {
 	bool m_jump;
 	bool m_right;
 	bool m_left;
-	bool m_holeObject;
+	bool m_holdTouchPointNow;
 
 	TerrestrialBody*m_terrestrialBody;
 
@@ -42,7 +43,7 @@ public:
 	inline void JumpSignal() { m_jump = true; }
 	inline void RightSignal() { m_right = true; }
 	inline void LeftSignal() { m_left = true;}
-	inline void HoldIntendedObject() { m_holeObject = true; }
+	inline void HoldTouchPoint() { m_holdTouchPointNow = true; }
 	
 };
 

@@ -46,7 +46,7 @@ void GameLoader::LoadGameWorldFromXml(const char * filename, World * pGameWorld,
 					while (pAABBObject) {
 
 						//get the info and pass it to the ObjectPool for creating
-						ObjectId::ObjectId objectId = pObjectPool->GetObjectId(pAABBObject->Attribute("name"));
+						GameWorldObjectId objectId = pObjectPool->GetObjectId(pAABBObject->Attribute("name"));
 						std::string data(pAABBObject->Attribute("extra"));
 						AABBEntity* attachedObject = pObjectPool->CreateNewObject(new InfoPacket(objectId, (void*)&data));
 

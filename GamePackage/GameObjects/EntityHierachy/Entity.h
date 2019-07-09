@@ -7,10 +7,11 @@
 class Entity {
 	bool m_done = false;
 public:
+	int id;
 	inline virtual ~Entity(){}
 	inline virtual void Init(){}
 
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(float deltaTime){}
 	inline virtual void Draw(){}//optional
 	inline void Done() { m_done = true; }
 	inline bool HasDone() { return m_done; }

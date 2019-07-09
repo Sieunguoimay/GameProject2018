@@ -23,7 +23,7 @@ struct FixtureUserData {
 
 class PhysicsFactory {
 	b2World*m_world;
-	ContactListener m_contactListener;
+	ContactListener*m_contactListener;
 
 	std::vector<b2FixtureDef>m_fixtureList;
 	void createFixtureList();

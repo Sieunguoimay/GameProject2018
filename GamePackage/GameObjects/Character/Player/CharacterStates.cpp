@@ -49,11 +49,6 @@ float _RunningState::calculatePelvisAngle(float normalAngle, bool flip)
 	return pelvisAngle;
 }
 
-_RunningState::_RunningState(int pPelvisBone, Player * entity)
-{
-	//m_pPelvisBone = entity->GetSkin()->GetSpriterEntity()->GetControlKey(pPelvisBone);
-	//m_pelvisAngle = entity->GetSkin()->GetSpriterEntity()->GetAngleOfBone(pPelvisBone);
-}
 
 void _RunningState::Enter(Player * entity)
 {
@@ -127,13 +122,6 @@ void _FallingState::Enter(Player * entity)
 
 
 
-
-_GlobalCharacterState::_GlobalCharacterState(int boneIndex)
-	:m_boneIndex(boneIndex)
-{
-}
-
-
 void _GlobalCharacterState::Enter(Player * entity)
 {
 }
@@ -158,9 +146,10 @@ void _GlobalCharacterState::Execute(Player * entity, float deltaTime)
 	//	}
 	//}
 
-
-	TouchPoint*touchPoint = entity->GetTerrestrialBody()->GetTouchPoint();
+	b2Vec2 point = 1.0f/M2P*glmVec2ToB2Vec2(((PlayerSkin*)entity->GetSkin())->GetArmBone1()->GetPos());
+	TouchPoint*touchPoint = entity->GetTerrestrialBody()->GetNearestTouchPoint(point);
 	if (touchPoint) {
-		playerSkin->Touch(b2ToGlm(M2P*touchPoint->GetPos()));
+		playerSkin->RaiseHands(b2Vec2ToGlmVec2(M2P*touchPoint->GetPos()));
+		touchPoint->Draw();
 	}
 }

@@ -13,9 +13,16 @@ public:
 	PlayerSkin(SpriterEntity*spriterEntity, float scale, glm::vec2 pos = glm::vec2(0.0, 0.0), float angle = 0.0);
 	~PlayerSkin();
 	void Update(float deltaTime)override;
+	
+	//getters
+	inline BodySegment*GetArmBone1() { return m_pArmBone1; }
+	inline BodySegment*GetArmBone2() { return m_pArmBone2; }
+	
 	//What can I do?
 	void LookAt();
-	void Touch(const glm::vec2&target);
+	void RaiseHands(const glm::vec2&target);
 	void BendPelvis();
+
+
 };
 

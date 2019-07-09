@@ -10,13 +10,10 @@ Player::Player(const glm::vec4 & AABB)
 	m_terrestrialBody = new TerrestrialBody();
 	m_body = m_terrestrialBody->GetBody();
 
-	m_globalState = new _GlobalCharacterState(
-		m_skin->GetSpriterEntity()->GetSegmentIndex("bone_012"));
+	m_globalState = new _GlobalCharacterState();
 
-	(m_running = new _RunningState(
-		m_skin->GetSpriterEntity()->GetSegmentIndex("bone_005"),this))->
+	(m_running = new _RunningState())->
 		SetAnimationIndex(m_skin->GetSpriterEntity()->GetAnimationIndex("run"));
-
 	(m_jumping = new _JumpingState())->
 		SetAnimationIndex(m_skin->GetSpriterEntity()->GetAnimationIndex("jump"));
 	(m_falling = new _FallingState())->
@@ -27,7 +24,8 @@ Player::Player(const glm::vec4 & AABB)
 		SetAnimationIndex(m_skin->GetSpriterEntity()->GetAnimationIndex("stop"));
 	(m_jumpingBuffer = new _JumpingBufferState())->
 		SetAnimationIndex(m_skin->GetSpriterEntity()->GetAnimationIndex("jump2"));
-
+	(m_walkingBackward = new BaseCharacterState())->
+		SetAnimationIndex(m_skin->GetSpriterEntity()->GetAnimationIndex("walk_backward"));
 	StateMachine<Player>::Init(this, m_standing, NULL, m_globalState);
 
 }
@@ -36,7 +34,9 @@ Player::Player(const glm::vec4 & AABB)
 void Player::SetupBody(bool atRunTime)
 {
 	glm::vec2 pos = glm::vec2((m_AABB.z + m_AABB.x) / 2.0f, (m_AABB.w + m_AABB.y) / 2.0f);
-	m_terrestrialBody->SetupBody(pos, glm::vec2(80, 160), m_body);
+	m_terrestrialBody->SetupBody(pos, glm::vec2(80, 160), m_body,this);
+
+
 }
 
 
@@ -58,7 +58,6 @@ Player::~Player() {
 void Player::Update(float deltaTime) {
 
 
-	StateMachine<Player>::Update(deltaTime);
 
 	//when to do what logics
 	//to deal with the 2 loops in one jump
@@ -73,29 +72,29 @@ void Player::Update(float deltaTime) {
 				m_terrestrialBody->JumpAndRun(m_right);//called again and again
 				m_skin->SetFlip(m_right ? FLIP_NONE : HORIZONTAL_FLIP);
 
-				if (StateMachine<Player>::IsInState(m_jumping))
-					StateMachine<Player>::ChangeState(m_jumpingBuffer);
-				else
-					StateMachine<Player>::ChangeState(m_jumping);
+				StateMachine<Player>::ChangeState(StateMachine<Player>::IsInState(m_jumping)?m_jumpingBuffer:m_jumping);
 			}
 			else if (m_left || m_right) {//run
 
-				m_terrestrialBody->Run(m_right);
-				m_skin->SetFlip(m_right ? FLIP_NONE : HORIZONTAL_FLIP);
+				if (m_holdTouchPointNow) {
+					m_terrestrialBody->Move(m_right, WALK_SPEED);
+					//walking forward or backward depends on the direction of the body and the relative position of 
+					// the rock with respect to the body. 
+					//if on the same direction then forward
+					//els backward
+					StateMachine<Player>::ChangeState(m_walkingBackward);
+				}
+				else {
+					m_skin->SetFlip(m_right ? FLIP_NONE : HORIZONTAL_FLIP);
+					StateMachine<Player>::ChangeState(m_running);
+					m_terrestrialBody->Move(m_right, RUN_SPEED);
+				}
 
-				StateMachine<Player>::ChangeState(m_running);
 			}
 			else if (m_jump) {
-
 				s_jump_flag = true;
-
 				m_terrestrialBody->Jump();
-
-				if (StateMachine<Player>::IsInState(m_jumping))
-					StateMachine<Player>::ChangeState(m_jumpingBuffer);
-				else
-					StateMachine<Player>::ChangeState(m_jumping);
-
+				StateMachine<Player>::ChangeState(StateMachine<Player>::IsInState(m_jumping)?m_jumpingBuffer:m_jumping);
 			}
 			else {//stand
 
@@ -108,25 +107,33 @@ void Player::Update(float deltaTime) {
 					StateMachine<Player>::ChangeState(m_standing);
 
 			}
+
+			//while standing on ground we can hold object??
+			if (m_holdTouchPointNow&&!m_jump) {
+				m_terrestrialBody->HoldTouchPoint(1.0f/M2P*glmVec2ToB2Vec2(((PlayerSkin*)m_skin)->GetArmBone1()->GetPos()));
+			}
+			else
+				m_terrestrialBody->LeaveTouchPoint();
 		}
 	}
 	else if (!flag) {//on air
 		s_jump_flag = false;
 	}
 
+	
+
 	//reset all triggers
 	if (!flag){
 		m_jump = false;
 		m_right = false;
 		m_left = false;
-		m_holeObject = false;
+		m_holdTouchPointNow = false;
 	}
 
 
 	m_terrestrialBody->Update(deltaTime);
 	AnimationBodyEntity::Update(deltaTime);
-	//Character::Update(deltaTime);
-
+	StateMachine<Player>::Update(deltaTime);
 }
 
 
@@ -137,7 +144,7 @@ Spawner * Player::Spawn(InfoPacket * info)
 	std::string s = *((std::string*)info->GetData());
 	auto&ss = split(s, ' ');
 	glm::vec4 aabb(atof(ss[0].c_str()),atof(ss[1].c_str()),0,0);
-	if (ss.size() == 2) {
+	if (ss.size() == 2){
 		aabb.z = aabb.x;
 		aabb.w = aabb.y;
 	}

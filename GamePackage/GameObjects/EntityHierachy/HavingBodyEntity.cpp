@@ -5,7 +5,6 @@
 HavingBodyEntity::HavingBodyEntity(/* ObjectType type*/)
 	:/*BodyProtocol(type)
 	, */m_bodyDragAndDrop(Locator::GetPhysicsFactory()->GetB2World())
-	, m_body(NULL)
 {
 }
 

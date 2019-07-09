@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world>
-    <platform id="0" aa_x="-4856" aa_y="-758" bb_x="-856.00024" bb_y="2242" texture="platforms/platform3.png" num="16">
+    <platform id="0" aa_x="-4684" aa_y="-810.00006" bb_x="-4684" bb_y="-810.00006" texture="platforms/platform3.png" num="16">
         <polygon id="0" num="3">
             <vertex id="0" x="25.749998" y="8.2299995"/>
             <vertex id="1" x="17.233332" y="12.766667"/>
@@ -100,13 +100,11 @@
             <vertex id="4" x="28.529997" y="4.52"/>
         </polygon>
     </platform>
-    <platform id="1" aa_x="-614" aa_y="-772" bb_x="1306" bb_y="308" texture="platforms/platform2.png" num="4">
+    <platform id="1" aa_x="-706" aa_y="-768" bb_x="1214" bb_y="312" texture="platforms/platform2.png" num="4">
         <polygon id="0" num="3">
             <vertex id="0" x="18.889999" y="4.6999998"/>
             <vertex id="1" x="14.67" y="5.1900001"/>
-            <vertex id="2" x="11.559999" y="5.1500001">
-                <object name="player" extra="652.511108 -308.170349 1187.184937 56.088196"/>
-            </vertex>
+            <vertex id="2" x="11.559999" y="5.1500001"/>
         </polygon>
         <polygon id="1" num="3">
             <vertex id="0" x="18.889999" y="4.6999998"/>
@@ -118,6 +116,7 @@
             <vertex id="1" x="18.889999" y="4.6999998"/>
             <vertex id="2" x="11.559999" y="5.1500001"/>
             <vertex id="3" x="6.8888888" y="5.2592587">
+                <object name="player" extra="188.278351 -246.710907 482.952148 -45.957932"/>
             </vertex>
             <vertex id="4" x="3.185185" y="5.185185"/>
             <vertex id="5" x="0.039999999" y="4.1799998"/>

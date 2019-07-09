@@ -67,9 +67,9 @@ public:
 class NoAnimationSkin :public Skin{
 	Texture*m_pTexture;
 	glm::vec4 m_AABB;
-	glm::vec2 m_center;
+	glm::vec2 m_center;//0-1
 public:
-	NoAnimationSkin(Texture*texture, const glm::vec2& pos=glm::vec2(0,0),const glm::vec2& size=glm::vec2(-1.0f), const float& angle=0.0);
+	NoAnimationSkin(Texture*texture);
 	~NoAnimationSkin() { m_pTexture = NULL; }
 
 	void Draw()override;

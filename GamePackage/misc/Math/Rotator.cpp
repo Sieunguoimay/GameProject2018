@@ -5,10 +5,12 @@ void Rotator::Init(const float& initialAngle, const float& angularSpeed, const C
 {
 	m_angle = initialAngle;
 	m_newAngle = initialAngle;
+	m_oldAngle = initialAngle;
 	m_angularSpeed = angularSpeed;
-	m_rotatingFlag = false;
 	m_curveType = curveType;
-	printf("%f initially\n", initialAngle);
+	m_rotatingFlag = false;
+	m_time = 0;
+	m_upperBoundTime = 0;
 }
 
 
@@ -20,11 +22,15 @@ void Rotator::RotateTo(float newAngle, float deltaTime)
 		m_time = 0;
 
 		float delta = std::abs(m_newAngle - m_angle);
-		m_crossZero = (delta > 180 ? (m_newAngle > m_oldAngle ? 360 : -360) : 0);
-
-		m_oldAngle = m_angle + m_crossZero;
+		float crossZero = 0;
+		if (delta > 180) {
+			delta = std::abs(360.0f - delta);
+			crossZero = (m_newAngle > m_oldAngle ? 360 : -360);
+		}
+		m_oldAngle = m_angle + crossZero;
 		m_upperBoundTime = delta / m_angularSpeed;
-		printf("%f old %f new\n", m_oldAngle,m_newAngle);
+
+		//printf("delta %f old angle %f new angle %f time %f\n", delta, m_oldAngle,m_newAngle, m_upperBoundTime);
 	}
 	if (m_rotatingFlag) {
 		m_time += deltaTime;
@@ -32,15 +38,18 @@ void Rotator::RotateTo(float newAngle, float deltaTime)
 			m_rotatingFlag = false;
 		}
 		m_time = std::fmin(m_time, m_upperBoundTime);
-		float sign = (m_oldAngle < m_newAngle ? 1: -1);
-		
-		switch (m_curveType) {
-		case CurveType::LINEAR:
-			m_angle = m_oldAngle + sign*m_time*m_angularSpeed;
-			break;
-		case CurveType::QUADRATIC:
-			m_angle = quadratic(m_oldAngle, 0.25f*(m_newAngle + m_oldAngle), m_newAngle, m_time / m_upperBoundTime);
-			break;
-		}
+		//
+		//switch (m_curveType) {
+		//case CurveType::LINEAR:
+		//	m_angle = m_oldAngle + sign*m_time*m_angularSpeed;
+		//	break;
+		//case CurveType::QUADRATIC:
+		//	m_angle = quadratic(m_oldAngle, 0.25f*(m_newAngle + m_oldAngle), m_newAngle, m_time / m_upperBoundTime);
+		//	break;
+		//}
+		//m_angle = _linear(m_oldAngle, m_newAngle, m_time / m_upperBoundTime);
+		m_angle = quadratic(m_oldAngle, m_oldAngle+0.85f*(m_newAngle - m_oldAngle), m_newAngle, m_time / m_upperBoundTime);
+		//normalizeDegreeAngle(m_angle);
+		//printf("%f\n", m_angle);
 	}
 }

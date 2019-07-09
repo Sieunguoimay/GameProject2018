@@ -5,19 +5,17 @@
 #include"../PhysicsEngine/BodyBase.h"
 class TouchPoint:public BodyBase {
 	b2Vec2 m_pos;
-	b2Body*m_body;
 public:
-	TouchPoint(const b2Vec2& pos) :m_pos(pos) {
+	void Init() {
 		b2CircleShape cs;
 		cs.m_radius = 10.0f / M2P;
 		m_body = Locator::GetPhysicsFactory()->CreateBody(&cs, b2BodyType::b2_dynamicBody, MaterialType::SENSOR, m_pos);
 		m_body->SetUserData(this);
 		m_body->SetGravityScale(0);
-		m_specifier = ObjectType::OID_TOUCH_POINT;
+		m_bodyId = BodyObjectType::BOT_TOUCH_POINT;
 	}
-	void Draw() {
-		Locator::GetPrimitiveRenderer()->FillCircle(glm::vec2(m_pos.x, m_pos.y),10);
-	}
+	void Draw() { Locator::GetPrimitiveRenderer()->DrawCircle(b2Vec2ToGlmVec2(M2P*m_pos), 5, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); }
 	//what can I do?
-	inline const b2Vec2& GetPos() { return m_pos; }
+	inline const b2Vec2& GetPos() { m_pos = m_body->GetPosition(); return m_pos; }
+	inline void SetPos(const b2Vec2&pos) { m_pos = pos; }
 };

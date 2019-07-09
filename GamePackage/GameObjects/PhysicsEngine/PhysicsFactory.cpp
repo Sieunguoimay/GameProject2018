@@ -5,15 +5,18 @@ PhysicsFactory::~PhysicsFactory(){}
 void PhysicsFactory::Init()
 {
 	m_world = new b2World(b2Vec2(0.0f, -10.0f));
-	m_world->SetContactListener(&m_contactListener);
+	m_contactListener = new ContactListener();
+	m_world->SetContactListener(m_contactListener);
 	createFixtureList();
 }
 
 void PhysicsFactory::CleanUp()
 {
+	delete m_contactListener;
 	for (auto&a : m_fixtureList)
 		delete (FixtureUserData*)a.userData;
 	delete m_world;
+	
 	m_world = NULL;
 }
 
@@ -22,7 +25,6 @@ void PhysicsFactory::Update(float deltaTime)
 	m_world->ClearForces();
 	m_world->Step(deltaTime, 6, 2);
 	m_world->DrawDebugData();
-
 }
 
 void PhysicsFactory::SetRenderer(b2Draw * debugDraw)

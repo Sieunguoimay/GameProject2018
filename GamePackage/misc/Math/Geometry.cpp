@@ -48,3 +48,7 @@ float quintic(float a, float b, float c, float d, float e, float f, float t)
 }
 
 
+void normalizeDegreeAngle(float& angle) {
+	if (angle < 0) angle += 360;
+	else if (angle >= 360) angle -= 360;
+}

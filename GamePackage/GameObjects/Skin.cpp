@@ -8,7 +8,9 @@ AnimationSkin::AnimationSkin(SpriterEntity * spriterEntity,
 	, m_firstTimeFlag(true),m_scale(1,1)
 {
 	m_spriterEntity->SetAnimation(0);
-	m_spriterEntity->Draw(m_pos, m_angle, m_scale.x, m_scale.y, m_flip);
+	m_spriterEntity->SetInfo(m_pos, m_angle, m_scale.x, m_scale.y, m_flip);
+	m_spriterEntity->Update(0);
+	m_spriterEntity->Draw();
 	m_originalAABB = m_spriterEntity->GetAABB();
 	m_AABBBuffer = m_originalAABB;
 	m_originalCenter = m_pos - glm::vec2(m_originalAABB.x, m_originalAABB.y);
@@ -23,7 +25,7 @@ AnimationSkin::~AnimationSkin()
 
 void AnimationSkin::Draw()
 {
-	m_spriterEntity->Draw(m_pos, m_angle, m_scale.x, m_scale.y, m_flip);
+	m_spriterEntity->Draw();
 }
 
 //this function represents the  problem of born 
@@ -47,6 +49,7 @@ void AnimationSkin::Update(float deltaTime)
 	m_AABBBuffer.z = p.x+d.x;
 	m_AABBBuffer.w = p.y+d.y;
 
+	m_spriterEntity->SetInfo(m_pos, m_angle, m_scale.x, m_scale.y, m_flip);
 	m_spriterEntity->Update(deltaTime);
 }
 
@@ -64,12 +67,12 @@ void AnimationSkin::Update(float deltaTime)
 
 
 
-NoAnimationSkin::NoAnimationSkin(Texture * texture, const glm::vec2 & pos, const glm::vec2 & size, const float & angle)
+NoAnimationSkin::NoAnimationSkin(Texture * texture)
 	:m_pTexture(texture)
+	,m_center(0.5f,0.5f)
 {
-	if(size.x == -1.0f)
-		SetSize(glm::vec2(m_pTexture->GetWidth(), m_pTexture->GetHeight()));
-	m_center = glm::vec2(m_size.x / 2.0f, m_size.y / 2.0f);
+	//if(size.x == -1.0f)
+	SetSize(glm::vec2(m_pTexture->GetWidth(), m_pTexture->GetHeight()));
 }
 
 void NoAnimationSkin::Draw()
@@ -81,7 +84,7 @@ void NoAnimationSkin::Draw()
 		glm::vec4(0, 0, 1, 1),							//UVs
 		m_pTexture->GetId(), 0,							//id and depth
 		glm::vec4(1.0f), m_angle,						//color and angle
-		m_center,
+		glm::vec2(m_center.x*rect.z, m_center.y*rect.w),
 		m_flip==FlipType::HORIZONTAL_FLIP,				//horizontal flip
 		m_flip == FlipType::VERTICAL_FLIP);				//vertical flip
 
