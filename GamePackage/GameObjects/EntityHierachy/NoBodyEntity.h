@@ -27,7 +27,7 @@ public:
 	void OnRelease(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;
 
-	const glm::vec4&CalculateAABB() override { return m_skin->GetAABB(); }
+	inline glm::vec4 CalculateAABB() override { return m_skin->GetAABB(); }
 };
 
 
@@ -49,5 +49,5 @@ public:
 	void OnRelease(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;
 
-	const glm::vec4&CalculateAABB() override{ return m_skin->GetAABB(); }
+	inline glm::vec4 CalculateAABB() override{ return m_skin->GetAABB(); }
 };

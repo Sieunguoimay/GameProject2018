@@ -55,10 +55,25 @@ Command * InputHandler::handleInput()
 		&& Locator::GetInputEvent()->IsKeyPressed(KEY_D))
 		{m_commands[HT_KEY_D]->Execute();}
 
-	if (m_commands[HT_KEY_W]
-		&& Locator::GetInputEvent()->IsKeyPressed(KEY_W))
-		{m_commands[HT_KEY_W]->Execute();}
+	executeOnce(HT_KEY_W, KEY_W);
 
 	return NULL;
 	//want more??... 
+}
+
+void InputHandler::executeOnce(int ht_key, int key)
+{
+
+	if (m_commands[ht_key]
+		&& Locator::GetInputEvent()->IsKeyPressed(key))
+	{
+		if (!m_commands[ht_key]->m_executeOnceFlag) {
+			m_commands[ht_key]->ExecuteOnce();
+			m_commands[ht_key]->m_executeOnceFlag = true;
+		}
+	}
+	else {
+		m_commands[ht_key]->m_executeOnceFlag = false;
+	}
+
 }

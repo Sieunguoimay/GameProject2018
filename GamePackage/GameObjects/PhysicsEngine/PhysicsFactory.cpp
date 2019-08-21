@@ -12,9 +12,10 @@ void PhysicsFactory::Init()
 
 void PhysicsFactory::CleanUp()
 {
+	LIST_FOR(it, m_actions) delete it->data;
+
 	delete m_contactListener;
-	for (auto&a : m_fixtureList)
-		delete (FixtureUserData*)a.userData;
+	for (auto&a : m_fixtureList) delete (FixtureUserData*)a.userData;
 	delete m_world;
 	
 	m_world = NULL;
@@ -25,6 +26,14 @@ void PhysicsFactory::Update(float deltaTime)
 	m_world->ClearForces();
 	m_world->Step(deltaTime, 6, 2);
 	m_world->DrawDebugData();
+
+	LIST_FOR(it,m_actions){
+		it->data->Run(deltaTime);
+		if (it->data->Timeout()&&it->data->IsAutorelease()) {
+			delete it->data;
+			it = m_actions.erase(it);
+		}
+	}
 }
 
 void PhysicsFactory::SetRenderer(b2Draw * debugDraw)

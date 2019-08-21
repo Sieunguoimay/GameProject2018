@@ -6,7 +6,9 @@ template<class T>
 struct Node {
 	Node(Node<T>*prev, Node<T>*next,T data) 
 		:prev(prev),next(next),data(data){}
-		
+	Node(Node<T>*prev, Node<T>*next)
+		:prev(prev), next(next) {}
+
 	Node<T>*next;
 	Node<T>*prev;
 	T data;
@@ -17,8 +19,8 @@ template<class T>
 class List {
 public:
 	List() {
-		head = new Node<T>(NULL, NULL, (T)0);
-		tail = new Node<T>(head, NULL, (T)0);
+		head = new Node<T>(NULL, NULL);
+		tail = new Node<T>(head, NULL);
 		head->next = tail;
 		n = 0;
 	}
@@ -77,5 +79,5 @@ public:
 	Node<T>*tail;
 	int n;
 };
-
+#define LIST_FOR(it,list) for(auto it = list.first(); it!=list.tail; it = it->next)
 #endif // !DOUBLY_LINKED_LIST_H

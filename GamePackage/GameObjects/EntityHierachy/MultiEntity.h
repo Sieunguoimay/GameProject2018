@@ -26,7 +26,7 @@ public:
 	//override some unused functions
 	//if your multiEntity needs no AABB access 
 	//then ignore it.
-	const glm::vec4&CalculateAABB()override;
+	glm::vec4 CalculateAABB()override;
 	void OnSelect(const glm::vec4&AABB)override{}
 	void OnRelease(const glm::vec4&AABB)override{}
 	//to apply AABB here means, to change AABB of all the m_entities
@@ -54,7 +54,7 @@ inline void MultiEntity<T>::AddEntity(T * entity)
 }
 
 template<class T>
-inline const glm::vec4 & MultiEntity<T>::CalculateAABB()
+inline glm::vec4 MultiEntity<T>::CalculateAABB()
 {
 	// TODO: insert return statement here
 	if (m_entities.empty()) return glm::vec4(0, 0, 50, 50);

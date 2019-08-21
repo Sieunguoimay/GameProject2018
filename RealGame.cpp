@@ -65,11 +65,9 @@ void RealGame::Update()
 	m_physicsFactory.Update(deltaTime);
 
 	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Update(deltaTime);
+	
 	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next) {
 		it->data->Update(deltaTime);
-
-		//if (m_tools[EDITOR])((Editor*)m_tools[EDITOR])->GetPicker().Process(it->data, m_inputEvent.GetLeftMouse());
-
 		if (it->data->HasDone()) {
 			delete it->data;
 			it = m_entities.erase(it);

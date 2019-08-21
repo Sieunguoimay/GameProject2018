@@ -11,11 +11,10 @@ void InputEvent::ProcessInputEvent(const InputEventPackage & inputEvent,
 	const glm::vec2& cameraPos)
 
 {
+	
 	if (inputEvent.type == KEY_DOWN)
 		keyPressed[inputEvent.data.key] = true;
-	
-	
-	if (inputEvent.type == KEY_UP)
+	else if (inputEvent.type == KEY_UP)
 		keyPressed[inputEvent.data.key] = false;
 	
 

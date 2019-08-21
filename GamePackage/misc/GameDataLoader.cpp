@@ -46,7 +46,7 @@ void GameLoader::LoadGameWorldFromXml(const char * filename, World * pGameWorld,
 					while (pAABBObject) {
 
 						//get the info and pass it to the ObjectPool for creating
-						GameWorldObjectId objectId = pObjectPool->GetObjectId(pAABBObject->Attribute("name"));
+						int objectId = pObjectPool->GetObjectId(pAABBObject->Attribute("name"));
 						std::string data(pAABBObject->Attribute("extra"));
 						AABBEntity* attachedObject = pObjectPool->CreateNewObject(new InfoPacket(objectId, (void*)&data));
 
@@ -78,7 +78,7 @@ void GameLoader::WriteWorldStructureToFile(const char * filename, World * pWorld
 	doc.InsertFirstChild(pDec);
 	doc.InsertEndChild(pRoot);
 	int count = 0;
-	for (int i = 0; i < pWorld->GetEntities()->size(); i++) {
+	for (int i = 0, n = pWorld->GetEntities()->size(); i < n;i++) {
 		Platform&platform = *pWorld->GetEntities()->at(i);
 		tinyxml2::XMLElement*pPlatform = doc.NewElement("platform");
 		pPlatform->SetAttribute("id", i);

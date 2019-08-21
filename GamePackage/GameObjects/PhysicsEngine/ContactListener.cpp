@@ -1,26 +1,17 @@
 #include "ContactListener.h"
-#include"../EntityHierachy/Entity.h"
+#include"../EntityHierachy/HavingBodyEntity.h"
 //#include"../EntityHierachy/BodyProtocol.h"
 
 
 //virtual function nevel gets called here................
-
-ContactListener::ContactListener()
-	:b2ContactListener()
-{
-}
-ContactListener::~ContactListener() {
-
-}
 
 void ContactListener::BeginContact(b2Contact * contact)
 {
 	void*A = contact->GetFixtureA()->GetBody()->GetUserData();
 	void*B = contact->GetFixtureB()->GetBody()->GetUserData();
 	if (A&&B) {
-		//SDL_Log("%d %d", ((BodyBase*)A)->GetSpecifier(), ((BodyBase*)B)->GetSpecifier());
-		SDL_Log("%d %d", ((Entity*)A)->id, ((Entity*)B)->id);
-		//SDL_Log("%d %d", ((BodyBase*)A)->_id, ((BodyBase*)B)->_id);
+		((BodyBase*)A)->HandleBeginContact(contact, contact->GetFixtureB());
+		((BodyBase*)B)->HandleBeginContact(contact, contact->GetFixtureA());
 	}
 
 }
@@ -31,13 +22,12 @@ void ContactListener::BeginContact(b2Contact * contact)
 
 void ContactListener::EndContact(b2Contact * contact)
 {
-	//void*A = contact->GetFixtureA()->GetBody()->GetUserData();
-	//void*B = contact->GetFixtureB()->GetBody()->GetUserData();
-	//if (A&&B) {
-	//	((BodyBase*)A)->endContact();
-	//	((BodyBase*)B)->endContact();
-	//}
-
+	void*A = contact->GetFixtureA()->GetBody()->GetUserData();
+	void*B = contact->GetFixtureB()->GetBody()->GetUserData();
+	if (A&&B) {
+		((BodyBase*)A)->HandleEndContact(contact, contact->GetFixtureB());
+		((BodyBase*)B)->HandleEndContact(contact, contact->GetFixtureA());
+	}
 }
 
 void ContactListener::PreSolve(b2Contact * contact, const b2Manifold * oldManifold)

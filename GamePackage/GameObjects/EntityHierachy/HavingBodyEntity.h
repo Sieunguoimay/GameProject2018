@@ -15,10 +15,11 @@ public:
 	virtual ~HavingBodyEntity();
 
 	inline virtual void Init()override { SetupBody(); }
+
 	//must implement
 	virtual void SetupBody(bool atRunTime = false) = 0;
-	void HandleBeginContact(b2Contact*contact, b2Fixture*fixture)override {}
-	void HandleEndContact(b2Contact*contact, b2Fixture*fixture) override {}
+	//void HandleBeginContact(b2Contact*contact, b2Fixture*fixture)override {}
+	//void HandleEndContact(b2Contact*contact, b2Fixture*fixture) override {}
 
 	//optional from the higher level
 	void OnSelect(const glm::vec4&AABB)override;
@@ -45,7 +46,7 @@ public:
 	//animation skin requires updating
 	virtual void Update(float deltaTime)override;
 	virtual void Draw()override;
-	inline const glm::vec4& CalculateAABB() override { return m_skin->GetAABB(); };
+	inline glm::vec4 CalculateAABB() override { return m_skin->GetAABB(); };
 	//optional from the higher level
 	void OnSelect(const glm::vec4&AABB)override;
 	void OnRelease(const glm::vec4&AABB)override;
@@ -66,7 +67,7 @@ protected:
 public:
 	NoAnimationBodyEntity(NoAnimationSkin*skin/*, ObjectType*/,glm::vec4 AABB);
 	virtual ~NoAnimationBodyEntity();
-	const glm::vec4& CalculateAABB() override { return m_skin->GetAABB(); }
+	inline glm::vec4 CalculateAABB() override { return m_skin->GetAABB(); }
 	virtual void Update(float deltaTime)override;
 	virtual void Draw()override;
 	//optional from the higher level

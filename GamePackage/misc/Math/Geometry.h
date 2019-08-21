@@ -14,14 +14,27 @@ public:
 	}
 	inline static b2Vec2 BezierCurve3(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3, float variance){
 		return BezierCurve2(
-			BezierCurve2(p1,p2, variance), 
-			BezierCurve2(p2,p3,variance), variance);
+			BezierCurve2(p1, p2, variance),
+			BezierCurve2(p2, p3, variance), variance);
 	}
 	inline static b2Vec2 BezierCurve4(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3, b2Vec2 p4, float variance) {
 		return BezierCurve2(
 			BezierCurve3(p1, p2,p3, variance), 
 			BezierCurve3(p2, p3,p4, variance), variance);
 	}
+	inline static b2Vec2 GetMidPointByX(float x, const b2Vec2&a, const b2Vec2&b) {
+		if (x == a.x)return a;
+		if (x == b.x)return b;
+		return b2Vec2(x, (x-a.x)*(b.y-a.y)/(b.x-a.x)+a.y);
+	}
+	inline static b2Vec2 GetMidPointByY(float y, const b2Vec2&a, const b2Vec2&b) {
+		if (y == a.y)return a;
+		if (y == b.y)return b;
+		return b2Vec2((y - a.y)*(b.x - a.x) / (b.y - a.y) + a.x,y);
+	}
+	static bool onLine(const b2Vec2&a, const b2Vec2&b1, const b2Vec2&b2);
+	static int direction(const b2Vec2&a, const b2Vec2&b, const b2Vec2&c);
+	static bool CheckSegmentIntersect(const b2Vec2&a1, const b2Vec2&a2, const b2Vec2&b1, const b2Vec2&b2);
 };
 
 extern float _linear(float a, float b, float t);

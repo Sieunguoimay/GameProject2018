@@ -1,25 +1,11 @@
 #include"Assistances.h"
 #include"SDL2\SDL_rwops.h"
-void logError(const std::string&error) {
+void Utils::logError(const std::string&error) {
 	SDL_Log("Error: %s", error.c_str());
 	exit(69);
 }
-float getAngle(float x, float y) {
-	float length = std::sqrt(x*x + y*y);
 
-	if (length < 0) return 0;
-
-	float angle = acosf(x / length);
-	if (y < 0) angle = 2.0f*3.141592654f - angle;
-	return angle;
-}
-const glm::vec2& rotateVec2(const glm::vec2&v, float angle) {
-	float c = glm::cos(angle);
-	float s = glm::sin(angle);
-	return glm::vec2(v.x*c - v.y*s, v.x*s + v.y*c);
-}
-
-std::vector<std::string> split(const std::string& s, char seperator)
+std::vector<std::string> Utils::split(const std::string& s, char seperator)
 {
 	std::vector<std::string> output;
 
@@ -41,19 +27,19 @@ std::vector<std::string> split(const std::string& s, char seperator)
 
 
 
-float _atof(const char*a) {
+float Utils::_atof(const char*a) {
 	if (a) {
 		return atof(a);
 	}
 	return 0;
 }
-float _atoi(const char*a) {
+float Utils::_atoi(const char*a) {
 	if (a) {
 		return atoi(a);
 	}
 	return 0;
 }
-std::string _atos(const char*a) {
+std::string Utils::_atos(const char*a) {
 	if (a) {
 		return std::string(a);
 	}
@@ -62,7 +48,7 @@ std::string _atos(const char*a) {
 
 
 
-void loadFile(char*&buffer, const std::string& filename) {
+void Utils::loadFile(char*&buffer, const std::string& filename) {
 	SDL_RWops* rwops = SDL_RWFromFile(filename.c_str(), "rb");
 	if (rwops == NULL)
 	{
@@ -82,7 +68,7 @@ void loadFile(char*&buffer, const std::string& filename) {
 	buffer[data_max_size] = 0;
 	SDL_RWclose(rwops);
 }
-void loadFile(std::vector<unsigned char>& buffer, const std::string& filename) //designed for loading files from hard disk in an std::vector
+void Utils::loadFile(std::vector<unsigned char>& buffer, const std::string& filename) //designed for loading files from hard disk in an std::vector
 {
 	/*	std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -120,7 +106,7 @@ void loadFile(std::vector<unsigned char>& buffer, const std::string& filename) /
 	SDL_RWclose(rwops);
 }
 
-bool check_AABB_overlap(const glm::vec4& a, const glm::vec4& b){
+bool Utils::check_AABB_overlap(const glm::vec4& a, const glm::vec4& b){
 	if (a.x + a.z < b.x)return false;
 	if (a.x > b.x + b.z)return false;
 	if (a.y + a.w < b.y)return false;
@@ -128,7 +114,7 @@ bool check_AABB_overlap(const glm::vec4& a, const glm::vec4& b){
 	return true;
 }
 
-bool check_AABB_against_point(const glm::vec4& AABB,const glm::vec2 & point)
+bool Utils::check_AABB_against_point(const glm::vec4& AABB,const glm::vec2 & point)
 {
 	if (point.x < AABB.x) return false;
 	if (point.x > AABB.z) return false;
@@ -136,9 +122,18 @@ bool check_AABB_against_point(const glm::vec4& AABB,const glm::vec2 & point)
 	if (point.y > AABB.w) return false;
 	return true;
 }
+bool Utils::check_AABB_against_point(const b2AABB& AABB, const b2Vec2& point)
+{
+	if (point.x < AABB.lowerBound.x) return false;
+	if (point.x > AABB.upperBound.x) return false;
+	if (point.y < AABB.lowerBound.y) return false;
+	if (point.y > AABB.upperBound.y) return false;
+	return true;
+}
 
 
-b2Vec2 PointToWorldSpace(const b2Vec2 &point,
+
+b2Vec2 Utils::PointToWorldSpace(const b2Vec2 &point,
 	const b2Vec2 &AgentHeading,
 	const b2Vec2 &AgentSide,
 	const b2Vec2 &AgentPosition)
@@ -149,7 +144,7 @@ b2Vec2 PointToWorldSpace(const b2Vec2 &point,
 	return transPoint;
 }
 
-b2Vec2 PointToLocalSpace(const b2Vec2 &point,
+b2Vec2 Utils::PointToLocalSpace(const b2Vec2 &point,
 	const b2Vec2 &AgentHeading,
 	const b2Vec2 &AgentSide,
 	const b2Vec2 &AgentPosition)
@@ -160,7 +155,7 @@ b2Vec2 PointToLocalSpace(const b2Vec2 &point,
 
 	return b2Vec2(x, y);
 }
-b2Vec2 VectorToWorldSpace(const b2Vec2 &vector,
+b2Vec2 Utils::VectorToWorldSpace(const b2Vec2 &vector,
 	const b2Vec2 &AgentHeading,
 	const b2Vec2 &AgentSide)
 {
@@ -168,7 +163,7 @@ b2Vec2 VectorToWorldSpace(const b2Vec2 &vector,
 	b2Vec2 side = vector.y*AgentSide;
 	return b2Vec2(head.x + side.x, head.y + side.y);
 }
-void Truncate(b2Vec2&vector, float max_length) {
+void Utils::Truncate(b2Vec2&vector, float max_length) {
 	if (vector.LengthSquared() > max_length*max_length) {
 		vector.Normalize();
 		vector *= max_length;

@@ -7,7 +7,6 @@
 class Entity {
 	bool m_done = false;
 public:
-	int id;
 	inline virtual ~Entity(){}
 	inline virtual void Init(){}
 
@@ -42,7 +41,7 @@ public:
 	virtual void OnRelease(const glm::vec4&AABB) = 0;
 
 	//lower level: to provide AABB
-	virtual const glm::vec4& CalculateAABB()=0;
+	virtual glm::vec4 CalculateAABB()=0;
 	//lower level: maybe used at the initial state or during editing, to adjust the entity
 	virtual void ApplyAABB(const glm::vec4&AABB) = 0;
 
@@ -51,7 +50,7 @@ public:
 
 
 	//higher level: to check AABB
-	inline const glm::vec4&GetAABB() { return m_AABB; }
+	inline glm::vec4 GetAABB() { return m_AABB; }
 	//higher level: change the AABB while selected flag is On
 	inline void SetAABB(const glm::vec4&aabb) { m_AABB = aabb; }
 

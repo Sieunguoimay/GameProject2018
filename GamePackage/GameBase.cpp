@@ -30,7 +30,7 @@
 GameBase::GameBase()
 	:m_done(false)
 {
-	srand(time(0));
+	srand((unsigned int)time(0));
 	SDL_Init(SDL_INIT_EVERYTHING);//for loading files, logging, Timimg, etc 
 	IMG_Init(IMG_INIT_PNG);//to load png image
 	Mix_Init(MIX_INIT_MP3|MIX_INIT_OGG|MIX_INIT_FLAC);//music
@@ -53,7 +53,7 @@ int GameBase::Init(int width, int height)
 	m_windowSize.Init(width, height, 1920, 1080);
 	m_camera2D.Init(m_windowSize.GetGameSize(), m_windowSize.GetWindowSize());
 	m_timer.Init(50);
-	setupOpenGL(width, height);
+	setupOpenGL((float)width, (float)height);
 
 	m_assetsManager.Init("Resources/assets.xml");
 
@@ -82,8 +82,8 @@ int GameBase::Init(int width, int height)
 void GameBase::setupOpenGL(float width, float height)
 {
 	glViewport(
-		m_windowSize.GetViewport().x, m_windowSize.GetViewport().y,
-		m_windowSize.GetViewport().w, m_windowSize.GetViewport().h);
+		(GLint)m_windowSize.GetViewport().x, (GLint)m_windowSize.GetViewport().y,
+		(GLsizei)m_windowSize.GetViewport().w, (GLsizei)m_windowSize.GetViewport().h);
 
 	//glClearColor(64.0f / 255.0f, 65.0f / 255.0f, 68.0f / 255.0f, 1.0f);
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);

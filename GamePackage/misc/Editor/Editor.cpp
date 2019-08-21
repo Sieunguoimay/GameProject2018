@@ -92,7 +92,7 @@ void Editor::LoadObjectFromPEXml(const char * filename, World*pWorld)
 				tinyxml2::XMLElement*pAnchorPoint = pBody->FirstChildElement("anchorpoint");
 				glm::vec2 pos;
 				if (pAnchorPoint) {
-					std::vector<std::string> origin = split(std::string(pAnchorPoint->GetText()), ',');
+					std::vector<std::string> origin = Utils::split(std::string(pAnchorPoint->GetText()), ',');
 					tinyxml2::XMLUtil::ToFloat(origin[0].c_str(), &pos.x);
 					tinyxml2::XMLUtil::ToFloat(origin[1].c_str(), &pos.y);
 					pos.x = -pos.x*texture->GetWidth();
@@ -112,7 +112,7 @@ void Editor::LoadObjectFromPEXml(const char * filename, World*pWorld)
 
 								newPlatform->m_polygons.push_back(std::vector<b2Vec2>());
 
-								std::vector<std::string> polygon = split(std::string(pPolygon->GetText()), ',');
+								std::vector<std::string> polygon = Utils::split(std::string(pPolygon->GetText()), ',');
 								for (int i = 0; i < polygon.size() / 2; i++) {
 									b2Vec2 vertex;
 									tinyxml2::XMLUtil::ToFloat(polygon[2 * i].c_str(), &vertex.x);
@@ -251,7 +251,7 @@ Platform*Editor::LoadObjectFromJson(const char * filename)
 	Platform*newPlatform = NULL;
 	//this json reader is to load the data from the physics body editor
 	char*json_data;
-	loadFile(json_data, filename);
+	Utils::loadFile(json_data, filename);
 	rapidjson::Document document;
 	document.Parse(json_data);
 

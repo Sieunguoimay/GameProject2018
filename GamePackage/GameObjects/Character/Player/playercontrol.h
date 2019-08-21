@@ -10,9 +10,11 @@ public:
 	void Execute()override {
 	
 		if (m_commandIndex == 3) m_pPlayer->HoldTouchPoint();
-		if (m_commandIndex == 2) m_pPlayer->JumpSignal();
 		if (m_commandIndex == 0) m_pPlayer->LeftSignal();
 		else if (m_commandIndex == 1) m_pPlayer->RightSignal();
+	}
+	void ExecuteOnce()override {
+		if (m_commandIndex == 2) m_pPlayer->JumpSignal();
 	}
 };
 #include"../../ObjectPool.h"

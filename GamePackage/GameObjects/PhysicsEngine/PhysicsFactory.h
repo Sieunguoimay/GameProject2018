@@ -2,6 +2,8 @@
 #include<vector>
 #include"Box2D\Box2D.h"
 #include"ContactListener.h"
+#include"PrimitiveActions.h"
+#include"../../misc/list.h"
 
 enum MaterialType {
 	PLASTIC,
@@ -27,6 +29,9 @@ class PhysicsFactory {
 
 	std::vector<b2FixtureDef>m_fixtureList;
 	void createFixtureList();
+
+	List<pe::BaseAction*> m_actions;
+
 public:
 	PhysicsFactory();
 	~PhysicsFactory();
@@ -35,7 +40,7 @@ public:
 	void CleanUp();
 	void Update(float deltaTime);
 	
-
+	inline void RunAction(pe::BaseAction*action) { m_actions.push_back(action); }
 
 	b2Body*CreateBody(b2Shape*shape, const b2BodyType& type, const MaterialType& material, const b2Vec2& pos);
 

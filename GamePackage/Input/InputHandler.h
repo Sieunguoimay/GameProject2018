@@ -6,12 +6,14 @@ class Command :public PointerHolder{
 public:
 	//this is also a magic, not wasting a variable, and the constructor is unchanged
 	//the price is that, one more function is added, though it's inline :)))
-	inline virtual const bool& IsUnderInputHandler() { return true; }
+	inline virtual bool IsUnderInputHandler() { return true; }
 	//->what do you mean by this??? -> whether this command is under inputhandler or other handler ???
 
 
 
 	virtual void Execute() = 0;
+	virtual void ExecuteOnce() {}
+	bool m_executeOnceFlag = false;
 };
 
 
@@ -36,6 +38,7 @@ public:
 	void Update(float deltaTime)override;
 	void AddCommand(Command*newCommand, const HandleType&handleType);
 
+	void executeOnce(int ht_key,int key);
 private:
 	Command*handleInput();
 	Command*m_commands[HANDLE_TYPE_NUM] = { 0 };

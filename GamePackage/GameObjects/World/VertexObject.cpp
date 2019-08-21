@@ -55,7 +55,7 @@ Spawner * VertexObject::Spawn(InfoPacket * info)
 	return a;
 }
 
-const glm::vec4 & VertexObject::CalculateAABB()
+glm::vec4 VertexObject::CalculateAABB()
 {
 
 	glm::vec2 platform_pos(m_pPlatform->GetAABB().x, m_pPlatform->GetAABB().y);

@@ -29,7 +29,7 @@ void World::AddVertexObject(int i, int j, Platform * platform)
 
 VertexObject * World::GetVertexObject(int i)
 {
-	if (i >= m_verexObjects.size())
+	if (i >= (int)m_verexObjects.size())
 		return NULL;
 	return m_verexObjects[i];
 }

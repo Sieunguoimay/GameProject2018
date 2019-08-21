@@ -15,5 +15,5 @@ public:
 	void Update(float deltaTime)override;
 	void Draw()override;
 	void Execute()override;
-	inline const bool& IsUnderInputHandler() override{ return false; }
+	inline bool IsUnderInputHandler() override{ return false; }
 };

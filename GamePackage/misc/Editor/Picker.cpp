@@ -21,7 +21,7 @@ void Picker::Process(AABBEntity * entity, MouseEvent & inputEvent)
 	static glm::vec2 firstMouse;
 	
 	glm::vec2 pos = inputEvent.GetMousePosInWorld();
-	if (check_AABB_against_point(entity->GetAABB(),pos)) {
+	if (Utils::check_AABB_against_point(entity->GetAABB(),pos)) {
 
 		if (inputEvent.IsClickSignalled()) {
 			entity->Select();

@@ -1,49 +1,57 @@
 #pragma once
 #include"../../EntityHierachy/HavingBodyEntity.h"
 #include"../../../misc/StateMachine/StateMachine.h"
-#include"CharacterStates.h"
-#include"TerrestrialBody.h"
+#include"ActionStates.h"
+#include"PlayerBody.h"
 #include"PlayerSkin.h"
-class Player :public AnimationBodyEntity, public StateMachine<Player> {
-	BaseCharacterState*m_standing;
-	BaseCharacterState*m_running;
-	BaseCharacterState*m_jumping;
-	BaseCharacterState*m_falling;
-	BaseCharacterState*m_jumpingBuffer;
-	BaseCharacterState*m_stopping;
-	BaseCharacterState*m_walkingBackward;
+#include"BrainStates.h"
 
-	_GlobalCharacterState*m_globalState;
 
-	friend class _StoppingState;
-	friend class _JumpingBufferState;
-	friend class _JumpingState;
-	friend class _GlobalCharacterState;
-	friend class BaseCharacterState;
+
+class Player :public AnimationBodyEntity, public StateMachine<Player>,public PlayerBodyCallback {
 	//control
+
 	bool m_jump;
 	bool m_right;
 	bool m_left;
 	bool m_holdTouchPointNow;
 
-	TerrestrialBody*m_terrestrialBody;
+	PlayerBody*m_playerBody;
+
+	
+	BrainState* m_brainStates[BrainStateEnum::BS_TOTAL_NUM];
 
 public:
-	Player():AnimationBodyEntity(NULL,/*ObjectType::NULL_TYPE,*/glm::vec4(0.0f)){}
+	Player():AnimationBodyEntity(NULL,/*ObjectType::NULL_TYPE,*/glm::vec4(0.0f)){
+		SDL_Log("Created player prototype");
+	}
 	Player(const glm::vec4&AABB);
 	~Player();
 
 	//seting functions
 	Spawner*Spawn(InfoPacket*info)override;
 	void SetupBody(bool atRunTime=false)override;
-	void Update(float deltaTime);
-	inline TerrestrialBody*GetTerrestrialBody() { return m_terrestrialBody; }
+	void Update(float deltaTime)override;
+
+	//callback implementation
+	inline void OnStateChanged(int brainState)override { ChangeBrainState(brainState); }
+
+
+	inline PlayerBody*GetPlayerBody() { return m_playerBody; }
+	inline void ChangeBrainState(int state) {ChangeState(m_brainStates[state]);}
 
 	//What I can do
-	inline void JumpSignal() { m_jump = true; }
+	inline void JumpSignal() { m_jump = true;}
 	inline void RightSignal() { m_right = true; }
 	inline void LeftSignal() { m_left = true;}
 	inline void HoldTouchPoint() { m_holdTouchPointNow = true; }
 	
+
+	friend class BrainStateOnTheFloor;
+	friend class BrainStateNextToRockLHS;
+	friend class BrainStateNextToRockRHS;
+	friend class BrainStateOnRockTopRight;
+	friend class BrainStateOnRockTopLeft;
+	friend class BrainStateTest;
 };
 

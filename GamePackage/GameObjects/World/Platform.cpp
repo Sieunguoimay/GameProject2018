@@ -28,9 +28,7 @@ Spawner * Platform::Spawn(InfoPacket * info)
 void Platform::Update(float deltaTime)
 {
 
-	if (m_contactInfo.hasContact) {
-		SDL_Log("Platform %d is contacting with %d", m_bodyId, m_contactInfo.other->GetSpecifier());
-	}
+
 	//super
 	AABBEntity::Update(deltaTime);
 	if (AABBEntity::IsSelected())return;
@@ -68,9 +66,7 @@ void Platform::SetupBody(bool atRunTime /*= false*/)
 		else 
 			m_body->CreateFixture(&Locator::GetPhysicsFactory()->GetFixture(MaterialType::SOIL));
 		
-		m_body->SetUserData(this);
+		m_body->SetUserData(m_bodyBaseThis);
 		m_bodyId = BodyObjectType::BOT_GROUND;
-		id = 1;
-		_id = 1;
 	}
 }

@@ -12,31 +12,38 @@
 #define M2P 100.0f
 #define DEBUG_MODE true
 
-inline static glm::vec2 b2Vec2ToGlmVec2(const b2Vec2&v) { return glm::vec2(v.x, v.y); }
-inline static b2Vec2 glmVec2ToB2Vec2(const glm::vec2&v) { return b2Vec2(v.x, v.y); }
 
-extern void logError(const std::string&error);
-extern float getAngle(float x, float y);
-extern const glm::vec2&rotateVec2(const glm::vec2&, float);
-extern std::vector<std::string> split(const std::string& s, char seperator);
 
-inline static float _stof(std::string str) {return strtof(str.c_str(), NULL);}
-inline static int _stoi(std::string str) {return atoi(str.c_str());}
-template<class T> inline static std::string _to_string(T i){return std::stringstream(i).str();}
-inline static float _sign(float a) {return (a >= 0? 1.0f:-1.0f);}
-inline static float RandomClamped(float begin = -1.0f, float end = 1.0f) {return (end - begin)*((float)(rand() % (RAND_MAX)) / (float)RAND_MAX) + begin; }
+class Utils {
+public:
+	static void logError(const std::string&error);
+	static std::vector<std::string> split(const std::string& s, char seperator);
 
-extern void loadFile(char*&buffer, const std::string& filename);
-extern void loadFile(std::vector<unsigned char>& buffer, const std::string& filename); //designed for loading files from hard disk in an std::vector
-extern b2Vec2 PointToWorldSpace(const b2Vec2 &point, const b2Vec2 &AgentHeading, const b2Vec2 &AgentSide, const b2Vec2 &AgentPosition);
-extern b2Vec2 PointToLocalSpace(const b2Vec2 &point, const b2Vec2 &AgentHeading, const b2Vec2 &AgentSide, const b2Vec2 &AgentPosition);
-extern b2Vec2 VectorToWorldSpace(const b2Vec2 &vector,const b2Vec2 &AgentHeading, const b2Vec2 &AgentSide);
-extern void Truncate(b2Vec2&vector, float max_length);
-extern bool check_AABB_overlap(const glm::vec4& a, const glm::vec4& b);
-extern bool check_AABB_against_point(const glm::vec4& AABB, const glm::vec2 & point);
-extern float _atof(const char*a);
-extern float _atoi(const char*a);
-extern std::string _atos(const char*a);
+	inline static glm::vec2 b2ToGlm(const b2Vec2&v) { return glm::vec2(v.x, v.y); }
+	inline static b2Vec2 glmToB2(const glm::vec2&v) { return b2Vec2(v.x, v.y); }
+	inline static float _stof(std::string str) { return strtof(str.c_str(), NULL); }
+	inline static int _stoi(std::string str) { return atoi(str.c_str()); }
+	template<class T> inline static std::string _to_string(T i) { return std::stringstream(i).str(); }
+	inline static float _sign(float a) { return (a >= 0 ? 1.0f : -1.0f); }
+	inline static float RandomClamped(float begin = -1.0f, float end = 1.0f) { return (end - begin)*((float)(rand() % (RAND_MAX)) / (float)RAND_MAX) + begin; }
+	inline static float Random_0_1() { return ((float)(rand() % (RAND_MAX)) / (float)(RAND_MAX-1)); }
+
+	static void loadFile(char*&buffer, const std::string& filename);
+	static void loadFile(std::vector<unsigned char>& buffer, const std::string& filename); //designed for loading files from hard disk in an std::vector
+	static b2Vec2 PointToWorldSpace(const b2Vec2 &point, const b2Vec2 &AgentHeading, const b2Vec2 &AgentSide, const b2Vec2 &AgentPosition);
+	static b2Vec2 PointToLocalSpace(const b2Vec2 &point, const b2Vec2 &AgentHeading, const b2Vec2 &AgentSide, const b2Vec2 &AgentPosition);
+	static b2Vec2 VectorToWorldSpace(const b2Vec2 &vector, const b2Vec2 &AgentHeading, const b2Vec2 &AgentSide);
+	static void Truncate(b2Vec2&vector, float max_length);
+	static bool check_AABB_overlap(const glm::vec4& a, const glm::vec4& b);
+	static bool check_AABB_against_point(const glm::vec4& AABB, const glm::vec2 & point);
+	static bool check_AABB_against_point(const b2AABB& AABB, const b2Vec2& point);
+	static float _atof(const char*a);
+	static float _atoi(const char*a);
+	static std::string _atos(const char*a);
+	inline static float RadToDeg(float radian) { return radian*180.0f / 3.141592654f; }
+
+};
+
 
 struct cmp_str { bool operator()(char const *a, char const *b) const { return std::strcmp(a, b) < 0; } };
 

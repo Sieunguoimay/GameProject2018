@@ -13,8 +13,10 @@ public:
 		m_body->SetUserData(this);
 		m_body->SetGravityScale(0);
 		m_bodyId = BodyObjectType::BOT_TOUCH_POINT;
+
+
 	}
-	void Draw() { Locator::GetPrimitiveRenderer()->DrawCircle(b2Vec2ToGlmVec2(M2P*m_pos), 5, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); }
+	void Draw() { Locator::GetPrimitiveRenderer()->DrawCircle(Utils::b2ToGlm(M2P*m_pos), 5, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); }
 	//what can I do?
 	inline const b2Vec2& GetPos() { m_pos = m_body->GetPosition(); return m_pos; }
 	inline void SetPos(const b2Vec2&pos) { m_pos = pos; }

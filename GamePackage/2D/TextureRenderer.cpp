@@ -113,21 +113,21 @@ TextureRenderer::~TextureRenderer()
 
 
 const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
-	if (m_disabled||!check_AABB_overlap(*m_pWindow, destRect)) return NULL;
+	if (m_disabled||!Utils::check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 
 	m_meshes.emplace_back(SpriteMesh(destRect, uvRect, textureID, depth, color, horizontal_flip, vertical_flip));
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
 	return &m_meshes.back();
 }
 const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, float angle, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
-	if (m_disabled || !check_AABB_overlap(*m_pWindow, destRect)) return NULL;
+	if (m_disabled || !Utils::check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 
 	m_meshes.emplace_back(destRect, uvRect, textureID, depth, color, angle,center, horizontal_flip,vertical_flip);
 	m_pMeshes.push_back(&m_meshes[m_meshes.size() - 1]);
 	return &m_meshes.back();
 }
 const SpriteMesh*  TextureRenderer::Draw(glm::vec4 destRect, glm::vec4 uvRect, GLuint textureID, float depth, glm::vec4 color, glm::vec2 direction, glm::vec2 center /*= glm::vec2(0, 0)*/, bool horizontal_flip /*= false*/, bool vertical_flip /*= false*/) {
-	if (m_disabled || !check_AABB_overlap(*m_pWindow, destRect)) return NULL;
+	if (m_disabled || !Utils::check_AABB_overlap(*m_pWindow, destRect)) return NULL;
 
 	const glm::vec2 right(1.0f, 0.0f);
 	float angle = glm::cos(glm::dot(right, direction));

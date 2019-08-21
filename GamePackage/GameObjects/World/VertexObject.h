@@ -26,7 +26,7 @@ public:
 	inline List<AABBEntity*>&GetAttachedEntitites() { return m_attachedEntities; }
 
 	Spawner*Spawn(InfoPacket*info)override;
-	virtual const glm::vec4& CalculateAABB();
+	virtual glm::vec4 CalculateAABB();
 	//no use
 	virtual void OnSelect(const glm::vec4&AABB) {};
 	virtual void OnRelease(const glm::vec4&AABB) {};

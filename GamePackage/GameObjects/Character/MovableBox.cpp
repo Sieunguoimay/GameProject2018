@@ -15,11 +15,8 @@ void MovableBox::SetupBody(bool atRunTime)
 	b2PolygonShape ps;
 	ps.SetAsBox(width, height);
 	m_body = Locator::GetPhysicsFactory()->CreateBody(&ps, b2BodyType::b2_dynamicBody, MaterialType::STEEL, pos);
-	m_body->SetUserData(this);
+	m_body->SetUserData(m_bodyBaseThis);
 	m_bodyId = BodyObjectType::BOT_ROCK;
-	id = 4;
-	_id = 4;
-
 	m_touchPoints[0].SetPos(pos + 0.95f*b2Vec2(ps.m_vertices[0].x,0));
 	m_touchPoints[1].SetPos(pos + 0.95f*b2Vec2(0,ps.m_vertices[1].y));
 	m_touchPoints[2].SetPos(pos + 0.95f*b2Vec2(ps.m_vertices[2].x,0));

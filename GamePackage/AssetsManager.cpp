@@ -39,7 +39,7 @@ Texture * AssetsManager::GetTexture(const std::string & name)
 {
 	auto mit = m_textures.find(name);
 	if (mit == m_textures.end()) {
-		logError("texture " + name + " Not Found");
+		Utils::logError("texture " + name + " Not Found");
 	}
 	return mit->second;
 }
@@ -48,7 +48,7 @@ Shaders * AssetsManager::GetShader(const std::string & name)
 {
 	auto mit = m_shaders.find(name);
 	if (mit == m_shaders.end()) {
-		logError("Shader " + name + " Not Found");
+		Utils::logError("Shader " + name + " Not Found");
 	}
 	return mit->second;
 }
@@ -57,7 +57,7 @@ SpriterEntity * AssetsManager::SpawnSpriterEntity(std::string name)
 {
 	auto mit = m_spriterEntities.find(name);
 	if (mit == m_spriterEntities.end()) {
-		logError("SpriterEntity " + name + " Not Found");
+		Utils::logError("SpriterEntity " + name + " Not Found");
 	}
 	return mit->second->Spawn();
 }
@@ -75,7 +75,7 @@ AnimationCollection * AssetsManager::SpawnAnimationCollection(const std::string&
 {
 	auto mit = m_animationCollections.find(name);
 	if (mit == m_animationCollections.end()) {
-		logError("texture " + name + " Not Found");
+		Utils::logError("texture " + name + " Not Found");
 	}
 	return mit->second->Clone();
 }
@@ -102,14 +102,14 @@ void AssetsManager::loadFromXml(std::string filename)
 	if (pAssets) {
 		tinyxml2::XMLElement*pFolder = pAssets->FirstChildElement("folder");
 		while (pFolder) {
-			std::string folder_name = _atos(pFolder->Attribute("name"));
+			std::string folder_name = Utils::_atos(pFolder->Attribute("name"));
 			if (folder_name!="") folder_name += "/";
 
 			tinyxml2::XMLElement*pFile = pFolder->FirstChildElement("file");
 			std::string name,tag;
 			std::map<std::string, bool> shader_names;
 			while (pFile) {
-				name = _atos(pFile->Attribute("name"));
+				name = Utils::_atos(pFile->Attribute("name"));
 				auto found = name.find_last_of('.');
 				if (found != std::string::npos) {
 					tag = name.substr(found + 1, name.length() - found - 1);
@@ -174,7 +174,7 @@ void AssetsManager::loadFromXml(std::string filename)
 
 		m_scmlObjects.insert(std::pair<std::string,ScmlObject*>(body_name,newScmlObject));
 
-		for (int i = 0; i < newScmlObject->entities.size(); i++)
+		for (int i = 0,n = newScmlObject->entities.size();i<n; i++)
 			m_spriterEntities.insert(
 				std::pair<std::string, SpriterEntity*>(
 					body_name +"/"+newScmlObject->entities[i]->name,

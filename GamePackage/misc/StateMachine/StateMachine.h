@@ -1,5 +1,6 @@
 #pragma once
 #include"State.h"
+#include<stdarg.h>
 template<class T>
 class StateMachine
 {
@@ -28,8 +29,8 @@ public:
 		this->m_currentState = currentState;
 		this->m_previousState = previousState;
 		this->m_globalState = globalSate;
-		this->m_currentState->Enter(m_owner);
-		this->m_globalState->Enter(m_owner);
+		if(m_currentState) m_currentState->Enter(m_owner);
+		if(m_globalState) m_globalState->Enter(m_owner);
 	}
 	void Update(float deltaTime) {
 		if (!m_owner) return;
@@ -46,15 +47,24 @@ public:
 		m_currentState->Enter(m_owner);
 		return true;
 	}
-	void RevertToPrevState() {
+	inline void RevertToPrevState() {
 		if (m_previousState)
 			ChangeState(m_previousState);
 	}
-	bool IsInState(State<T>*state) {
+	inline bool IsInState(State<T>*state) {
 		if (m_currentState == state) return true;
 		return false;
 	}
-
+	bool IsInStates(State<T>*state,...) {
+		va_list pa;
+		va_start(pa, state);
+		while (state != NULL) {
+			if (m_currentState == state) return true;
+			state = va_arg(pa, State<T>*);
+		}
+		va_end(pa);
+		return false;
+	}
 	State<T>*GetCurrentState() { return m_currentState; }
 	State<T>*GetPreviousState() { return m_previousState; }
 	State<T>*GetGlobalState() { return m_globalState; }

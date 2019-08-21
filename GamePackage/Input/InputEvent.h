@@ -88,7 +88,7 @@ public:
 		const glm::vec2& cameraPos);
 	void ClearEvent();
 
-	const bool IsKeyPressed(Key key) const { return keyPressed[key]; }
+	const bool IsKeyPressed(int key) const { return keyPressed[key]; }
 
 	inline MouseEvent&GetLeftMouse() { return m_leftMouse; }
 	inline MouseEvent&GetRightMouse() { return m_rightMouse; }

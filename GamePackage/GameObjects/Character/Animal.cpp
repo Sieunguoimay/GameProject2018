@@ -53,7 +53,7 @@ Spawner * Animal::Spawn(InfoPacket*info)
 {
 	//x y z w
 	std::string s=*((std::string*)info->GetData());
-	auto&ss=split(s, ' ');
+	auto&ss=Utils::split(s, ' ');
 	glm::vec4 aabb;
 
 	aabb.x = atof(ss[0].c_str());

@@ -77,7 +77,7 @@ GLuint Shaders::LoadShader(GLenum type,const char * filename)
 	if (shader == 0)
 		return 0;
 	char*v_data;
-	loadFile(v_data, filename);
+	Utils::loadFile(v_data, filename);
 
 	//glShaderSource(shader, 1, (const char **)&data, NULL);
 	glShaderSource(shader, 1, (const char **)(&v_data), NULL);
@@ -134,12 +134,12 @@ void Shaders::setLocationVariables()
 	u_shininess = glGetUniformLocation(program, "u_shininess");
 	u_lightNum = glGetUniformLocation(program, "u_lightNum");
 	for (int i = 0; i < 4; i++) {
-		u_lights[i][0] = glGetUniformLocation(program, (std::string("u_lights[") + _to_string(i) + std::string("].type")).c_str());
-		u_lights[i][1] = glGetUniformLocation(program, (std::string("u_lights[") + _to_string(i) + std::string("].diffuse")).c_str());
-		u_lights[i][2] = glGetUniformLocation(program, (std::string("u_lights[") + _to_string(i) + std::string("].pos")).c_str());
-		u_lights[i][3] = glGetUniformLocation(program, (std::string("u_lights[") + _to_string(i) + std::string("].constant")).c_str());
-		u_lights[i][4] = glGetUniformLocation(program, (std::string("u_lights[") + _to_string(i) + std::string("].linear")).c_str());
-		u_lights[i][5] = glGetUniformLocation(program, (std::string("u_lights[") + _to_string(i) + std::string("].quadratic")).c_str());
+		u_lights[i][0] = glGetUniformLocation(program, (std::string("u_lights[") + Utils::_to_string(i) + std::string("].type")).c_str());
+		u_lights[i][1] = glGetUniformLocation(program, (std::string("u_lights[") + Utils::_to_string(i) + std::string("].diffuse")).c_str());
+		u_lights[i][2] = glGetUniformLocation(program, (std::string("u_lights[") + Utils::_to_string(i) + std::string("].pos")).c_str());
+		u_lights[i][3] = glGetUniformLocation(program, (std::string("u_lights[") + Utils::_to_string(i) + std::string("].constant")).c_str());
+		u_lights[i][4] = glGetUniformLocation(program, (std::string("u_lights[") + Utils::_to_string(i) + std::string("].linear")).c_str());
+		u_lights[i][5] = glGetUniformLocation(program, (std::string("u_lights[") + Utils::_to_string(i) + std::string("].quadratic")).c_str());
 	}
 
 	GLint maxAttribLen, numAttribs;

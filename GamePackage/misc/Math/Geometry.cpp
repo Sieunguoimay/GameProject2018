@@ -22,6 +22,40 @@ void Geometry::Intersection(const b2Vec2 & c_p, const float & c_r, const b2Vec2 
 	output->p2.y = c_p.y + (-D*d.x + b2Abs(d.y)*b2Sqrt(delta)) / (dr*dr);
 }
 
+bool Geometry::onLine(const b2Vec2 & a, const b2Vec2 & b1, const b2Vec2 & b2)
+{
+	if (a.x > std::max(b1.x, b2.x))return false;
+	if (a.x < std::min(b1.x, b2.x))return false;
+	if (a.y > std::max(b1.y, b2.y))return false;
+	if (a.y < std::min(b1.y, b2.y))return false;
+	return true;
+}
+
+int Geometry::direction(const b2Vec2 & a, const b2Vec2 & b, const b2Vec2 & c)
+{
+	float val = (b.y - a.y)*(c.x - b.x) - (b.x - a.x)*(c.y - b.y);
+	if (val == 0)return 0;//colinear
+	else if (val < 0)return -1;//anti-clockwise
+	return 1;//clockwise
+}
+
+bool Geometry::CheckSegmentIntersect(const b2Vec2 & a1, const b2Vec2 & a2, const b2Vec2 & b1, const b2Vec2 & b2)
+{
+	int dir1 = direction(a1, a2, b1);
+	int dir2 = direction(a1, a2, b2);
+	int dir3 = direction(b1, b2, a1);
+	int dir4 = direction(b1, b2, a2);
+
+	if (dir1 != dir2 && dir3 != dir4) return true;
+	if (dir1 == 0 && onLine(b1, a1, a2)) return true;
+	if (dir2 == 0 && onLine(b2, a1, a2)) return true;
+	if (dir3 == 0 && onLine(a1, b1, b2)) return true;
+	if (dir4 == 0 && onLine(a2, b1, b2)) return true;
+
+	return false;
+}
+
+
 float _linear(float a, float b, float t)
 {
 	return ((b - a)*t) + a;

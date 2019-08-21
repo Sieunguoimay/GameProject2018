@@ -41,29 +41,29 @@ AABBEntity*ObjectPool::CreateNewObject(InfoPacket * packet, bool atRunTime /*= f
 	return a;
 }
 
-const GameWorldObjectId & ObjectPool::GetObjectId(const char*name)
+int ObjectPool::GetObjectId(const char*name)
 {
 	// TODO: insert return statement here
 	auto&a = m_nameMap.find(name);
 	if (a != m_nameMap.end()) return a->second;
 	return GWOID_OBJECT_NUM;//check for it 
 }
-const char * ObjectPool::GetObjectName(const GameWorldObjectId& id)
+const char * ObjectPool::GetObjectName(int id)
 {
 	auto&a = m_idMap.find(id);
 	if (a != m_idMap.end()) return a->second;
 	return "";//check for it 
 }
-AABBEntity * ObjectPool::GetSavedObject(const GameWorldObjectId & id)
+AABBEntity * ObjectPool::GetSavedObject(int id)
 {
 	auto&a = m_objectsOfInterest.find(id);
 	if (a != m_objectsOfInterest.end()) return a->second;
 	return NULL;
 }
-void ObjectPool::insertMap(const char * name, const GameWorldObjectId & id,AABBEntity*entity)
+void ObjectPool::insertMap(const char * name,int  id,AABBEntity*entity)
 {
-	m_nameMap.insert(std::pair<const char*, GameWorldObjectId>(name, id));
-	m_idMap.insert(std::pair<GameWorldObjectId, const char*>(id, name));
+	m_nameMap.insert(std::pair<const char*, int >(name, id));
+	m_idMap.insert(std::pair<int , const char*>(id, name));
 	m_objectPrototypes[id] = entity;
 }
 

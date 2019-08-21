@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B6D0781E-57CD-4A79-B3C1-EBBBF6933A4A}</ProjectGuid>
     <RootNamespace>MainProject</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -80,7 +80,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libEGL.lib;libGLESv2.lib;glu32.lib;Utilities.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib;SDL2_mixer.lib;Engine.lib;SpriterEngine.lib;freetype240MT_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libEGL.lib;libGLESv2.lib;glu32.lib;Utilities.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib;SDL2_mixer.lib;SDL2_ttf.lib;GraphicsEngine.lib;SpriterEngine.lib;GameEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -89,9 +89,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)Lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_net.lib;SDL2_ttf.lib;libEGL.lib;libGLESv2.lib;Utilities.lib;Box2D.lib;freetype240MT_D.lib;GameEngine.lib;GraphicsEngine.lib;SpriterEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -123,43 +126,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GamePackage\GameObjects\Box.cpp" />
-    <ClCompile Include="GamePackage\AssetsManager.cpp" />
-    <ClCompile Include="GamePackage\GameBase.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\Character\BodyKit.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\Character\CharacterBrain.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\Character\Player.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\Character\Character.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\Character\TerrestrialBody.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\Entity.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\GraphicsTree\GraphNode.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\GraphicsTree\Transform.cpp" />
-    <ClCompile Include="GamePackage\GameObjects\SpriterEntity.cpp" />
-    <ClCompile Include="GamePackage\Input\InputManager.cpp" />
-    <ClCompile Include="GamePackage\misc\Locator.cpp" />
-    <ClCompile Include="GamePackage\misc\tinyXML2\tinyxml2.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="GamePackage\misc\StateMachine\StateMachine.cpp" />
+    <ClCompile Include="RealGame.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GamePackage\GameObjects\Box.h" />
-    <ClInclude Include="GamePackage\AssetsManager.h" />
-    <ClInclude Include="GamePackage\GameBase.h" />
-    <ClInclude Include="GamePackage\GameObjects\Character\BodyKit.h" />
-    <ClInclude Include="GamePackage\GameObjects\Character\CharacterBrain.h" />
-    <ClInclude Include="GamePackage\GameObjects\Character\Player.h" />
-    <ClInclude Include="GamePackage\GameObjects\Character\Character.h" />
-    <ClInclude Include="GamePackage\GameObjects\Character\TerrestrialBody.h" />
-    <ClInclude Include="GamePackage\GameObjects\Entity.h" />
-    <ClInclude Include="GamePackage\GameObjects\GraphicsTree\GraphNode.h" />
-    <ClInclude Include="GamePackage\GameObjects\GraphicsTree\Transform.h" />
-    <ClInclude Include="GamePackage\GameObjects\SpriterEntity.h" />
-    <ClInclude Include="GamePackage\Input\InputManager.h" />
-    <ClInclude Include="GamePackage\misc\Locator.h" />
-    <ClInclude Include="GamePackage\misc\StateMachine\State.h" />
-    <ClInclude Include="GamePackage\misc\StateMachine\StateMachine.h" />
-    <ClInclude Include="GamePackage\misc\tinyXML2\tinyxml2.h" />
+    <ClInclude Include="RealGame.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
