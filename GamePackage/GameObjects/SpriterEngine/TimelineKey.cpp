@@ -2,7 +2,7 @@
 #include<glm\glm.hpp>
 #include"../../misc/Assistances.h"
 #include"../../misc/Math/Geometry.h"
-
+#include"../../2D/Texture.h"
 float angle_linear(float angleA, float angleB, int spin, float t)
 {
 	if (spin == 0)
@@ -26,7 +26,7 @@ float angle_linear(float angleA, float angleB, int spin, float t)
 
 	return _linear(angleA, angleB, t);
 }
-SpatialInfo _linear(SpatialInfo infoA, SpatialInfo infoB, int spin, float t)
+SpatialInfo SpatialInfo::linear(SpatialInfo infoA, SpatialInfo infoB, int spin, float t)
 {
 	SpatialInfo resultInfo;
 	resultInfo.x = _linear(infoA.x, infoB.x, t);
@@ -41,28 +41,27 @@ SpatialInfo _linear(SpatialInfo infoA, SpatialInfo infoB, int spin, float t)
 
 
 
-#include<iostream>
 void TimelineKey::Log() {
 	SDL_Log("\t\t\tkey %d %d %d %f %f\n", time, spin, curveType, c1, c2);
 }
 void BoneTimelineKey::Log() {
 	TimelineKey::Log();
-	SDL_Log("\t\t\tbone %f %f %f %f %f %f --- %d %d\n", info.x, info.y, info.angle, info.scaleX, info.scaleY,info.a, length, height);
+	SDL_Log("\t\t\tbone %f %f %f %f %f %f --- %d %d\n", m_info.x, m_info.y, m_info.angle, m_info.scaleX, m_info.scaleY,m_info.a, length, height);
 }
 void SpriteTimelineKey::Log() {
 	TimelineKey::Log();
-	SDL_Log("\t\t\tobject %f %f %f %f %f %f --- %d %d %f %f\n", info.x, info.y, info.angle, info.scaleX, info.scaleY, info.a, /*folder, file,*/ pivot_x, pivot_y);
+	SDL_Log("\t\t\tobject %f %f %f %f %f %f --- %d %d %f %f\n", m_info.x, m_info.y, m_info.angle, m_info.scaleX, m_info.scaleY, m_info.a, /*folder, file,*/ m_pivot_x, m_pivot_y);
 }
 
 
 
 void TimelineKey::Interpolate(TimelineKey*movingKey, TimelineKey*nextKey, int nextKeyTime, float currentTime)
 {
-	Linear(movingKey,nextKey, GetTWithNextKey(nextKey, nextKeyTime, currentTime));
+	Linear(movingKey,nextKey, GetTWithNextKey(nextKeyTime, currentTime));
 }
 
 
-float TimelineKey::GetTWithNextKey(TimelineKey*nextKey, int nextKeyTime, float currentTime)
+float TimelineKey::GetTWithNextKey(int nextKeyTime, float currentTime)
 {
 	if (curveType == INSTANT || time == nextKeyTime)
 	{
@@ -261,7 +260,7 @@ void BoneTimelineKey::Linear(TimelineKey*_movingKey,TimelineKey*_keyB, float t)
 	BoneTimelineKey*movingKey = (BoneTimelineKey*)_movingKey;
 	this->Clone(movingKey);
 
-	movingKey->info = _linear(info, keyB->info, spin, t);
+	movingKey->m_info = SpatialInfo::linear(m_info, keyB->m_info, spin, t);
 	if (paintDebugBones)
 	{
 		movingKey->length = _linear((float)length, (float)keyB->length, t);
@@ -280,7 +279,7 @@ TimelineKey * BoneTimelineKey::Spawn()
 }
 void BoneTimelineKey::Unmap(SpatialInfo parentInfo)
 {
-	this->info = this->info.unmapFromParent(parentInfo);
+	this->m_info = this->m_info.unmapFromParent(parentInfo);
 }
 void SpriteTimelineKey::Linear(TimelineKey*movingKey,TimelineKey*keyB, float t)
 {
@@ -288,11 +287,11 @@ void SpriteTimelineKey::Linear(TimelineKey*movingKey,TimelineKey*keyB, float t)
 	SpriteTimelineKey*_movingKey = ((SpriteTimelineKey*)movingKey);
 	this->Clone(_movingKey);
 
-	_movingKey->info = _linear(info, _keyB->info, spin, t);
-	if (!useDefaultPivot)
+	_movingKey->m_info = SpatialInfo::linear(m_info, _keyB->m_info, spin, t);
+	if (!m_useDefaultPivot)
 	{
-		_movingKey->pivot_x = _linear(pivot_x, _keyB->pivot_x, t);
-		_movingKey->pivot_y = _linear(pivot_y, _keyB->pivot_y, t);
+		_movingKey->m_pivot_x = _linear(m_pivot_x, _keyB->m_pivot_x, t);
+		_movingKey->m_pivot_y = _linear(m_pivot_y, _keyB->m_pivot_y, t);
 	}
 }
 
@@ -308,5 +307,5 @@ TimelineKey * SpriteTimelineKey::Spawn()
 }
 void SpriteTimelineKey::Unmap(SpatialInfo parentInfo)
 {
-	this->info = this->info.unmapFromParent(parentInfo);
+	this->m_info = this->m_info.unmapFromParent(parentInfo);
 }

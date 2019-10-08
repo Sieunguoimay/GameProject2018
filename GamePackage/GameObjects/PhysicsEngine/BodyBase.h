@@ -24,22 +24,21 @@ enum ContactState {
 
 class BodyBase {
 protected:
-	BodyBase*m_bodyBaseThis;
-	int m_bodyId;
+	
+	BodyBase*m_bodyBaseThis; //look funny =)))
+	
 	b2Body*m_body;
-
-
-	//if child class override the ProcessContact() function then this flag will be true
+	int m_bodyId;
 
 public:
-	BodyBase() :m_bodyId(UNDEFINED), m_body(NULL){ m_bodyBaseThis = this; }
-	virtual ~BodyBase();
 
-	void HandleBeginContact(b2Contact*contact, b2Fixture*fixture){}
-	void HandleEndContact(b2Contact*contact, b2Fixture*fixture){}
+	BodyBase() :m_bodyId(UNDEFINED), m_body(NULL), m_bodyBaseThis(this) { }
+	~BodyBase();
+	virtual void HandleBeginContact(b2Contact*contact, b2Fixture*fixture){}
+	virtual void HandleEndContact(b2Contact*contact, b2Fixture*fixture){}
 
-	inline int GetSpecifier() const { return m_bodyId; }
-	inline virtual b2Body*GetBody() { return m_body; };			//be careful babe
+	int GetSpecifier() const { return m_bodyId; }
+	b2Body*GetBody() { return m_body; };			//be careful babe
 };
 
 

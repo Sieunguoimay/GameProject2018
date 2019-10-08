@@ -29,6 +29,7 @@ void PhysicsFactory::Update(float deltaTime)
 
 	LIST_FOR(it,m_actions){
 		it->data->Run(deltaTime);
+		it->data->DrawDebug();
 		if (it->data->Timeout()&&it->data->IsAutorelease()) {
 			delete it->data;
 			it = m_actions.erase(it);
@@ -110,7 +111,7 @@ void PhysicsFactory::createFixtureList() {
 		b2FixtureDef& fd = m_fixtureList.back();
 		fd.density = 50.0f;
 		fd.friction = 0.3f;
-		fd.restitution = 0.5f;
+		fd.restitution = 0.2f;
 		fd.userData = new FixtureUserData(STEEL);
 
 	}

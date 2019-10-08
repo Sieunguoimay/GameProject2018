@@ -2,59 +2,68 @@
 #include"../../misc/Math/Geometry.h"
 #include"ScmlEntity.h"
 #include"ScmlObject.h"
-AnimationSwitcher::AnimationSwitcher(ScmlObject*pOwner, ScmlEntity*pEntity, void * extraPointer, 
-	std::vector<BodySegment*>*pControlKeys)
-	:AnimationBase(pOwner,pEntity)
-	, m_extraPointer(extraPointer)
-	, m_pControlKeys(pControlKeys)
-{
-}
-
+#include"../SpriterEntity.h"
+#include"../../misc/Assistances.h"
 AnimationSwitcher::~AnimationSwitcher()
 {
-	for (auto&a : pSliceA)
-		delete a;
+	for (auto&a : m_sliceA)delete a;
+	for (auto&a : m_sliceB)delete a;
 }
-
-void AnimationSwitcher::Init( AnimationBase*animationA, AnimationBase*animationB, int switchingTime, int nextAnimationIndex)
+void AnimationSwitcher::Init( AnimationBase*animationA, AnimationBase*animationB, int switchingTime, int nextAnimationIndex, const glm::vec2&jumpDistance)
 {
+	//m_pRootBoneKey = NULL;
+	m_jumpDistance = jumpDistance;
+	if (m_jumpDistance.x != 0 || m_jumpDistance.y != 0) {
+		m_appliedJumpDistance = false;
+	}
 	//keep the sliceA first
-	bool firstTime = timelineSlice.empty();
-	std::vector<TimelineKey*>&sliceA = animationA->GetSlice();
+	bool firstTime = m_sliceA.empty();// timelineSlice.empty();
+	std::vector<TimelineKey*>&sliceA = m_pOwner->m_timelineSlice;// animationA->GetSlice();
+
+	int boneNum = animationA->mainKey->boneRefs.size();
+	int spriteNum = animationA->mainKey->objectRefs.size();
+
+	if (firstTime) 
+		m_sliceA.reserve(boneNum + spriteNum);
+
 	for (int i = 0; i < sliceA.size(); i++) {
 		//just fill it up for the fist time
-		if (firstTime) {
-			//for this timelineSlice
-			timelineSlice.push_back(sliceA[i]->Spawn());
+		if (firstTime) 
+			m_sliceA.push_back(sliceA[i]->Spawn());
+		
+		sliceA[i]->Clone(m_sliceA[i]);
+		m_sliceA[i]->time = 0;
 
-			//for the sliceA to keep track
-			pSliceA.push_back(sliceA[i]->Spawn());
-			sliceA[i]->Clone(pSliceA[i]);
-			pSliceA[i]->time = 0;
-		}
-		else {//from the second time on
-			//just replace the pSliceA's elements.
-			sliceA[i]->Clone(pSliceA[i]);
-			pSliceA[i]->time = 0;
+		if (i < boneNum) {
+			auto currentRef = animationA->mainKey->boneRefs[i];
+			if (currentRef.parent == -1 && !m_appliedJumpDistance) {
+
+				if(m_pOwner->GetFlip()==HORIZONTAL_FLIP)
+					m_jumpDistance.x = -m_jumpDistance.x;//???
+		
+				auto m_pRootBoneKey = (BoneTimelineKey*)m_sliceA[i];
+				m_pRootBoneKey->m_info.x = m_pRootBoneKey->m_info.x - m_jumpDistance.x;
+				m_pRootBoneKey->m_info.y = m_pRootBoneKey->m_info.y - m_jumpDistance.y;
+				m_appliedJumpDistance = true;
+			}
 		}
 	}
 	mainKey = animationA->mainKey;
 
 	//then sliceB
-	float max_angle_diff = ((Animation*)animationB)->CalculateSliceAtZero(&pSliceA);
-	pSliceB = &animationB->GetSlice();
+	float max_angle_diff = ((Animation*)animationB)->CalculateSliceAtZero(m_sliceB,&m_sliceA);
+	//pSliceB = &animationB->GetSlice();
 
 
 	static const float angle_speed = 90.0f / 300.0f;
-	if (switchingTime == -1)
-		length = (int)glm::max((max_angle_diff / angle_speed),10.0f);
-	else
-		length = switchingTime;
+	if (switchingTime == -1) length = (int)glm::max((max_angle_diff / angle_speed),10.0f);
+	else length = switchingTime;
 
 	m_nextAnimationIndex = nextAnimationIndex;
 	m_done = false;
 }
-float AnimationSwitcher::UpdateAndDraw(float newTime)
+
+float AnimationSwitcher::Update(float newTime, int*currentMainLineKeyIndex,AnimationCallBack*callback)
 {
 	//what going on in the swicthingTime interval goes here..
 
@@ -62,31 +71,30 @@ float AnimationSwitcher::UpdateAndDraw(float newTime)
 	newTime = glm::min(newTime, (float)length);
 
 	int boneNum = mainKey->boneRefs.size();
-	int objectNum = mainKey->objectRefs.size();
 
 	for (int b = 0; b < boneNum; b++)
 	{
 		Ref currentRef = mainKey->boneRefs[b];
-		BoneTimelineKey*currentKey = (BoneTimelineKey*)timelineSlice[b];// new BoneTimelineKey();
+		if (callback != NULL){
 
-		pSliceA.at(b)->Interpolate(currentKey, pSliceB->at(b),length, newTime);
-		float angleA = ((BoneTimelineKey*)pSliceA.at(b))->info.angle;
-		float angleB = ((BoneTimelineKey*)pSliceB->at(b))->info.angle;
-		if (std::abs(angleB - angleA)>180.0f) {
-			if (angleA > angleB) angleA -= 360.0f;
-			else angleA += 360.0f;
+			BoneTimelineKey*currentKey = (BoneTimelineKey*)callback->GetTimelineKeyFromSlice(b);// new BoneTimelineKey();
+			BoneTimelineKey*prevKey = (BoneTimelineKey*)m_sliceA[b];// (BoneTimelineKey*)callback->GetTimelineKeyFromSliceA(b);
+			BoneTimelineKey*nextKey = (BoneTimelineKey*)m_sliceB[b];// (BoneTimelineKey*)callback->GetTimelineKeyFromSliceB(b);
+
+			currentKey->m_info = SpatialInfo::linear(prevKey->m_info, nextKey->m_info, 1, prevKey->GetTWithNextKey(length, newTime));
+
+			float angleA = prevKey->m_info.angle;
+			float angleB = nextKey->m_info.angle;
+			if (std::abs(angleB - angleA) > 180.0f) {
+				if (angleA > angleB) angleA -= 360.0f;
+				else angleA += 360.0f;
+			}
+			currentKey->m_info.angle = _linear(angleA, angleB, newTime / (float)length);
+			callback->UpdateBoneFromKey(b, currentKey);
 		}
-		currentKey->info.angle = _linear(angleA, angleB, newTime / (float)length);
-		m_pOwner->callback->UpdateBoneFromKey(b, (BoneTimelineKey*)timelineSlice[b]);
 	}
 
-	for (int o = 0; o < objectNum; o++)
-	{
-		Ref currentRef = mainKey->objectRefs[o];
-		pSliceA.at(boneNum + o)->Interpolate(timelineSlice[boneNum + o], pSliceB->at(boneNum + o), length, newTime);
-		m_pOwner->callback->UpdateSpriteFromKey(o, (SpriteTimelineKey*)timelineSlice[boneNum + o]);
-	}
-
+	
 
 	if (newTime == length) {
 		m_done = true;
@@ -94,6 +102,22 @@ float AnimationSwitcher::UpdateAndDraw(float newTime)
 		return 0;
 	}
 	return newTime;
+}
+
+void AnimationSwitcher::Draw(int newTime, AnimationCallBack * callback)
+{
+	if (callback == NULL)return;
+	int boneNum = mainKey->boneRefs.size();
+	int objectNum = mainKey->objectRefs.size();
+	for (int o = 0; o < objectNum; o++)
+	{
+		Ref currentRef = mainKey->objectRefs[o];
+		SpriteTimelineKey* currentKey = (SpriteTimelineKey*)callback->GetTimelineKeyFromSlice(boneNum + o);
+		SpriteTimelineKey* prevKey = (SpriteTimelineKey*)m_sliceA[boneNum+o];// callback->GetTimelineKeyFromSliceA(boneNum + o);
+		SpriteTimelineKey* nextKey = (SpriteTimelineKey*)m_sliceB[boneNum + o];// callback->GetTimelineKeyFromSliceB(boneNum + o);
+		prevKey->Interpolate(currentKey, nextKey, length, newTime);
+		callback->UpdateSpriteFromKey(o, currentKey);
+	}
 }
 
 

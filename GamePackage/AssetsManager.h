@@ -10,25 +10,19 @@
 
 class AssetsManager
 {
-	//AssetsManager&operator=(const AssetsManager&);
-	//AssetsManager(const AssetsManager&);
-	//static AssetsManager* s_instance;
 	void loadFromXml(std::string filename);
 	void loadFromTxt(std::string filename);
 public:
-	AssetsManager();
-	~AssetsManager();
-	//static AssetsManager& Instance();
+	void Init(std::string filename);
 	void CleanUp();
 
-
-	void Init(std::string filename);
 	Texture*GetTexture(const std::string& name);
 	Shaders*GetShader(const std::string& name);
 	SpriterEntity*SpawnSpriterEntity(std::string name);
 	AnimationCollection*SpawnAnimationCollection(const std::string&name);
 	std::string&GetFontPath(int index) { return m_fontPaths[index]; }
 	int GetTextureNum() { return m_textures.size(); }
+
 private:
 	std::map<std::string, Texture*>m_textures;
 	std::map<std::string, Shaders*>m_shaders;
@@ -37,5 +31,3 @@ private:
 	std::map<std::string, SpriterEntity*> m_spriterEntities;
 	std::vector<std::string> m_fontPaths;
 };
-
-#define s_assetsManager AssetsManager::Instance()

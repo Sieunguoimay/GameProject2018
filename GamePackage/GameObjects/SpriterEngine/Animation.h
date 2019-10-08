@@ -3,8 +3,6 @@
 #include"Timeline.h"
 #include"MainlineKey.h"
 #include"Folder.h"
-class ScmlEntity;
-class ScmlObject;
 //TimelineSlice: to serve for animation switching
 //having the ability of keeping the current slad of 
 //timeline of the current animation. so that when
@@ -14,25 +12,23 @@ class ScmlObject;
 
 class AnimationCallBack {
 public:
+	virtual ~AnimationCallBack() {}
 	virtual void UpdateBoneFromKey(int boneIndex, BoneTimelineKey*boneKey) = 0;
 	virtual void UpdateSpriteFromKey(int spriteIndex, SpriteTimelineKey*spriteKey) = 0;
+	virtual TimelineKey*GetTimelineKeyFromSlice(int index) = 0;
 };
 
 class AnimationBase {
 protected:
-	std::vector<TimelineKey*>timelineSlice;
 	bool m_done;//signaling out used for no loop animation
-	ScmlEntity*m_pEntity;//to serve for callback on taking out slice of keys
-	ScmlObject*m_pOwner;
 public:
-	AnimationBase(ScmlObject*owner, ScmlEntity*pEntity);
+	AnimationBase();
 	virtual ~AnimationBase();
-	virtual float UpdateAndDraw(float newTime)=0;
-	virtual std::vector<TimelineKey*>&GetSlice(){return timelineSlice;}
+	virtual float Update(float newTime, int*currentMainlineKeyIndex, AnimationCallBack*callback)=0;
+	virtual void Draw(int newTime, AnimationCallBack*callback)=0;
 	bool HasDone() { return m_done; }
 	int length;
-	MainlineKey*mainKey;//this fucking key is not belong to the scml project
-	//TimelineKey* KeyFromRef(Ref ref, int newTime);
+	MainlineKey*mainKey;
 };
 
 
@@ -47,15 +43,14 @@ public:
 	std::vector<Timeline*>timelines;
 
 
-	Animation(ScmlObject*pOwner, ScmlEntity*pEntity);
 	~Animation() override;
 	void Log();
-	MainlineKey* MainlineKeyFromTime(int time);
+	MainlineKey* MainlineKeyFromTime(int time, int*currentMainlineKeyIndex);
 	void KeyFromRef(TimelineKey*pKey, Ref ref, int newTime, bool isBone = false);
-	float CalculateSliceAtZero(const std::vector<TimelineKey*>*sliceA);
+	float CalculateSliceAtZero(std::vector<TimelineKey*>&timelineSlice,const std::vector<TimelineKey*>*sliceA);
 
 	//public used.
-	float UpdateAndDraw(float newTime) override;
-	void UpdateCharacter(MainlineKey*mainKey, int newTime);
+	float Update(float newTime, int*currentMainlineKeyIndex, AnimationCallBack*callback) override;
+	void Draw(int newTime, AnimationCallBack*callback)override;
 
 };

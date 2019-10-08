@@ -1,26 +1,24 @@
 #pragma once
-#include"../../Skin.h"
-
-class PlayerSkin: public AnimationSkin
+#include"../../SpriterEntity.h"
+class PlayerSkin
 {
-	BodySegment*m_pPelvisBone;
-	BodySegment*m_pArmBone2;
-	BodySegment*m_pArmBone1;
+	class Player*m_pOwner;
 
-	bool m_touchTrigger;
-	glm::vec2 m_target;
+	BoneSegment*m_pPelvisBone;
+	BoneSegment*m_pArmBone2;
+	BoneSegment*m_pArmBone1;
 public:
-	PlayerSkin(SpriterEntity*spriterEntity, float scale, glm::vec2 pos = glm::vec2(0.0, 0.0), float angle = 0.0);
+	PlayerSkin(Player*pOwner);
 	~PlayerSkin();
-	void Update(float deltaTime)override;
+	void Update(float deltaTime);
 	
 	//getters
-	inline BodySegment*GetArmBone1() { return m_pArmBone1; }
-	inline BodySegment*GetArmBone2() { return m_pArmBone2; }
+	BoneSegment*GetArmBone1() { return m_pArmBone1; }
+	BoneSegment*GetArmBone2() { return m_pArmBone2; }
 	
 	//What can I do?
 	void LookAt();
-	void RaiseHands(const glm::vec2&target);
+	void RaiseHands(const glm::vec2&target,float deltaTime);
 	void BendPelvis();
 
 

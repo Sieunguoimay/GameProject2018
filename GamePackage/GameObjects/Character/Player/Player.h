@@ -2,56 +2,51 @@
 #include"../../EntityHierachy/HavingBodyEntity.h"
 #include"../../../misc/StateMachine/StateMachine.h"
 #include"ActionStates.h"
-#include"PlayerBody.h"
+#include"PlayerActuator.h"
 #include"PlayerSkin.h"
-#include"BrainStates.h"
+#include"PlayerDecisionMaker.h"
+#include"PlayerControl.h"
+#include"PlayerSensor.h"
+#include"PlayerMemory.h"
+class Player :public AnimationBodyEntity {
 
-
-
-class Player :public AnimationBodyEntity, public StateMachine<Player>,public PlayerBodyCallback {
-	//control
-
-	bool m_jump;
-	bool m_right;
-	bool m_left;
-	bool m_holdTouchPointNow;
-
-	PlayerBody*m_playerBody;
-
-	
-	BrainState* m_brainStates[BrainStateEnum::BS_TOTAL_NUM];
-
+	PlayerDecisionMaker m_decisionMaker;
+	PlayerActuator m_actuator;
+	PlayerControl m_control;
+	PlayerSensor m_sensor;
+	PlayerMemory m_memory;
+	PlayerSkin m_skin;
 public:
-	Player():AnimationBodyEntity(NULL,/*ObjectType::NULL_TYPE,*/glm::vec4(0.0f)){
-		SDL_Log("Created player prototype");
-	}
 	Player(const glm::vec4&AABB);
 	~Player();
 
 	//seting functions
-	Spawner*Spawn(InfoPacket*info)override;
+	static Spawner*Spawn(InfoPacket*info);
 	void SetupBody(bool atRunTime=false)override;
 	void Update(float deltaTime)override;
 
-	//callback implementation
-	inline void OnStateChanged(int brainState)override { ChangeBrainState(brainState); }
-
-
-	inline PlayerBody*GetPlayerBody() { return m_playerBody; }
-	inline void ChangeBrainState(int state) {ChangeState(m_brainStates[state]);}
-
-	//What I can do
-	inline void JumpSignal() { m_jump = true;}
-	inline void RightSignal() { m_right = true; }
-	inline void LeftSignal() { m_left = true;}
-	inline void HoldTouchPoint() { m_holdTouchPointNow = true; }
-	
+	friend class PlayerDecisionMaker;
+	friend class PlayerActuator;
+	friend class PlayerControl;
+	friend class PlayerSensor;
+	friend class PlayerMemory;
+	friend class PlayerSkin;
 
 	friend class BrainStateOnTheFloor;
 	friend class BrainStateNextToRockLHS;
 	friend class BrainStateNextToRockRHS;
 	friend class BrainStateOnRockTopRight;
 	friend class BrainStateOnRockTopLeft;
-	friend class BrainStateTest;
+	friend class BrainStateLongAction;
+
+	friend class _GlobalCharacterState;
+
+
+	PlayerDecisionMaker&	GetDecisionMaker()	{ return m_decisionMaker; }
+	PlayerActuator&			GetActuator()		{ return m_actuator; }
+	PlayerControl&			GetControl()		{ return m_control; }
+	PlayerSensor&			GetSensor()			{ return m_sensor; }
+	PlayerMemory&			GetMemory()			{ return m_memory; }
+	PlayerSkin&				GetSkin()			{ return m_skin; }
 };
 

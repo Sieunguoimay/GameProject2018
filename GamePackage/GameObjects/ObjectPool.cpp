@@ -9,19 +9,19 @@ ObjectPool::ObjectPool(List<AABBEntity*>* pContainer)
 }
 ObjectPool::~ObjectPool()
 {
-	for (int i = 0; i < GWOID_OBJECT_NUM; i++) 
-		if(m_objectPrototypes[i]) delete m_objectPrototypes[i];
+	//for (int i = 0; i < GWOID_OBJECT_NUM; i++) 
+	//	if(m_objectPrototypes[i]) delete m_objectPrototypes[i];
 
 	m_pContainer = NULL;
 }
 void ObjectPool::Init()
 {
-	insertMap("player", GWOID_PLAYER, new Player());
-	insertMap("animal", GWOID_ANIMAL, new Animal());
-	insertMap("grass", GWOID_GRASS, new Grass());
-	insertMap("leaf", GWOID_LEAF, new Leaf());
-	insertMap("leaf", GWOID_VERTEX_OBJECT, new VertexObject());
-	insertMap("leaf", GWOID_PLATFORM, new Platform());
+	insertMap("player", GWOID_PLAYER, Player::Spawn);
+	insertMap("animal", GWOID_ANIMAL, Animal::Spawn);
+	insertMap("grass", GWOID_GRASS, Grass::Spawn);
+	insertMap("leaf", GWOID_LEAF, Leaf::Spawn);
+	insertMap("leaf", GWOID_VERTEX_OBJECT, VertexObject::Spawn);
+	insertMap("leaf", GWOID_PLATFORM, Platform::Spawn);
 	
 	SDL_Log("Object Pool Initialized.");
 }
@@ -29,7 +29,7 @@ void ObjectPool::Init()
 
 AABBEntity*ObjectPool::CreateNewObject(InfoPacket * packet, bool atRunTime /*= false*/)
 {
-	AABBEntity*a = (AABBEntity*)m_objectPrototypes[packet->GetId()]->Spawn(packet);
+	AABBEntity*a = (AABBEntity*)m_objectPrototypes[packet->GetId()](packet);
 	if (atRunTime) {
 		m_pContainer->push_front(a);
 		m_pContainer->first()->data->Init();
@@ -60,7 +60,7 @@ AABBEntity * ObjectPool::GetSavedObject(int id)
 	if (a != m_objectsOfInterest.end()) return a->second;
 	return NULL;
 }
-void ObjectPool::insertMap(const char * name,int  id,AABBEntity*entity)
+void ObjectPool::insertMap(const char * name,int  id, std::function<Spawner*(InfoPacket*)>entity)
 {
 	m_nameMap.insert(std::pair<const char*, int >(name, id));
 	m_idMap.insert(std::pair<int , const char*>(id, name));

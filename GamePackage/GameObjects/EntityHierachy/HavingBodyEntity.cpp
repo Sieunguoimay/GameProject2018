@@ -40,23 +40,23 @@ void HavingBodyEntity::ApplyAABB(const glm::vec4 & AABB)
 
 
 
-AnimationBodyEntity::AnimationBodyEntity(AnimationSkin * skin, /*ObjectType type,*/ glm::vec4 AABB)
-	:/*HavingBodyEntity(type),*/m_skin(skin)
+AnimationBodyEntity::AnimationBodyEntity(SpriterEntity*spriterEntity, /*ObjectType type,*/ glm::vec4 AABB)
+	:m_spriterEntity(spriterEntity)
 {
-	if (m_skin== NULL) return;
+	if (m_spriterEntity == NULL) return;
 
 	if (AABB.z <= AABB.x) {
-		const glm::vec4&aabb = m_skin->GetAABB();
+		const glm::vec4&aabb = m_spriterEntity->GetAABB();
 		AABB.z = (aabb.z - aabb.x) + AABB.x;
 		AABB.w = (aabb.w - aabb.y) + AABB.y;
 	}
-	m_skin->SetAABB(AABB);
+	m_spriterEntity->SetAABB(AABB);
 	m_AABB = AABB;
 }
 
 AnimationBodyEntity::~AnimationBodyEntity()
 {
-	if(m_skin) delete m_skin;
+	delete m_spriterEntity;
 }
 
 void AnimationBodyEntity::Update(float deltaTime)
@@ -66,35 +66,35 @@ void AnimationBodyEntity::Update(float deltaTime)
 	if (AABBEntity::IsSelected())return;
 
 	b2Vec2 pos = M2P*m_body->GetPosition();
-	m_skin->SetPos(glm::vec2(pos.x, pos.y));
-	m_skin->SetAngle(m_body->GetAngle());
+	m_spriterEntity->SetPos(glm::vec2(pos.x, pos.y));
+	m_spriterEntity->SetAngle(m_body->GetAngle());
 
-	m_skin->Update(deltaTime);
+	m_spriterEntity->Update(deltaTime);
 }
 
 void AnimationBodyEntity::Draw()
 {
 	AABBEntity::Draw();
-	m_skin->Draw();
+	m_spriterEntity->Draw();
 }
 
 void AnimationBodyEntity::OnSelect(const glm::vec4 & AABB)
 {
 	HavingBodyEntity::OnSelect(AABB);
-	m_animationIndexBuffer = m_skin->GetSpriterEntity()->GetCurrentAnimationIndex();
-	m_skin->GetSpriterEntity()->SetAnimationStrictly(0);
+	m_animationIndexBuffer = m_spriterEntity->GetCurrentAnimationIndex();
+	m_spriterEntity->SetAnimationStrictly(0);
 }
 
 void AnimationBodyEntity::OnRelease(const glm::vec4 & AABB)
 {
 	HavingBodyEntity::OnRelease(AABB);
-	m_skin->GetSpriterEntity()->SetAnimationStrictly(m_animationIndexBuffer);
+	m_spriterEntity->SetAnimationStrictly(m_animationIndexBuffer);
 }
 
 void AnimationBodyEntity::ApplyAABB(const glm::vec4 & AABB)
 {
 	HavingBodyEntity::ApplyAABB(AABB);
-	m_skin->SetAABB(AABB);//-> not support zooming with AnimationBodyEntity
+	m_spriterEntity->SetAABB(AABB);//-> not support zooming with AnimationBodyEntity
 }
 
 

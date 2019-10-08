@@ -1,5 +1,5 @@
 #include "Geometry.h"
-
+#include"../Assistances.h"
 void Geometry::Intersection(const b2Vec2 & c_p, const float & c_r, const b2Vec2 & _p1, const b2Vec2 & _p2, CirlceIntersectOutput * output)
 {
 	b2Vec2 p1 = _p1 - c_p;
@@ -55,6 +55,137 @@ bool Geometry::CheckSegmentIntersect(const b2Vec2 & a1, const b2Vec2 & a2, const
 	return false;
 }
 
+bool Geometry::LineSegmentIntersection(const b2Vec2&l11, const b2Vec2&l12, const b2Vec2&l21, const b2Vec2&l22,b2Vec2&intersection)
+{
+	b2Vec2 d = l12 - l11;
+	float m1 = d.y / d.x;
+	float  c1 = l11.y - m1 * l11.x; // which is same as y2 - slope * x2
+	
+	d = l22 - l21;
+	float m2 = d.y / d.x;
+	float  c2 = l21.y - m2 * l21.x; // which is same as y2 - slope * x2
+
+	if ((m1 - m2) == 0)
+		return false;
+	else
+	{
+		intersection.x = (c2 - c1) / (m1 - m2);
+		intersection.y = m1 * intersection.x + c1;
+	}
+	return true;
+}
+
+void Geometry::normalizeDegreeAngle(float& angle) {
+	if (angle < 0) angle += 360;
+	else if (angle >= 360) angle -= 360;
+}
+
+
+void Geometry::clipPolygonAgainstAABB(
+	b2PolygonShape*shape, const b2AABB& clippingAABB,
+	std::function<void(const b2Vec2&)>addVertexToContainer,
+	std::function<b2Vec2(const b2Vec2&)>localToWorld /*= NULL*/)
+{
+	//collect vertices
+	int n = shape->m_count;
+	b2Vec2 topLeft{ clippingAABB.lowerBound.x, clippingAABB.upperBound.y };
+	b2Vec2 bottomRight{ clippingAABB.upperBound.x, clippingAABB.lowerBound.y };
+	b2Vec2*vertices = shape->m_vertices;
+	b2Vec2 lastVertex;
+	bool lastInside = false;
+
+	for (int i = 0; i < n + 1; i++) {
+		b2Vec2 vertex = vertices[i == n ? 0 : i];
+		if (localToWorld != NULL) vertex = localToWorld(vertex);
+
+		if (Utils::check_AABB_against_point(clippingAABB, vertex)) {
+			if (!lastInside&&i != 0) {
+				float x = (lastVertex.x < vertex.x ? clippingAABB.lowerBound.x : clippingAABB.upperBound.x);
+				float y = (lastVertex.y < vertex.y ? clippingAABB.lowerBound.y : clippingAABB.upperBound.y);
+				b2Vec2 a;
+				if (Geometry::CheckSegmentIntersect(lastVertex, vertex, b2Vec2(x, clippingAABB.lowerBound.y), b2Vec2(x, clippingAABB.upperBound.y)))
+					a = Geometry::GetMidPointByX(x, lastVertex, vertex);
+				else if (Geometry::CheckSegmentIntersect(lastVertex, vertex, b2Vec2(clippingAABB.lowerBound.x, y), b2Vec2(clippingAABB.upperBound.x, y)))
+					a = Geometry::GetMidPointByY(y, lastVertex, vertex);
+				addVertexToContainer(a);
+			}
+			lastVertex = vertex;
+			lastInside = true;
+		}
+		else {
+			if (lastInside) {
+				//get the vertex on the line
+				float x = (lastVertex.x > vertex.x ? clippingAABB.lowerBound.x : clippingAABB.upperBound.x);
+				float y = (lastVertex.y > vertex.y ? clippingAABB.lowerBound.y : clippingAABB.upperBound.y);
+
+				b2Vec2 a;
+				if (Geometry::CheckSegmentIntersect(lastVertex, vertex, b2Vec2(x, clippingAABB.lowerBound.y), b2Vec2(x, clippingAABB.upperBound.y)))
+					a = Geometry::GetMidPointByX(x, lastVertex, vertex);
+				else if (Geometry::CheckSegmentIntersect(lastVertex, vertex, b2Vec2(clippingAABB.lowerBound.x, y), b2Vec2(clippingAABB.upperBound.x, y)))
+					a = Geometry::GetMidPointByY(y, lastVertex, vertex);
+
+				addVertexToContainer(a);
+
+				lastVertex = vertex;
+				lastInside = false;
+				continue;
+			}
+			else {
+				lastInside = false;
+
+				//we know that both vertices are not inside AABB
+				if (Geometry::CheckSegmentIntersect(topLeft, bottomRight, lastVertex, vertex) ||
+					Geometry::CheckSegmentIntersect(clippingAABB.lowerBound, clippingAABB.upperBound, lastVertex, vertex)) {
+					//intersect with AABB. Now we gonna find those 2 points.
+					b2Vec2 p[2] = { lastVertex, vertex }; int i = 0;
+
+
+					if (Geometry::CheckSegmentIntersect(clippingAABB.lowerBound, topLeft, p[0], p[1])) {
+						b2Vec2 a = Geometry::GetMidPointByX(clippingAABB.lowerBound.x, p[0], p[1]);
+						if (p[0].x < p[1].x) p[0] = a;
+						else p[1] = a;
+						i++;
+					}
+					if (Geometry::CheckSegmentIntersect(bottomRight, clippingAABB.upperBound, p[0], p[1])) {
+						b2Vec2 a = Geometry::GetMidPointByX(clippingAABB.upperBound.x, p[0], p[1]);
+						if (p[0].x < p[1].x) p[1] = a;
+						else p[0] = a;
+						i++;
+					}
+
+					if (i < 2) {
+						if (Geometry::CheckSegmentIntersect(clippingAABB.lowerBound, bottomRight, p[0], p[1])) {
+							b2Vec2 a = Geometry::GetMidPointByY(clippingAABB.lowerBound.y, p[0], p[1]);
+							if (p[0].y < p[1].y) p[0] = a;
+							else p[1] = a;
+							i++;
+						}
+					}
+					if (i < 2) {
+						if (Geometry::CheckSegmentIntersect(topLeft, clippingAABB.upperBound, p[0], p[1])) {
+							b2Vec2 a = Geometry::GetMidPointByY(clippingAABB.upperBound.y, p[0], p[1]);
+							if (p[0].y < p[1].y) p[1] = a;
+							else p[0] = a;
+						}
+					}
+					addVertexToContainer(p[0]);
+
+					//ignore the vertex
+					lastVertex = vertex;
+					vertex = p[1];
+				}
+				else {
+					//ignore the vertex
+					lastVertex = vertex;
+					continue;
+				}
+			}
+		}
+		addVertexToContainer(vertex);
+	}
+}
+
+
 
 float _linear(float a, float b, float t)
 {
@@ -81,8 +212,3 @@ float quintic(float a, float b, float c, float d, float e, float f, float t)
 	return _linear(quartic(a, b, c, d, e, t), quartic(b, c, d, e, f, t), t);
 }
 
-
-void normalizeDegreeAngle(float& angle) {
-	if (angle < 0) angle += 360;
-	else if (angle >= 360) angle -= 360;
-}

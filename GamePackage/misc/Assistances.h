@@ -42,6 +42,11 @@ public:
 	static std::string _atos(const char*a);
 	inline static float RadToDeg(float radian) { return radian*180.0f / 3.141592654f; }
 
+	static b2AABB getAABB(b2Body*body);
+	template <class T>
+	static void Swap(T&a, T&b);
+
+	static glm::vec2 LocalPointInSpartialInfoSpace(const struct SpatialInfo&coord,const glm::vec2&v);
 };
 
 
@@ -91,7 +96,15 @@ template<class T> static void sortList(List<T>& list, bool(*compare_data)(T, T))
 	quickSort(list.first(), list.last(), compare_data);
 }
 
+template<class T>
+inline void Utils::Swap(T & a, T & b)
+{
+	T temp = a;
+	a = b;
+	b = temp;
+}
 
 
 
 #endif ASSISTANCES_H
+

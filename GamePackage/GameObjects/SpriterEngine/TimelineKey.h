@@ -3,7 +3,6 @@
 #include"Folder.h"
 using namespace SpriterEngine;
 enum FlipType { FLIP_NONE, VERTICAL_FLIP, HORIZONTAL_FLIP };
-class SpatialInfo;
 class TimelineKey
 {
 public:
@@ -16,40 +15,31 @@ public:
 	float c3;
 	float c4;
 
-	virtual ~TimelineKey() {}
 	virtual void Log();
 
 	//TimelineKey*Interpolate(TimelineKey*nextKey, int nextKeyTime, float currentTime);
 	void Interpolate(TimelineKey*movingKey,TimelineKey*nextKey,int nextKeyTime, float currentTime);
-	float GetTWithNextKey(TimelineKey*nextKey, int nextKeyTime, float currentTime);
+	float GetTWithNextKey(int nextKeyTime, float currentTime);
 
 	// overridden in inherited types  return linear(this,keyB,t);
 	//virtual void Paint( FlipType flip = FLIP_NONE) {}
 	virtual void Linear(TimelineKey*movingKey,TimelineKey*keyB, float t) {  }
 	virtual void Clone(TimelineKey*target);
 	virtual TimelineKey*Spawn()=0;
-	virtual void Unmap(SpatialInfo)=0;
+	virtual void Unmap(struct SpatialInfo)=0;
 };
 
-class SpatialInfo
+struct SpatialInfo
 {
-public:
 	float x = 0;
 	float y = 0;
 	float angle = 0;
 	float scaleX = 1;
 	float scaleY = 1;
-	float a = 1;
+	float a = 1; //alpha =)
 
 	SpatialInfo unmapFromParent(SpatialInfo parentInfo);
-	inline void set(float x, float y, float angle, float scaleX, float scaleY, float a) { 
-		this->x = x;  
-		this->y = y;
-		this->angle = angle;
-		this->scaleX = scaleX;
-		this->scaleY = scaleY;
-		this->a = a;
-	}
+	static SpatialInfo linear(SpatialInfo infoA, SpatialInfo infoB, int spin, float t);
 };
 
 
@@ -57,20 +47,18 @@ public:
 class SpatialTimelineKey : public TimelineKey
 {
 public:
-	SpatialInfo info;
-	virtual ~SpatialTimelineKey()override {}
+	SpatialInfo m_info;
 };
 
 
 class BoneTimelineKey: public SpatialTimelineKey
 {
-public:
+private:
 	// unimplemented in Spriter
 	int length = 50;
 	int height = 5;
 	bool paintDebugBones = false;
 
-	~BoneTimelineKey() override {}
 	void Log()override;
 
 	// override paint if you want debug visuals for bones
@@ -79,11 +67,22 @@ public:
 	void Clone(TimelineKey*target) override;
 	TimelineKey*Spawn()override;
 	void Unmap(SpatialInfo parentInfo)override;
+
+	friend class ScmlObject;
+	friend class Animation;
+	friend class AnimationSwitcher;
+	friend class SpriterEntity;
 };
 
 class SpriteTimelineKey: public SpatialTimelineKey
 {
 public:
+	bool m_useDefaultPivot; // true if missing pivot_x and pivot_y in object tag
+	float m_pivot_x = 0;
+	float m_pivot_y = 1;
+
+
+private:
 	//what is the purpose of using these two???-> just to retrieve texture???
 	//int folder; // index of the folder within the ScmlObject
 	//int file;
@@ -91,21 +90,20 @@ public:
 	//question is: how the texture is changed? 
 	//->it depends on when the file and folder are changed. at that point,
 	//simply call setFile() instead.
+	int m_folderId;
+	int m_fileId;
 
-	bool useDefaultPivot; // true if missing pivot_x and pivot_y in object tag
-	float pivot_x = 0;
-	float pivot_y = 1;
-	int folderId;
-	int fileId;
-
-	~SpriteTimelineKey() {}
 	void Log()override;
 
 	//void Paint( FlipType flip = FLIP_NONE)override;
 	void Linear(TimelineKey*movingKey, TimelineKey*keyB, float t)override;
 	void Clone(TimelineKey*target) override;
-	TimelineKey*Spawn()override;
 	void Unmap(SpatialInfo parentInfo)override;
+	TimelineKey*Spawn()override;
+
+	friend class ScmlObject;
+	friend class Animation;
+	friend class AnimationSwitcher;
+	friend class SpriterEntity;
 };
 
-extern SpatialInfo _linear(SpatialInfo infoA, SpatialInfo infoB, int spin, float t);

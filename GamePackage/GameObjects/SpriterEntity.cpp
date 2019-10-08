@@ -2,45 +2,45 @@
 #include<algorithm>
 #include<limits>
 #include"SpriterEngine\AnimationSwitcher.h"
-
+#include"../misc/Math/Geometry.h"
+#include"../misc/Locator.h"
 
 //used for Spawner
-SpriterEntity::SpriterEntity(ScmlObject*pScmlObject, int scmlEntityIndex)
-{
-	//once for all
-	m_pScmlObject = pScmlObject;
-	m_scmlEntityIndex = scmlEntityIndex;
-	m_animationMap = &(m_pScmlObject->entities[m_scmlEntityIndex]->animationMap);
-	m_animationContainer = &(m_pScmlObject->entities[m_scmlEntityIndex]->animations);
-	m_actualAnimationNum = m_animationContainer->size();
-	m_animationIndex = -1;
-	m_actualAnimationIndex = -1;
-}
+SpriterEntity::SpriterEntity(ScmlEntity*entity, std::vector<SpriterEngine::Folder*>*pFolders)
+	:m_pScmlEntity(entity)
+	,m_pFolders(pFolders)
+{}
+
 //used for copy
-SpriterEntity::SpriterEntity(SpriterEntity*spriterEntity)
+SpriterEntity::SpriterEntity(SpriterEntity*spriterEntity, bool calculateAABB /*= false*/)
+	: m_pScmlEntity(spriterEntity->m_pScmlEntity)
+	, m_pFolders(spriterEntity->m_pFolders)
 {
-	m_pScmlObject = spriterEntity->m_pScmlObject;
-	m_scmlEntityIndex = spriterEntity->m_scmlEntityIndex;
-	m_animationMap = spriterEntity->m_animationMap;
-	m_animationContainer = spriterEntity->m_animationContainer;
-	m_actualAnimationNum = spriterEntity->m_actualAnimationNum;
-	m_animationIndex = -1;
-	m_actualAnimationIndex = -1;
 
-	auto&boneRefs = ((Animation*)m_pScmlObject->entities[m_scmlEntityIndex]->animations[0])->mainlineKeys[0]->boneRefs;
-	for (auto&a : boneRefs)
-		bodySegments.push_back(new BodySegment(bodySegments.size(), a.parent));
-	auto&spriteRefs = ((Animation*)m_pScmlObject->entities[m_scmlEntityIndex]->animations[0])->mainlineKeys[0]->objectRefs;
-	for (auto&a : spriteRefs)
-		spriteSegments.push_back(new SpriteSegment(spriteSegments.size(), a.parent,a.z_index));
-
+	auto&boneRefs = ((Animation*)m_pScmlEntity->animations[0])->mainlineKeys[0]->boneRefs;
+	auto&spriteRefs = ((Animation*)m_pScmlEntity->animations[0])->mainlineKeys[0]->objectRefs;
+	m_boneSegments.reserve(boneRefs.size());
+	m_spriteSegments.reserve(spriteRefs.size());
+	for (auto&a : boneRefs) m_boneSegments.push_back(new BoneSegment(m_boneSegments.size(), a.parent));
+	for (auto&a : spriteRefs) m_spriteSegments.push_back(new SpriteSegment(m_spriteSegments.size(), a.parent, a.z_index));
 
 	//each spriterEntity has only one animationSwitcher used for multiple times. 
-	m_animationContainer->push_back(new AnimationSwitcher(m_pScmlObject,m_pScmlObject->entities[m_scmlEntityIndex],(void*)this, &bodySegments));
-	m_animationSwitcherIndex = m_animationContainer->size() - 1;
-	
-	//query for callback at animation update
-	m_pScmlObject->SetAnimationCallback(this);
+	m_animationSwitcherIndex = m_pScmlEntity->animations.size();
+	m_pScmlEntity->animations.push_back(new AnimationSwitcher(&m_boneSegments, m_animationSwitcherIndex,this));
+
+	if (calculateAABB) {
+		m_defaultAABB = glm::vec4(
+			std::numeric_limits<float>::max(),
+			std::numeric_limits<float>::max(),
+			std::numeric_limits<float>::min(),
+			std::numeric_limits<float>::min());
+
+		SetAnimation(0);
+		Update(0);
+		Draw();
+
+		m_defaultOriginInAABB = glm::vec2(characterInfo.x, characterInfo.y) - glm::vec2(m_defaultAABB.x, m_defaultAABB.y);
+	}
 }
 SpriterEntity::~SpriterEntity() {
 	//erasing what you messed up at the beginning
@@ -49,77 +49,63 @@ SpriterEntity::~SpriterEntity() {
 	if (m_animationIndex != -1)
 	{
 		//correct the index going tobe kept in the last element while jumping to the new location in the vector
-		((SpriterEntity*)(((AnimationSwitcher*)(*(m_animationContainer->end() - 1)))->GetOwner()))->m_animationSwitcherIndex = m_animationSwitcherIndex;
+		((AnimationSwitcher*)(*(m_pScmlEntity->animations.end() - 1)))->SetAnimationSwitcherIndex(m_animationSwitcherIndex);
 
 		//swap
-		std::iter_swap(m_animationContainer->begin() + m_animationSwitcherIndex, m_animationContainer->end() - 1);
+		std::iter_swap(m_pScmlEntity->animations.begin() + m_animationSwitcherIndex, m_pScmlEntity->animations.end() - 1);
 
 		//destroy the last one
-		delete *(m_animationContainer->end() - 1);//delete the dynamic memory
-		m_animationContainer->erase(m_animationContainer->end() - 1);//remove the last element 
+		delete *(m_pScmlEntity->animations.end() - 1);//delete the dynamic memory
+		
+		m_pScmlEntity->animations.erase(m_pScmlEntity->animations.end() - 1);//remove the last element 
 	}
-	for (auto&a : bodySegments) delete a;
-	for (auto&a : spriteSegments) delete a;
-
+	for (auto&a : m_boneSegments) delete a;
+	for (auto&a : m_spriteSegments) delete a;
+	for (auto&a : m_timelineSlice) delete a;
 }
 
 
 
-#include"../misc/Locator.h"
 
 bool SpriterEntity::HasDone() {
-	if (m_animationIndex == -1)
-		return false;
-
+	if (m_animationIndex == -1) return false;
 	if (m_animationIndex != m_animationSwitcherIndex)
-		return m_animationContainer->at(m_animationIndex)->HasDone();
-	
+		return m_pScmlEntity->animations.at(m_animationIndex)->HasDone();
 	return false;
 }
 
-void SpriterEntity::SetInfo(glm::vec2 pos, float angle, float scaleX, float scaleY, FlipType flip) {
-	characterInfo.set(pos.x, pos.y, angle, scaleX, scaleY, 1);
-	m_flip = flip;
-}
 void SpriterEntity::Update(float deltaTime)
 {
 	m_currentTime += (int)(deltaTime*1000.0f);
 	if (m_animationIndex == -1) return;
 	if (m_animationIndex == m_animationSwitcherIndex) {
-		AnimationSwitcher*temp = (AnimationSwitcher*)(m_animationContainer->at(m_animationIndex));
+		AnimationSwitcher*temp = (AnimationSwitcher*)(m_pScmlEntity->animations.at(m_animationIndex));
 		if (temp->HasDone())//gets the out going signal
 		{
 			m_animationIndex = temp->GetNextAnimationIndex();
 			m_actualAnimationIndex = m_animationIndex;
+			m_currentMainlineKeyIndex = 0;
 		}
 	}
-
-	m_pScmlObject->currentEntity = m_scmlEntityIndex;
-	m_pScmlObject->currentAnimation = m_animationIndex;
-
-	m_AABB = glm::vec4(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
-	m_currentTime = m_pScmlObject->Draw(m_currentTime);
-
+	m_currentTime = m_pScmlEntity->animations.at(m_animationIndex)->Update(m_currentTime, &m_currentMainlineKeyIndex, this);
 }
 
 void SpriterEntity::Draw()
 {
 	if (m_animationIndex == -1) return;
+	
+	m_pScmlEntity->animations.at(m_animationIndex)->Draw(m_currentTime, this);
 
-	//for (auto&a : bodySegments) {
-	//	glm::vec2 dir(cos(glm::radians(a->GetInfo().angle)), sin(glm::radians(a->GetInfo().angle)));
-	//	glm::vec2 pos(a->GetInfo().x, a->GetInfo().y);
-	//	Locator::GetPrimitiveRenderer()->DrawLine(pos, pos + 20.0f*dir, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	//}
-	for (auto&a : spriteSegments) {
-		a->Draw(m_flip);
-		const glm::vec4& aabb = a->GetAABB();
-		if (m_AABB.x > aabb.x)m_AABB.x = aabb.x;
-		if (m_AABB.y > aabb.y)m_AABB.y = aabb.y;
-		if (m_AABB.z < aabb.z)m_AABB.z = aabb.z;
-		if (m_AABB.w < aabb.w)m_AABB.w = aabb.w;
-		
+	if (m_aabbFlag) {
+		m_aabbFlag = false;
+		m_AABB = m_defaultAABB;
 	}
+	for (auto&a : m_boneSegments) {
+		glm::vec2 dir(cos(glm::radians(a->GetInfo().angle)), sin(glm::radians(a->GetInfo().angle)));
+		glm::vec2 pos(a->GetInfo().x, a->GetInfo().y);
+		Locator::GetPrimitiveRenderer()->DrawLine(pos, pos + 20.0f*dir, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
 }
 
 
@@ -128,70 +114,117 @@ void SpriterEntity::Draw()
 
 
 
-BodySegment* SpriterEntity::GetBodySegment(int boneIndex)
+BoneSegment* SpriterEntity::GetBodySegment(int boneIndex)
 {
-	if(boneIndex<bodySegments.size())
-		return bodySegments[boneIndex];
+	if(boneIndex<m_boneSegments.size())
+		return m_boneSegments[boneIndex];
 	return NULL;
 }
 
 
-#include"../misc/Math/Geometry.h"
 void SpriterEntity::UpdateBoneFromKey(int boneIndex, BoneTimelineKey*boneKey) {
-	BodySegment*segment = bodySegments[boneIndex];
-	float angle = segment->GetAngle();
-	segment->SetInfo(boneKey->info);
+	BoneSegment*segment = m_boneSegments[boneIndex];
 
-	SpatialInfo&info = segment->GetInfo();
+
+	float oldAngle = segment->GetAngle();
+	segment->SetInfo(boneKey->m_info);
+	SpatialInfo&segmentInfo = segment->GetInfo();
 	SpatialInfo parentInfo;
 	if (segment->GetParentId() < 0) {
 		parentInfo = characterInfo;
 		if (m_flip == HORIZONTAL_FLIP) {
-			info.angle = 180.0f - info.angle;
-			normalizeDegreeAngle(info.angle);
+			segmentInfo.angle = 180.0f - segmentInfo.angle;
+			Geometry::normalizeDegreeAngle(segmentInfo.angle);
+			segmentInfo.x = -segmentInfo.x;
 		}else if (m_flip == VERTICAL_FLIP) {
 			//segment->GetInfo().angle = -segment->GetInfo().angle;
 			//normalizeDegreeAngle(segment->GetInfo().angle);
+			//info.y = -info.y;
 		}
 	}
 	else {
-		parentInfo = bodySegments[segment->GetParentId()]->GetInfo();
-		segment->Update(m_flip);
+		parentInfo = m_boneSegments[segment->GetParentId()]->GetInfo();
+		segment->Flip(m_flip);
 	}
-	info = info.unmapFromParent(parentInfo);
-	normalizeDegreeAngle(info.angle);
+	segmentInfo = segmentInfo.unmapFromParent(parentInfo);
+	Geometry::normalizeDegreeAngle(segmentInfo.angle);
 
-	if (segment->IsControlled())
-		segment->SetAngle(angle);
+	if (segment->IsControlled()) {
+		segment->SetAngle(oldAngle);
+		float localAngle = oldAngle - m_boneSegments[segment->GetParentId()]->GetInfo().angle;
+		((BoneTimelineKey*)m_timelineSlice[boneIndex])->m_info.angle = 
+			(m_flip == HORIZONTAL_FLIP ?-localAngle: localAngle);
+	}
+	segment->Update();
 }
+
 void SpriterEntity::UpdateSpriteFromKey(int spriteIndex, SpriteTimelineKey*spriteKey) {
-	Texture*&pTexture = m_pScmlObject->folders[spriteKey->folderId]->files[spriteKey->fileId].pTexture;
-	
-	SpriteSegment*sprite = spriteSegments[spriteIndex];
-	sprite->SetInfo(spriteKey->info, spriteKey->pivot_x, spriteKey->pivot_y, spriteKey->useDefaultPivot,pTexture);
-	sprite->Update(m_flip);
+	Texture*&pTexture = m_pFolders->at(spriteKey->m_folderId)->files[spriteKey->m_fileId].pTexture;
+
+	SpriteSegment*sprite = m_spriteSegments[spriteIndex];
+	sprite->SetInfo(spriteKey->m_info, spriteKey->m_pivot_x, spriteKey->m_pivot_y, spriteKey->m_useDefaultPivot,pTexture);
+	sprite->Flip(m_flip);
 
 	SpatialInfo&info = sprite->GetInfo();
-	info = info.unmapFromParent(bodySegments[sprite->GetParentId()]->GetInfo());
+	info = info.unmapFromParent(m_boneSegments[sprite->GetParentId()]->GetInfo());
 
+	sprite->Draw(m_flip, m_aabbFlag);
+
+	if (m_aabbFlag) {
+		const glm::vec4& aabb = sprite->GetAABB();
+		if (m_defaultAABB.x > aabb.x)m_defaultAABB.x = aabb.x;
+		if (m_defaultAABB.y > aabb.y)m_defaultAABB.y = aabb.y;
+		if (m_defaultAABB.z < aabb.z)m_defaultAABB.z = aabb.z;
+		if (m_defaultAABB.w < aabb.w)m_defaultAABB.w = aabb.w;
+	}
 }
 
-
-
-
-
+TimelineKey*SpriterEntity::GetTimelineKeyFromSlice(int index) {
+	if (index < m_boneSegments.size()) {
+		if (m_boneSegments[index]->IsControlled()) {
+			return &m_tempKey;
+		}
+	}
+	return m_timelineSlice[index];
+}
 
 
 void SpriterEntity::SetAnimationSwitchingTime(const char*animationA, const char*animationB, int time)
 {
-	m_pScmlObject->entities[m_scmlEntityIndex]->animationSwitchingTime
+	m_pScmlEntity->animationSwitchingTime
 		.at(GetAnimationIndex(animationA))
 		.at(GetAnimationIndex(animationB)) = time;
 }
 
+void SpriterEntity::SetPos(const glm::vec2 & pos)
+{
+	if (m_updatePositionFlag) {
+		characterInfo.x = pos.x;
+		characterInfo.y = pos.y;
+
+		glm::vec2 s(m_AABB.z - m_AABB.x, m_AABB.w - m_AABB.y);
+		glm::vec2 p(
+			characterInfo.x - m_defaultOriginInAABB.x* characterInfo.scaleX,
+			characterInfo.y - m_defaultOriginInAABB.y* characterInfo.scaleY);
+		m_AABB.x = p.x;
+		m_AABB.y = p.y;
+		m_AABB.z = p.x + s.x;
+		m_AABB.w = p.y + s.y;
+	}
+}
+
+void SpriterEntity::SetAABB(const glm::vec4 & AABB)
+{
+	characterInfo.scaleX = (AABB.z - AABB.x) / (m_defaultAABB.z - m_defaultAABB.x);
+	characterInfo.scaleY = (AABB.w - AABB.y) / (m_defaultAABB.w - m_defaultAABB.y);
+	characterInfo.x = (AABB.x) + m_defaultOriginInAABB.x*characterInfo.scaleX;
+	characterInfo.y = (AABB.y) + m_defaultOriginInAABB.y*characterInfo.scaleY;
+	m_AABB = AABB;
+}
+
 int SpriterEntity::GetSegmentIndex(const char * boneName)
 {
-	auto&map = m_pScmlObject->entities[m_scmlEntityIndex]->bodySegmentMap;
+	auto&map = m_pScmlEntity->bodySegmentMap;
 	auto&pos = map.find(boneName);
 	if (pos != map.end())
 		return pos->second;
@@ -200,53 +233,63 @@ int SpriterEntity::GetSegmentIndex(const char * boneName)
 
 SpriterEntity * SpriterEntity::Spawn()
 {
-	return new SpriterEntity(this);
+	return new SpriterEntity(this,true);
 }
 
 
 void SpriterEntity::SetAnimation(const char* name)
 {
 	m_currentTime = 0;
-	auto animation = m_animationMap->find(name);
-	if (animation == m_animationMap->end()) {
+	auto animation = m_pScmlEntity->animationMap.find(name);
+	if (animation == m_pScmlEntity->animationMap.end()) {
 		SDL_Log("Animation %s name Not found. Set to default (0)", name);
 		m_animationIndex = 0;
 		m_actualAnimationIndex = 0;
+		m_currentMainlineKeyIndex = 0;
 		return;
 	}
 	SetAnimation(animation->second);
 }
 
-void SpriterEntity::SetAnimation(int newAnimationIndex)
+void SpriterEntity::SetAnimation(int newAnimationIndex, glm::vec2 jumpDistance /*= glm::vec2(0, 0)*/)
 {
 	m_currentTime = 0;
 	// in case of the first time
 	if (m_animationIndex == -1) {
 		m_animationIndex = newAnimationIndex;
 		m_actualAnimationIndex = newAnimationIndex;
+		m_currentMainlineKeyIndex = 0;
 		//just fill the of the first animation and do not care about the return value
-		((Animation*)m_animationContainer->at(m_animationIndex))->CalculateSliceAtZero(NULL);
+		((Animation*)m_pScmlEntity->animations.at(m_animationIndex))->CalculateSliceAtZero(m_timelineSlice,NULL);
 		return;
 	}
-
-
-
 
 	//take out the switching times from the container at the positions
 	//of valid index of animations which are less than the size of 
 	//animation container
 	int switchingTime = -1;
-	if (m_animationIndex<m_animationMap->size() && newAnimationIndex <m_animationMap->size())
-		switchingTime = 
-			(m_pScmlObject->entities[m_scmlEntityIndex]->animationSwitchingTime)
-			.at(m_animationIndex).at(newAnimationIndex);
-	//SDL_Log("Switching Time: %d ", switchingTime);
+	SDL_Log("m_animationIndex: %d %d", m_actualAnimationIndex, newAnimationIndex);
+	if (m_actualAnimationIndex < m_pScmlEntity->animationMap.size()) {
+		if (newAnimationIndex < m_pScmlEntity->animationMap.size()) {
+			switchingTime = (m_pScmlEntity->animationSwitchingTime).at(m_actualAnimationIndex).at(newAnimationIndex);
+		}
+	}
+	if (switchingTime == 0) {
+		m_animationIndex = newAnimationIndex;
+		m_actualAnimationIndex = newAnimationIndex;
+		m_currentMainlineKeyIndex = 0;
+		//just fill the of the first animation and do not care about the return value
+		((Animation*)m_pScmlEntity->animations.at(m_animationIndex))->CalculateSliceAtZero(m_timelineSlice,NULL);
+		return;
+	}
+
+	SDL_Log("Switching Time: %d ", switchingTime);
 	//take out the animationSwitcher of this spriterEntity and init() it again
 	//with the new pair of animations
-	((AnimationSwitcher*)(m_animationContainer->at(m_animationSwitcherIndex)))->Init(
-		m_animationContainer->at(m_animationIndex),//this animation maybe a switcher or an Animation Object.
-		m_animationContainer->at(newAnimationIndex),//the second animation here is properly a real Animation Object
-		switchingTime, newAnimationIndex);
+	((AnimationSwitcher*)(m_pScmlEntity->animations.at(m_animationSwitcherIndex)))->Init(
+		m_pScmlEntity->animations.at(m_animationIndex),//this animation maybe a switcher or an Animation Object.
+		m_pScmlEntity->animations.at(newAnimationIndex),//the second animation here is properly a real Animation Object
+		switchingTime, newAnimationIndex,jumpDistance);
 
 	m_animationIndex = m_animationSwitcherIndex;
 	m_actualAnimationIndex = newAnimationIndex;
@@ -254,8 +297,8 @@ void SpriterEntity::SetAnimation(int newAnimationIndex)
 
 int SpriterEntity::GetAnimationIndex(const char* name)
 {
-	auto animation = m_animationMap->find(name);
-	if (animation == m_animationMap->end()) {
+	auto animation = m_pScmlEntity->animationMap.find(name);
+	if (animation == m_pScmlEntity->animationMap.end()) {
 		SDL_Log("Animation %s name Not found. Set to default (0)", name);
 		return -1;
 	}

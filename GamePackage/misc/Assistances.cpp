@@ -1,5 +1,7 @@
+#include "..\..\..\GameEngine\GamePackage\misc\Assistances.h"
 #include"Assistances.h"
 #include"SDL2\SDL_rwops.h"
+#include"../GameObjects/SpriterEngine/TimelineKey.h"
 void Utils::logError(const std::string&error) {
 	SDL_Log("Error: %s", error.c_str());
 	exit(69);
@@ -44,6 +46,40 @@ std::string Utils::_atos(const char*a) {
 		return std::string(a);
 	}
 	return "";
+}
+
+b2AABB Utils::getAABB(b2Body * body)
+{
+	b2AABB aabb;
+	for (auto it = body->GetFixtureList(); it != NULL; it = it->GetNext()) {
+		b2AABB aabb2 = it->GetAABB(0);
+		if (aabb.lowerBound.x < aabb2.lowerBound.x)
+			aabb.lowerBound.x = aabb2.lowerBound.x;
+		if (aabb.lowerBound.y < aabb2.lowerBound.y)
+			aabb.lowerBound.y = aabb2.lowerBound.y;
+		if (aabb.upperBound.x > aabb2.upperBound.x)
+			aabb.upperBound.x = aabb2.upperBound.x;
+		if (aabb.upperBound.y > aabb2.upperBound.y)
+			aabb.upperBound.y = aabb2.upperBound.y;
+	}
+	return aabb;
+}
+
+glm::vec2 Utils::LocalPointInSpartialInfoSpace(const SpatialInfo & coord, const glm::vec2 & v)
+{
+	//relative position w.r.t coord space
+	glm::vec2 p(v.x - coord.x, v.y - coord.y);
+
+	//coordinates of p on coord reference frame
+	glm::vec2 p2(
+		p.x*cos(coord.angle) - p.y*sin(coord.angle),
+		p.x*sin(coord.angle) + p.y*cos(coord.angle));
+
+	//finally scale
+	p2.x /= coord.scaleX;
+	p2.y /= coord.scaleY;
+
+	return p2;
 }
 
 

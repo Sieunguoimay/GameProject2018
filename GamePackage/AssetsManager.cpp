@@ -3,15 +3,6 @@
 #include<sstream>
 
 
-AssetsManager::AssetsManager()
-{
-}
-
-
-AssetsManager::~AssetsManager()
-{
-}
-
 void AssetsManager::CleanUp()
 {
 	for (auto&a : m_textures)
@@ -178,7 +169,7 @@ void AssetsManager::loadFromXml(std::string filename)
 			m_spriterEntities.insert(
 				std::pair<std::string, SpriterEntity*>(
 					body_name +"/"+newScmlObject->entities[i]->name,
-					new SpriterEntity(newScmlObject, i)));
+					new SpriterEntity(newScmlObject->entities[i],&newScmlObject->folders)));
 	}
 
 	//how to use it

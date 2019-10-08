@@ -15,6 +15,7 @@ public:
 	std::string name;
 	std::vector<AnimationBase*> animations;
 	std::map<std::string, int> animationMap;
+
 	std::vector<std::vector<int>> animationSwitchingTime;
 	std::map<std::string, int>bodySegmentMap;
 

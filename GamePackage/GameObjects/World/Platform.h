@@ -9,7 +9,7 @@ public:
 	Platform(Texture*pTexture,const glm::vec4& AABB);
 	~Platform();
 
-	Spawner*Spawn(InfoPacket*info)override;
+	static Spawner*Spawn(InfoPacket*info);
 
 	void Update(float deltaTime)override;
 	void SetupBody(bool atRunTime = false)override;

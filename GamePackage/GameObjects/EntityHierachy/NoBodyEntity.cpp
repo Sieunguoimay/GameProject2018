@@ -3,23 +3,23 @@
 
 
 //everything would be based on this first AABB including Body creating
-AnimationNoBodyEntity::AnimationNoBodyEntity(AnimationSkin * skin, glm::vec4 AABB)
-	:m_skin(skin)
+AnimationNoBodyEntity::AnimationNoBodyEntity(SpriterEntity* skin, glm::vec4 AABB)
+	:m_spriterEntity(skin)
 {
-	if (m_skin == NULL)return;
+	if (m_spriterEntity == NULL)return;
 	//if given AABB has no dimesion spefified, the we copy the dimension of original AABB of SKin;
 	if (AABB.z <= AABB.x) {
-		const glm::vec4&aabb = m_skin->GetAABB();
+		const glm::vec4&aabb = m_spriterEntity->GetAABB();
 		AABB.z = (aabb.z - aabb.x) + AABB.x;
 		AABB.w = (aabb.w - aabb.y) + AABB.y;
 	}
-	m_skin->SetAABB(AABB);
+	m_spriterEntity->SetAABB(AABB);
 }
 
 AnimationNoBodyEntity::~AnimationNoBodyEntity()
 {
-	if(m_skin!=NULL)
-		delete m_skin;
+	if(m_spriterEntity!=NULL)
+		delete m_spriterEntity;
 }
 
 void AnimationNoBodyEntity::Update(float deltaTime)
@@ -28,31 +28,31 @@ void AnimationNoBodyEntity::Update(float deltaTime)
 	AABBEntity::Update(deltaTime);
 	if (AABBEntity::IsSelected())return;
 
-	m_skin->Update(deltaTime);
+	m_spriterEntity->Update(deltaTime);
 }
 
 void AnimationNoBodyEntity::Draw()
 {
 	//super
 	AABBEntity::Draw();
-	m_skin->Draw();
+	m_spriterEntity->Draw();
 
 }
 
 void AnimationNoBodyEntity::OnSelect(const glm::vec4 & AABB)
 {
-	m_animationIndexBuffer = m_skin->GetSpriterEntity()->GetCurrentAnimationIndex();
-	m_skin->GetSpriterEntity()->SetAnimationStrictly(0);
+	m_animationIndexBuffer = m_spriterEntity->GetCurrentAnimationIndex();
+	m_spriterEntity->SetAnimationStrictly(0);
 }
 
 void AnimationNoBodyEntity::OnRelease(const glm::vec4 & AABB)
 {
-	m_skin->SetAnimation(m_animationIndexBuffer);
+	m_spriterEntity->SetAnimation(m_animationIndexBuffer);
 }
 
 void AnimationNoBodyEntity::ApplyAABB(const glm::vec4 & AABB)
 {
-	m_skin->SetAABB(AABB);
+	m_spriterEntity->SetAABB(AABB);
 }
 
 

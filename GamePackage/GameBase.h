@@ -30,7 +30,6 @@ protected:
 		CAMERA,
 		CAMERA_DRAG,
 		MOUSE_CURSOR,
-		INPUT_HANDLER,
 		TOOL_NUM
 	};
 

@@ -1,8 +1,9 @@
 #pragma once
 #include"Entity.h"
-#include"../Skin.h"
+#include"../NoAnimationSkin.h"
 #include"../PhysicsEngine/BodyDragAndDrop.h"
 #include"../PhysicsEngine/BodyBase.h"
+#include"../SpriterEntity.h"
 //Don't inherit this class (though doing so is harmless)
 //Inherit the 2 children of it.
 
@@ -38,21 +39,21 @@ class AnimationBodyEntity :public HavingBodyEntity {
 protected:
 	//this is just a pointer pointing to the skin object
 	//no deleting.
-	AnimationSkin*m_skin;
+	SpriterEntity*m_spriterEntity;
 public:
-	AnimationBodyEntity(AnimationSkin*skin/*, ObjectType type*/,glm::vec4 AABB);
+	AnimationBodyEntity(SpriterEntity*spriterEntity/*, ObjectType type*/,glm::vec4 AABB);
 	virtual ~AnimationBodyEntity();
 
 	//animation skin requires updating
 	virtual void Update(float deltaTime)override;
 	virtual void Draw()override;
-	inline glm::vec4 CalculateAABB() override { return m_skin->GetAABB(); };
+	inline glm::vec4 CalculateAABB() override { return m_spriterEntity->GetAABB(); };
 	//optional from the higher level
 	void OnSelect(const glm::vec4&AABB)override;
 	void OnRelease(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;
 	
-	inline AnimationSkin*GetSkin() { return m_skin; }
+	inline SpriterEntity*GetSpriterEntity() { return m_spriterEntity; }
 };
 
 

@@ -25,7 +25,7 @@ public:
 	void Dettach(AABBEntity*entity);
 	inline List<AABBEntity*>&GetAttachedEntitites() { return m_attachedEntities; }
 
-	Spawner*Spawn(InfoPacket*info)override;
+	static Spawner*Spawn(InfoPacket*info);
 	virtual glm::vec4 CalculateAABB();
 	//no use
 	virtual void OnSelect(const glm::vec4&AABB) {};

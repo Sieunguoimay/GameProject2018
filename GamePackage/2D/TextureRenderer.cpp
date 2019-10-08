@@ -167,7 +167,7 @@ void TextureRenderer::Render(const float*matrix) {
 		//glDrawArrays(GL_TRIANGLES, a.offset, a.numVertices);
 		glDrawElements(GL_TRIANGLES,a.numVertices, GL_UNSIGNED_SHORT,(void*)(a.offset*2));
 		/*
-			BIG LESTION TO REMEMEBER GOES HERE>>>>
+			BIG LESSION TO REMEMEBER GOES HERE>>>>
 
 			The size of a void* is a platform dependent value. 
 			Typically it's value is 4 or 8 for 32 and 64 bit platforms respectively.

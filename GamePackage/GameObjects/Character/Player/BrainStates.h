@@ -1,13 +1,15 @@
 #pragma once
 #include"../../../misc/StateMachine/StateMachine.h"
 #include<iostream>
+#include<queue>
+#include"../../PhysicsEngine/PrimitiveActions.h"
 enum BrainStateEnum {
 	BS_ON_THE_FLOOR,
 	BS_NEXT_TO_ROCK_LHS,
 	BS_NEXT_TO_ROCK_RHS,
 	BS_ON_ROCK_TOP_RIGHT,
 	BS_ON_ROCK_TOP_LEFT,
-	BS_TEST_STATE,
+	BS_LONG_ACTION,
 	BS_TOTAL_NUM
 };
 
@@ -61,8 +63,16 @@ public:
 
 
 
-class BrainStateTest :public BrainState {
+
+#include"PlayerActuator.h"
+class BrainStateLongAction :public BrainState {
+	State<Player>*m_followState = NULL;
+	std::queue<pa::PlayerLongActionBase*>m_actions;
+	bool m_enterFlag;
 public:
+	~BrainStateLongAction()override;
+	void SetFollowState(State<Player>*followState) { m_followState = followState; }
+	void AddAction(pa::PlayerLongActionBase *action) { m_actions.push(action); }
 	virtual void Enter() override;
 	virtual void Execute(float deltaTime) override;
 	virtual void Exit() override;

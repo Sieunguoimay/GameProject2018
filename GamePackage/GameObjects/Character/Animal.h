@@ -10,7 +10,7 @@ public:
 	//void OnBeginContact(b2Contact*contact, b2Fixture*fixture)override;
 	void Update(float deltaTime)override;
 
-	Spawner*Spawn(InfoPacket*info)override;
+	static Spawner*Spawn(InfoPacket*info);
 };
 
 class Rock :public NoAnimationBodyEntity {
@@ -24,12 +24,12 @@ public:
 class Grass : public AnimationNoBodyEntity {
 public:
 	Grass(const glm::vec2&pos=glm::vec2(0,0));
-	Spawner*Spawn(InfoPacket*info)override;
+	static Spawner*Spawn(InfoPacket*info);
 };
 
 class Leaf :public NoAnimationNoBodyEntity {
 public:
 	Leaf(const glm::vec2&pos = glm::vec2(0, 0));
-	Spawner*Spawn(InfoPacket*info)override;
+	static Spawner*Spawn(InfoPacket*info);
 };
 

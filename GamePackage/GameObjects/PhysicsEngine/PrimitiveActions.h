@@ -7,11 +7,12 @@ namespace pe {
 		bool m_autorelease;
 	public:
 		BaseAction():m_autorelease(true){}
-		inline virtual ~BaseAction() { }
-		inline virtual void Run(float deltaTime) = 0;
-		inline void Retain() { m_autorelease = false; }
-		inline bool IsAutorelease()const { return m_autorelease; }
-		inline virtual bool Timeout() { return true; }//true means run one time and die
+		virtual ~BaseAction() { }
+		virtual void Run(float deltaTime) = 0;
+		virtual bool Timeout() { return true; }//true means run one time and die
+		virtual void DrawDebug(){}
+		void Retain() { m_autorelease = false; }
+		bool IsAutorelease()const { return m_autorelease; }
 	};
 	class TangibleAction :public BaseAction {
 	protected:
@@ -22,8 +23,8 @@ namespace pe {
 		TangibleAction(b2Body*pBody, float duration)
 			:m_pBody(pBody), m_duration(duration){}
 		virtual ~TangibleAction(){ m_pBody = NULL; }
-		inline virtual void Run(float deltaTime)override { m_timer += deltaTime; if (m_timer > m_duration) m_timer = m_duration; }
-		inline bool Timeout() override { return m_timer >= m_duration; }
+		virtual void Run(float deltaTime)override { m_timer += deltaTime; if (m_timer > m_duration) m_timer = m_duration; }
+		bool Timeout() override { return m_timer >= m_duration; }
 	};
 
 	class MoveTo :public TangibleAction {
@@ -33,6 +34,7 @@ namespace pe {
 		MoveTo(b2Body*pBody, const b2Vec2&target, float duration);		
 		~MoveTo()override;
 		void Run(float deltaTime)override;
+		void DrawDebug()override;
 	};
 
 
@@ -40,12 +42,21 @@ namespace pe {
 		std::vector<BaseAction*>m_actions;
 		int m_actionIndex;
 	public:
+		Sequence(){}
 		Sequence(BaseAction*action, ...);
 		~Sequence()override;
 		void Run(float deltaTime)override;
 		inline bool Timeout()override { return (m_actionIndex==m_actions.size()); }
+		Sequence&AddAction(BaseAction*action) { m_actions.push_back(action); return *this; }
 	};
 
+	class Delay :public BaseAction {
+		float m_time;
+	public:
+		Delay(float time) :m_time(time) {}
+		void Run(float deltaTime)override { m_time-=deltaTime; }
+		bool Timeout()override { return (m_time <= 0.0f); }
+	};
 
 	class Callback :public BaseAction {
 		std::function<void()>m_callback;

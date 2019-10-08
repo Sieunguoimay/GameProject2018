@@ -1,7 +1,7 @@
 #pragma once
 #include"Entity.h"
-#include"../Skin.h"
-
+#include"../NoAnimationSkin.h"
+#include"../SpriterEntity.h"
 //why do these two classes look the same???
 //even though they are similar
 //they are better separate like this
@@ -14,10 +14,10 @@
 
 class AnimationNoBodyEntity :public AABBEntity {
 protected:
-	AnimationSkin*m_skin;
+	SpriterEntity*m_spriterEntity;
 	int m_animationIndexBuffer;
 public:
-	AnimationNoBodyEntity(AnimationSkin*skin,glm::vec4 AABB );
+	AnimationNoBodyEntity(SpriterEntity*skin,glm::vec4 AABB );
 	virtual ~AnimationNoBodyEntity();
 
 	void Update(float deltaTime)override;
@@ -27,7 +27,7 @@ public:
 	void OnRelease(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;
 
-	inline glm::vec4 CalculateAABB() override { return m_skin->GetAABB(); }
+	glm::vec4 CalculateAABB() override { return m_spriterEntity->GetAABB(); }
 };
 
 
@@ -49,5 +49,5 @@ public:
 	void OnRelease(const glm::vec4&AABB)override;
 	void ApplyAABB(const glm::vec4&AABB)override;
 
-	inline glm::vec4 CalculateAABB() override{ return m_skin->GetAABB(); }
+	glm::vec4 CalculateAABB() override{ return m_skin->GetAABB(); }
 };

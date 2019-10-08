@@ -6,11 +6,9 @@ Animal::Animal(const glm::vec2& pos)
 {
 }
 Animal::Animal(const glm::vec4 & aabb)
-	:AnimationBodyEntity(new AnimationSkin(
-		Locator::GetAssets()->SpawnSpriterEntity("skin_2/main_skin/entity_000"), 1.0f),
-		/*ObjectType::NULL_TYPE,*/ aabb)
+	:AnimationBodyEntity(Locator::GetAssets()->SpawnSpriterEntity("skin_2/main_skin/entity_000"),aabb)
 {
-	m_skin->SetAnimation(m_skin->GetSpriterEntity()->GetAnimationIndex("run"));
+	m_spriterEntity->SetAnimation(m_spriterEntity->GetAnimationIndex("run"));
 }
 Animal::~Animal(){}
 
@@ -112,8 +110,7 @@ Spawner * Grass::Spawn(InfoPacket * info)
 {
 	glm::vec2 pos = *(const glm::vec2*)info->GetData();
 	Spawner*a=(new Grass(pos))->SetId(info->GetId());
-	((Grass*)a)->m_skin = new AnimationSkin(
-		Locator::GetAssets()->SpawnSpriterEntity("tree/deep/rocktree/entity_000"), 1.0f);
+	((Grass*)a)->m_spriterEntity = Locator::GetAssets()->SpawnSpriterEntity("tree/deep/rocktree/entity_000");
 	delete info;
 	return a;
 }

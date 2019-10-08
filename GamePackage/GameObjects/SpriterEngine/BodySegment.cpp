@@ -1,12 +1,21 @@
 #include"BodySegment.h"
 #include"../../misc/Locator.h"
 #include"../../misc/Math/Geometry.h"
-void BodySegment::Update(const FlipType & flip)
+void BoneSegment::Update()
+{
+	if (m_state == State::BSS_RELEASE_CONTROL_SIGNAL) {
+		m_state = State::BSS_IDLE;
+	}
+	if (m_state == State::BSS_CONTROL_CAPTURED)
+		m_state = State::BSS_RELEASE_CONTROL_SIGNAL;
+}
+
+void BoneSegment::Flip(const FlipType & flip)
 {
 	if (flip == HORIZONTAL_FLIP) {
 		m_info.angle = -m_info.angle;
 		m_info.y = -m_info.y;
-		normalizeDegreeAngle(m_info.angle);
+		Geometry::normalizeDegreeAngle(m_info.angle);
 		return;
 	}
 	else if (flip == VERTICAL_FLIP) {
@@ -15,15 +24,15 @@ void BodySegment::Update(const FlipType & flip)
 		//normalizeDegreeAngle(m_info.angle);
 	}
 
-}
-void BodySegment::TakeControl(const float& oldAngle, const float& angularSpeed, Rotator::CurveType curveType)
-{
-	underControl = true;
-	m_rotator.Init(oldAngle, angularSpeed, curveType);
+
 }
 
-void BodySegment::SteerAngle(float targetAngle, float deltaTime) {
 
+void BoneSegment::SteerAngle(float targetAngle, float deltaTime, float angularSpeed, Rotator::CurveType curveType) {
+	if (m_state == State::BSS_IDLE)
+		m_rotator.Init(m_info.angle, angularSpeed, curveType);
+
+	m_state = State::BSS_CONTROL_CAPTURED;
 	m_rotator.RotateTo(targetAngle, deltaTime);
 	m_info.angle = m_rotator.GetAngle();
 }
@@ -33,12 +42,13 @@ void BodySegment::SteerAngle(float targetAngle, float deltaTime) {
 
 
 
-void SpriteSegment::Update(const FlipType& flip)
+void SpriteSegment::Flip(const FlipType& flip)
 {
+
 	if (flip == HORIZONTAL_FLIP) {
 		m_info.y = -m_info.y;
 		m_info.angle = -m_info.angle;
-		normalizeDegreeAngle(m_info.angle);
+		Geometry::normalizeDegreeAngle(m_info.angle);
 		m_pivot_y = 1 - m_pivot_y;
 	}
 	else if (flip == VERTICAL_FLIP) {
@@ -47,10 +57,9 @@ void SpriteSegment::Update(const FlipType& flip)
 		//normalizeDegreeAngle(m_info.angle);
 		//m_pivot_x = 1 - m_pivot_x;
 	}
-
 }
 
-void SpriteSegment::Draw(const FlipType& flip) {
+void SpriteSegment::Draw(const FlipType& flip, bool calculateSizeFlag) {
 
 	float w = m_info.scaleX*((float)m_pTexture->GetWidth());
 	float h = m_info.scaleY*((float)m_pTexture->GetHeight());
@@ -73,20 +82,20 @@ void SpriteSegment::Draw(const FlipType& flip) {
 		m_AABB = glm::vec4(m_info.x, m_info.y, m_info.x, m_info.y);
 		return;
 	}
-	//calculate AABB
-	glm::vec2 p[3] = { a->bottomLeft.position,
-		a->topRight.position,a->bottomRight.position };
 
 
-	m_AABB = glm::vec4(a->topLeft.position, a->topLeft.position);
-	for (int i = 0; i < 3; i++) {
-		if (m_AABB.x > p[i].x) m_AABB.x = p[i].x;
-		else if (m_AABB.z < p[i].x) m_AABB.z = p[i].x;
-		if (m_AABB.y > p[i].y) m_AABB.y = p[i].y;
-		else if (m_AABB.w < p[i].y) m_AABB.w = p[i].y;
+	if (calculateSizeFlag) {
+		//calculate AABB
+		glm::vec2 p[3] = { a->bottomLeft.position,
+			a->topRight.position,a->bottomRight.position };
+		m_AABB = glm::vec4(a->topLeft.position, a->topLeft.position);
+		for (int i = 0; i < 3; i++) {
+			if (m_AABB.x > p[i].x) m_AABB.x = p[i].x;
+			else if (m_AABB.z < p[i].x) m_AABB.z = p[i].x;
+			if (m_AABB.y > p[i].y) m_AABB.y = p[i].y;
+			else if (m_AABB.w < p[i].y) m_AABB.w = p[i].y;
+		}
 	}
-
-
 }
 
 void SpriteSegment::SetInfo(const SpatialInfo & info, float pivot_x, float pivot_y, bool useDefaultPivot, Texture*pTexture)

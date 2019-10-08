@@ -1,5 +1,6 @@
 #pragma once
 #include"Box2D\Box2D.h"
+#include<functional>
 class Geometry {
 public:
 	struct CirlceIntersectOutput {
@@ -35,6 +36,14 @@ public:
 	static bool onLine(const b2Vec2&a, const b2Vec2&b1, const b2Vec2&b2);
 	static int direction(const b2Vec2&a, const b2Vec2&b, const b2Vec2&c);
 	static bool CheckSegmentIntersect(const b2Vec2&a1, const b2Vec2&a2, const b2Vec2&b1, const b2Vec2&b2);
+	static bool LineSegmentIntersection(const b2Vec2&l11, const b2Vec2&l12, const b2Vec2&l21, const b2Vec2&l22, b2Vec2&intersect);
+	static void normalizeDegreeAngle(float&angle);
+
+	static void clipPolygonAgainstAABB(b2PolygonShape*shape, const b2AABB& aabb
+		, std::function<void(const b2Vec2&)>addVertexToContainer
+		, std::function<b2Vec2(const b2Vec2&)>localToWorld = NULL
+	);
+
 };
 
 extern float _linear(float a, float b, float t);
@@ -44,4 +53,3 @@ extern float cubic(float a, float b, float c, float d, float t);
 extern float quartic(float a, float b, float c, float d, float e, float t);
 extern float quintic(float a, float b, float c, float d, float e, float f, float t);
 
-extern void normalizeDegreeAngle(float&angle);

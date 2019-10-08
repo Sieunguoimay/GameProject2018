@@ -17,5 +17,6 @@ private:
 public:
 	void Init(const float& initialAngle,const float& angularSpeed,const CurveType& curveType);
 	void RotateTo(float newAngle, float deltaTime);
-	inline float GetAngle() { return m_angle; }
+	float GetAngle() { return m_angle; }
+	float GetOldAngle() { return m_oldAngle; }
 };

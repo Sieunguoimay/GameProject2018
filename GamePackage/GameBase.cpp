@@ -15,7 +15,6 @@
 
 #include"GameObjects\SpriterEntity.h"
 
-#include"GameObjects/Character/Character.h"
 #include"GameObjects/Character/Animal.h"
 #include"GameObjects/ObjectPool.h"
 
@@ -59,9 +58,11 @@ int GameBase::Init(int width, int height)
 
 	TextureRenderer*textureRenderer = new TextureRenderer(m_assetsManager.GetShader("HelloTriangle"),SortType::TEXTURE,m_camera2D.GetAABB());
 	PrimitiveRenderer*primitiveRenderer = new PrimitiveRenderer(m_assetsManager.GetShader("PrimitiveDrawing"),m_assetsManager.GetShader("PrimitiveFilling"),m_assetsManager.GetShader("2DLighting"));
-	//TextConsole*textConsole = new TextConsole(textureRenderer, m_assetsManager.GetFontPath(1).c_str(), 50);
-	//textConsole->SetPos(-m_windowSize.GetGameSize().x/ 2 + 500, m_windowSize.GetGameSize().y / 2 - 200);
-	//m_renderers.push_back(textConsole);//at first
+
+	TextConsole*textConsole = new TextConsole(textureRenderer, m_assetsManager.GetFontPath(1).c_str(), 30);
+	textConsole->SetPos(-m_windowSize.GetGameSize().x/ 2 + 500, m_windowSize.GetGameSize().y / 2 - 200);
+	m_renderers.push_back(textConsole);//at first
+
 	m_renderers.push_back(textureRenderer);
 	m_renderers.push_back(primitiveRenderer);
 
@@ -69,7 +70,7 @@ int GameBase::Init(int width, int height)
 
 	//Locator::Provide(&m_camera2D);
 	Locator::Provide(textureRenderer);
-	//Locator::Provide(textConsole);
+	Locator::Provide(textConsole);
 	Locator::Provide(primitiveRenderer);
 	Locator::Provide(&m_inputEvent);
 	Locator::Provide(&m_assetsManager);
@@ -127,11 +128,11 @@ void GameBase::Draw()
 	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Draw();
 	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next) it->data->Draw();
 
-	//Locator::GetTextConsole()->Log("Designed by VU DUY DU");
-	//Locator::GetPrimitiveRenderer()->DrawLight(Locator::GetInput()->GetMousePosInWorld(),
-	//	700, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
-	//	glm::vec4(1.0f, 1.0f, 0.0f, 0.0f));
-	//Locator::GetTextConsole()->Log(("FPS: "+std::to_string((int)m_timer.GetFPS())+"\nTEX: "+ std::to_string(Locator::GetTextureRenderer()->GetDrawNum())).c_str(),true);
+	Locator::GetTextConsole()->Log("Designed by VU DUY DU");
+	Locator::GetPrimitiveRenderer()->DrawLight(Locator::GetInputEvent()->GetLeftMouse().GetMousePosInWorld(),
+		700, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		glm::vec4(1.0f, 1.0f, 0.0f, 0.0f));
+	Locator::GetTextConsole()->Log(("FPS: "+std::to_string((int)m_timer.GetFPS())+"\nTEX: "+ std::to_string(Locator::GetTextureRenderer()->GetDrawNum())).c_str(),true);
 
 	//RENDERER::END: push them up to the sky
 	for(auto&renderer:m_renderers) renderer->Render(&(m_camera2D.GetMatrix()[0][0]));

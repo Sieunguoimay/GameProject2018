@@ -32,8 +32,13 @@ void pe::MoveTo::Run(float deltaTime){
 	b2Vec2 impulse = m_pBody->GetMass()*(vel - currentVel);
 	m_pBody->ApplyLinearImpulse(impulse, m_pBody->GetWorldCenter(), true);
 
+}
+
+void pe::MoveTo::DrawDebug()
+{
 	Locator::GetPrimitiveRenderer()->DrawCircle(M2P*Utils::b2ToGlm(m_oldPos), 10);
 	Locator::GetPrimitiveRenderer()->DrawCircle(M2P*Utils::b2ToGlm(m_target), 10);
+	//Locator::GetPrimitiveRenderer()->DrawCircle(M2P*Utils::b2ToGlm(m_target))
 }
 
 pe::Sequence::Sequence(BaseAction * action, ...)

@@ -4,7 +4,6 @@
 #include"GamePackage/misc/Locator.h"
 #include"GamePackage/AssetsManager.h"
 
-#include"GamePackage/GameObjects/Character/Character.h"
 #include"GamePackage/GameObjects/Character/Animal.h"
 #include"GamePackage/GameObjects/Character/Player/PlayerControl.h"
 #include"GamePackage/GameObjects/World/World.h"
@@ -22,13 +21,12 @@ void RealGame::InitGameObjects()
 	//Editor*editor = new Editor(gameWorld, objectPool);
 	HighLevelCamera*camera = new HighLevelCamera(&m_camera2D, Locator::GetTextConsole()->GetFreeTypeLoader());;
 	//InputHandler*inputHandler = new EditorPurposeHandler(editor, camera);
-	InputHandler*inputHandler = new PlayerControl(objectPool);
+	//InputHandler*inputHandler = new PlayerControl(objectPool);
 	//inputHandler->AddCommand(camera, InputHandler::HT_CTRL);
 	
 
 	m_tools[OBJECT_POOL] = objectPool;
 	//m_tools[EDITOR] = editor;
-	m_tools[INPUT_HANDLER] = inputHandler;
 	m_tools[WORLD] = gameWorld;
 	m_tools[CAMERA_DRAG] = camera;
 	m_tools[MOUSE_CURSOR] = new MouseCursor();
@@ -38,17 +36,13 @@ void RealGame::InitGameObjects()
 	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Init();
 	for (Node<AABBEntity*>*it = m_entities.first(); it != m_entities.tail; it = it->next) it->data->Init();
 
-	/*static TouchPoint touchPoint;
-	touchPoint.SetPos(b2Vec2(0, -1.5f));
-	touchPoint.Init();
-*/
 	
 
 	//Editor::SortEntitiesBySize(m_entities);//sort if you want to pick them up
 
-										   //for the purpose of editing
-										   //Locator::GetTextureRenderer()->Disable();
-	//Locator::GetPrimitiveRenderer()->Disable();
+	//for the purpose of editing
+	//Locator::GetTextureRenderer()->Disable();
+	Locator::GetPrimitiveRenderer()->Disable();
 	m_box2DRenderer.SetFlags(b2Draw::e_shapeBit);
 	m_physicsFactory.SetRenderer(&m_box2DRenderer);
 	AABBEntity::s_drawAABBTrigger = true;
@@ -61,7 +55,7 @@ void RealGame::Update()
 {
 	m_timer.Start();
 	//TIMER::BEGIN: timer start to count
-	float deltaTime = m_timer.GetDeltaTime();
+	auto deltaTime = m_timer.GetDeltaTime();
 	m_physicsFactory.Update(deltaTime);
 
 	for (int i = 0; i < TOOL_NUM; i++) if (m_tools[i]) m_tools[i]->Update(deltaTime);

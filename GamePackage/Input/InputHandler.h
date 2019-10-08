@@ -35,11 +35,11 @@ public:
 		HANDLE_TYPE_NUM
 	};
 	virtual ~InputHandler();
-	void Update(float deltaTime)override;
+	virtual void Update(float deltaTime)override;
 	void AddCommand(Command*newCommand, const HandleType&handleType);
 
 	void executeOnce(int ht_key,int key);
-private:
+protected:
 	Command*handleInput();
 	Command*m_commands[HANDLE_TYPE_NUM] = { 0 };
 };

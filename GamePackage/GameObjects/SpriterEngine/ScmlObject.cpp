@@ -8,8 +8,9 @@ ScmlObject::~ScmlObject()
 {
 	for (auto&entity : entities)
 		delete entity;
-	for (auto&folder : folders)
-		delete folder;
+	for (auto&a : folders)
+		delete a;
+	SDL_Log("scml object deleted");
 }
 
 void ScmlObject::LoadFile(const char * filepath, AssetsManager*assets)
@@ -79,7 +80,7 @@ void ScmlObject::LoadFile(const char * filepath, AssetsManager*assets)
 			//<animation>
 			tinyxml2::XMLElement*pAnimation = pEntity->FirstChildElement("animation");
 			while (pAnimation) {
-				Animation *animation = new Animation(this, entity);
+				Animation *animation = new Animation();
 				entity->animations.push_back(animation);
 				int controlKeyTemp = 0;
 
@@ -195,22 +196,22 @@ void ScmlObject::LoadFile(const char * filepath, AssetsManager*assets)
 							tinyxml2::XMLElement*pBone = pKey->FirstChildElement("bone");
 							if (pBone) {
 								const char*x = pBone->Attribute("x");
-								if (x) m_boneTimelineKey->info.x = Utils::_atof(x);
+								if (x) m_boneTimelineKey->m_info.x = Utils::_atof(x);
 
 								const char*y = pBone->Attribute("y");
-								if (y) m_boneTimelineKey->info.y = Utils::_atof(y);
+								if (y) m_boneTimelineKey->m_info.y = Utils::_atof(y);
 
 								const char*angle = pBone->Attribute("angle");
-								if (angle) m_boneTimelineKey->info.angle = Utils::_atof(angle);
+								if (angle) m_boneTimelineKey->m_info.angle = Utils::_atof(angle);
 
 								const char*scaleX = pBone->Attribute("scale_x");
-								if (scaleX) m_boneTimelineKey->info.scaleX = Utils::_atof(scaleX);
+								if (scaleX) m_boneTimelineKey->m_info.scaleX = Utils::_atof(scaleX);
 
 								const char*scaleY = pBone->Attribute("scale_y");
-								if (scaleY)m_boneTimelineKey->info.scaleY = Utils::_atof(scaleY);
+								if (scaleY)m_boneTimelineKey->m_info.scaleY = Utils::_atof(scaleY);
 
 								const char*a = pBone->Attribute("a");
-								if (a) m_boneTimelineKey->info.a = Utils::_atof(a);
+								if (a) m_boneTimelineKey->m_info.a = Utils::_atof(a);
 
 							}
 
@@ -268,22 +269,22 @@ void ScmlObject::LoadFile(const char * filepath, AssetsManager*assets)
 							if (pObject) {
 
 								const char*x = pObject->Attribute("x");
-								if (x) m_spriteTimelineKey->info.x = Utils::_atof(x);
+								if (x) m_spriteTimelineKey->m_info.x = Utils::_atof(x);
 
 								const char*y = pObject->Attribute("y");
-								if (y) m_spriteTimelineKey->info.y = Utils::_atof(y);
+								if (y) m_spriteTimelineKey->m_info.y = Utils::_atof(y);
 
 								const char*angle = pObject->Attribute("angle");
-								if (angle) m_spriteTimelineKey->info.angle = Utils::_atof(angle);
+								if (angle) m_spriteTimelineKey->m_info.angle = Utils::_atof(angle);
 
 								const char*scaleX = pObject->Attribute("scale_x");
-								if (scaleX) m_spriteTimelineKey->info.scaleX = Utils::_atof(scaleX);
+								if (scaleX) m_spriteTimelineKey->m_info.scaleX = Utils::_atof(scaleX);
 
 								const char*scaleY = pObject->Attribute("scale_y");
-								if (scaleY) m_spriteTimelineKey->info.scaleY = Utils::_atof(scaleY);
+								if (scaleY) m_spriteTimelineKey->m_info.scaleY = Utils::_atof(scaleY);
 
 								const char*a = pObject->Attribute("a");
-								if (a)m_spriteTimelineKey->info.a = Utils::_atof(a);
+								if (a)m_spriteTimelineKey->m_info.a = Utils::_atof(a);
 
 								
 								//keep the pointer to file is faster								
@@ -293,20 +294,20 @@ void ScmlObject::LoadFile(const char * filepath, AssetsManager*assets)
 								//const char*file = pObject->Attribute("file");
 								////if (file) m_spriteTimelineKey->file = Utils::_atoi(file);
 								//
-								m_spriteTimelineKey->folderId = Utils::_atoi(pObject->Attribute("folder"));
-								m_spriteTimelineKey->fileId = Utils::_atoi(pObject->Attribute("file"));
+								m_spriteTimelineKey->m_folderId = Utils::_atoi(pObject->Attribute("folder"));
+								m_spriteTimelineKey->m_fileId = Utils::_atoi(pObject->Attribute("file"));
 								//m_spriteTimelineKey->SetFile(&this->folders[Utils::_atoi(folder)]->files[Utils::_atoi(file)]);
 								//so that we dont have to pass on the folder vector all the way down to the spriteTimelineKey->Paint()
 
 
 
 								const char*pivot_x = pObject->Attribute("pivot_x");
-								if (pivot_x) m_spriteTimelineKey->pivot_x = Utils::_atof(pivot_x);
+								if (pivot_x) m_spriteTimelineKey->m_pivot_x = Utils::_atof(pivot_x);
 
 								const char *pivot_y = pObject->Attribute("pivot_y");
-								if (pivot_y) m_spriteTimelineKey->pivot_y = Utils::_atof(pivot_y);
+								if (pivot_y) m_spriteTimelineKey->m_pivot_y = Utils::_atof(pivot_y);
 
-								m_spriteTimelineKey->useDefaultPivot = !(pivot_x&&pivot_y);
+								m_spriteTimelineKey->m_useDefaultPivot = !(pivot_x&&pivot_y);
 
 							}
 							timeline->keys.push_back(m_spriteTimelineKey);
@@ -364,12 +365,11 @@ void ScmlObject::Log()
 //	return SpatialInfo();
 //}
 
-float ScmlObject::Draw(float newTime)
-{
-	if (entities.empty())return 0.0f;
-	float temp = entities[currentEntity]->animations[currentAnimation]->UpdateAndDraw(newTime);
-	return temp;
-}
+//float ScmlObject::Draw(float newTime)
+//{
+//	if (entities.empty())return 0.0f;
+//	return entities[currentEntity]->animations[currentAnimation]->UpdateAndDraw(newTime,NULL,NULL);
+//}
 
 //void ScmlObject::ApplyCharacterMap(CharacterMap * charMap, bool reset)
 //{

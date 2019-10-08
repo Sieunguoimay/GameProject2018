@@ -40,7 +40,7 @@ public:
 	void CleanUp();
 	void Update(float deltaTime);
 	
-	inline void RunAction(pe::BaseAction*action) { m_actions.push_back(action); }
+	int RunAction(pe::BaseAction*action) { m_actions.push_back(action); return m_actions.size()-1; }
 
 	b2Body*CreateBody(b2Shape*shape, const b2BodyType& type, const MaterialType& material, const b2Vec2& pos);
 

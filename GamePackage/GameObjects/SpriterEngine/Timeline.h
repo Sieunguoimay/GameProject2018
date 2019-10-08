@@ -15,14 +15,14 @@ public:
 
 	//to control this time line, set this flag to true
 	//use this key to control this timeline across animation channel.
-	BodySegment* pControlKey = NULL;
+	BoneSegment* pControlKey = NULL;
 
 	~Timeline() {
 		for (auto&timelineKey : keys)
 			delete timelineKey;
 	}
 	void Log() {
-		SDL_Log("\t\ttimeline %s %d size of the keys on this time line: %d\n", name.c_str(), objectType,(int)keys.size());
+		printf("\t\ttimeline %s %d size of the keys on this time line: %d\n", name.c_str(), objectType,(int)keys.size());
 		for (auto&timelineKey : keys)
 			timelineKey->Log();
 	}
